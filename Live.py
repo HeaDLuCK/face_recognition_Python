@@ -84,5 +84,3 @@ class Live:
                 break
 
 
-t = Live(0)
-t.main()
