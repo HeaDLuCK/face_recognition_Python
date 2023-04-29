@@ -44,18 +44,16 @@ class Blogic:
         if (dateCheck):
             a = self.collection.find_one(
                 {"presence.checkIn": {'$in': [hour, minusMinute, minusTwoMinutes]}, "date": date, "presence.perso_id": perso_id})
-            print(a)
             if not a:
                 self.collection.update_one(
                     {"_id": dateCheck['_id']},
-                    {"$push": {"presence": {"perso_id": perso_id, "checkIn": hour,
-                                            "checkOut": 'null'}}})
+                    {"$push": {"presence": {"perso_id": perso_id, "checkIn": hour}}})
 
         else:
 
             self.collection.insert_one(
                 {"date": date, "presence": [
-                    {"perso_id": perso_id, "checkIn": hour, "checkOut": 'null'}
+                    {"perso_id": perso_id, "checkIn": hour}
                 ]})
 
     def checkOutInsert(self, fulldate, perso_id):
@@ -68,7 +66,7 @@ class Blogic:
                 'presence.$[xxx].checkOut': hour
             }},
             array_filters=[
-                {"xxx.checkOut": 'null'}
+                {"xxx.checkOut": {"$exists": False}}
             ]
         )
 
@@ -85,10 +83,10 @@ class Blogic:
             if not a:
                 self.collection.update_one(
                     {"_id": dateCheck['_id']},
-                    {"$push": {"presence": {"perso_id": perso_id, "checkIn": 'null',
+                    {"$push": {"presence": {"perso_id": perso_id,
                                "checkOut": hour}}})
         else:
             self.collection.insert_one(
                 {"date": date, "presence": [
-                    {"perso_id": perso_id, "checkIn": 'null', "checkOut": hour}
+                    {"perso_id": perso_id, "checkOut": hour}
                 ]})

@@ -39,8 +39,7 @@ class Live:
             except:
                 check = False
             if check:
-                perso_id = self._businesslogic.collectImagesName(image_directory)[
-                    index]
+                perso_id = self._businesslogic.collectImagesName(image_directory)[index]
                 if (self.camera == 0):
                     self._businesslogic.checkInInsert(fulldate, perso_id)
                 elif (self.camera == 1):
@@ -56,7 +55,6 @@ class Live:
                         self.screenShot(filename, resized_frame)
                         self._businesslogic.checkInInsert(fulldate, filename)
                     else:
-                        print("im here")
                         self.searchForFaces(
                             frame, resized_frame, faces_location, fulldate, "unkown personnes", False)
                 elif (self.camera == 1):
