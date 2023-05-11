@@ -38,32 +38,34 @@ class Blogic:
         splittedDate = str(fulldate).split(" ")
         date = splittedDate[0]
         hour = splittedDate[1]
-        minusMinute = str(fulldate-timedelta(minutes=1)).split(" ")[1]
-        minusTwoMinutes = str(fulldate-timedelta(minutes=2)).split(" ")[1]
+        hour_to_number = int(hour.split(':')[0])*60+int(hour.split(':')[1])
+        minusMinute = hour_to_number-1
+        minusTwoMinutes = hour_to_number-2
         dateCheck = self.collection.find_one({"date": date})
         if (dateCheck):
             a = self.collection.find_one(
-                {"presence.checkIn": {'$in': [hour, minusMinute, minusTwoMinutes]}, "date": date, "presence.perso_id": perso_id})
+                {"presence.checkIn": {'$in': [hour_to_number, minusMinute, minusTwoMinutes]}, "date": date, "presence.perso_id": perso_id})
             if not a:
                 self.collection.update_one(
                     {"_id": dateCheck['_id']},
-                    {"$push": {"presence": {"perso_id": perso_id, "checkIn": hour}}})
+                    {"$push": {"presence": {"perso_id": perso_id, "checkIn": hour_to_number}}})
 
         else:
 
             self.collection.insert_one(
                 {"date": date, "presence": [
-                    {"perso_id": perso_id, "checkIn": hour}
+                    {"perso_id": perso_id, "checkIn": hour_to_number}
                 ]})
 
     def checkOutInsert(self, fulldate, perso_id):
         splittedDate = str(fulldate).split(" ")
         date = splittedDate[0]
         hour = splittedDate[1]
+        hour_to_number = int(hour.split(':')[0])*60+int(hour.split(':')[1])
         self.collection.update_one(
             {"presence.perso_id": perso_id, "date": date},
             {"$set": {
-                'presence.$[xxx].checkOut': hour
+                'presence.$[xxx].checkOut': hour_to_number
             }},
             array_filters=[
                 {"xxx.checkOut": {"$exists": False}}
@@ -74,19 +76,20 @@ class Blogic:
         splittedDate = str(fulldate).split(" ")
         date = splittedDate[0]
         hour = splittedDate[1]
-        plusMinute = str(fulldate+timedelta(minutes=1)).split(" ")[1]
-        plusTwoMinutes = str(fulldate+timedelta(minutes=2)).split(" ")[1]
+        hour_to_number = int(hour.split(':')[0])*60+int(hour.split(':')[1])
+        minusMinute = hour_to_number-1
+        minusTwoMinute = hour_to_number-2
         dateCheck = self.collection.find_one({"date": date})
         if (dateCheck):
             a = self.collection.find_one(
-                {"presence.checkIn": {'$in': [hour, plusMinute, plusTwoMinutes]}, "date": date, "presence.perso_id": perso_id})
+                {"presence.checkIn": {'$in': [hour_to_number, minusMinute, minusTwoMinute]}, "date": date, "presence.perso_id": perso_id})
             if not a:
                 self.collection.update_one(
                     {"_id": dateCheck['_id']},
                     {"$push": {"presence": {"perso_id": perso_id,
-                               "checkOut": hour}}})
+                               "checkOut": hour_to_number}}})
         else:
             self.collection.insert_one(
                 {"date": date, "presence": [
-                    {"perso_id": perso_id, "checkOut": hour}
+                    {"perso_id": perso_id, "checkOut": hour_to_number}
                 ]})
