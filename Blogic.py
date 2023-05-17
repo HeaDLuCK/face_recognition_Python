@@ -63,12 +63,12 @@ class Blogic:
         hour = splittedDate[1]
         minute = int(hour.split(':')[0])*60+int(hour.split(':')[1])
         self.collection.update_one(
-            {"presence.perso_id": perso_id, "date": date},
+            {"date": date},
             {"$set": {
                 'presence.$[xxx].checkOut': minute
             }},
             array_filters=[
-                {"xxx.checkOut": {"$exists": False}}
+                {"xxx.perso_id": perso_id, "xxx.checkOut": {"$exists": False}}
             ]
         )
 
