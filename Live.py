@@ -88,19 +88,21 @@ class Live:
                 check = False
             if check:
                 perso_id = imageNames[index]
+                print(perso_id)
                 if (self.camera == 0):
+                    
                     self._businesslogic.checkInInsert(fulldate, int(perso_id))
                 elif (self.camera == 1):
                     self._businesslogic.checkOutInsert(fulldate, int(perso_id))
             else:
                 date,time=str(fulldate).split(" ")
-                print(type(fulldate))
                 if (self.camera == 0):
                     if not failed:
                         #filename looks like 20141010141200 = 2014-10-10 T 14:12:00
                         filename = ''.join((date.split('-')))  + \
                             ''.join(time.split(':'))
                         self.screenShot(filename, resized_frame)
+                        print("i took screenshoot")
                         self._businesslogic.checkInInsert(fulldate, filename)
                     else:
                          self.queue.put(
