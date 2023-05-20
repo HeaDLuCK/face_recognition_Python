@@ -13,7 +13,7 @@ class Blogic:
 
     def checkInInsert(self, fulldate, perso_id):
         date,time = str(fulldate).split(" ")
-        hour,minute = map(int,time.split(":"))
+        hour,minute,seconds = map(int,time.split(":"))
         tolal_minute=hour*60+minute
         minusMinute = tolal_minute-1
         minusTwoMinutes = tolal_minute-2
@@ -35,7 +35,7 @@ class Blogic:
 
     def checkOutInsert(self, fulldate, perso_id):
         date,time = str(fulldate).split(" ")
-        hour,minute = map(int,time.split(":"))
+        hour,minute,seconds = map(int,time.split(":"))
         tolal_minute=hour*60+minute
         self.collection.update_one(
             {"date": date},
@@ -49,7 +49,7 @@ class Blogic:
 
     def checkOutExceptionInsert(self, fulldate, perso_id):
         date,time = str(fulldate).split(" ")
-        hour,minute = map(int,time.split(":"))
+        hour,minute,seconds = map(int,time.split(":"))
         tolal_minute=hour*60+minute
         minusMinute = tolal_minute-1
         minusTwoMinute = tolal_minute-2

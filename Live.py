@@ -8,6 +8,9 @@ from Blogic import Blogic
 
 
 class Live:
+    
+    
+
     def __init__(self, camera):
         self.camera = camera
         self._cap = cv2.VideoCapture(self.camera)
@@ -90,13 +93,13 @@ class Live:
                 elif (self.camera == 1):
                     self._businesslogic.checkOutInsert(fulldate, int(perso_id))
             else:
-                splittedDate = str(fulldate).split(" ")
-                date = splittedDate[0]
-                hour = splittedDate[1]
+                date,time=str(fulldate).split(" ")
+                print(type(fulldate))
                 if (self.camera == 0):
                     if not failed:
-                        filename = '_'.join((date.split('-'))) + "T" + \
-                            '_'.join(hour.split(':'))
+                        #filename looks like 20141010141200 = 2014-10-10 T 14:12:00
+                        filename = ''.join((date.split('-')))  + \
+                            ''.join(time.split(':'))
                         self.screenShot(filename, resized_frame)
                         self._businesslogic.checkInInsert(fulldate, filename)
                     else:
@@ -106,14 +109,15 @@ class Live:
 
                 elif (self.camera == 1):
                     if not failed:
-                        filename = '_'.join((date.split('-'))) + "T" + \
-                            '_'.join(hour.split(':'))
+                        #filename looks like 20141010141200 = 2014-10-10 T 14:12:00
+                        filename = ''.join((date.split('-'))) + \
+                            ''.join(time.split(':'))
                         self.screenShot(filename, resized_frame)
                         self._businesslogic.checkOutExceptionInsert(
                             fulldate, filename)
-                    # else:
-                    #     self.searchForFaces(
-                    #         frame, resized_frame, faces_location, fulldate, "unkown personnes", False)
+                    else:
+                         self.queue.put(
+                            (resized_frame, faces_location, self.encode_unknown_images, self.images_unknown_names, fulldate, False))
 
 
     #daemon helper
@@ -129,32 +133,34 @@ class Live:
         self.daemon_process.start()
 
         
-
-        while True:
-            _, frame = self._cap.read()
-            FrameResize = cv2.resize(frame, (0, 0), None, 0.5, 0.5)
-            FrameResize = cv2.cvtColor(FrameResize,cv2.COLOR_RGB2BGR)
-            facesLoc = face_recognition.face_locations(FrameResize)
-            fulldate = datetime.now().replace(second=0, microsecond=0)
-            for faceLoc in facesLoc:
-                cv2.rectangle(
-                    frame, (faceLoc[3]*2, faceLoc[0]*2), (faceLoc[1]*2, faceLoc[2]*2), (25, 155, 12), 1)
-            if len(facesLoc) > 0:
-                self.queue.put((
-                                FrameResize,
-                                facesLoc, 
-                                self.encode_known_images,
-                                self.images_known_names,
-                                fulldate,
-                                True))
+        try:
+            while True:
+                _, frame = self._cap.read()
+                FrameResize = cv2.resize(frame, (0, 0), None, 0.5, 0.5)
+                FrameResize = cv2.cvtColor(FrameResize,cv2.COLOR_RGB2BGR)
+                facesLoc = face_recognition.face_locations(FrameResize)
+                fulldate = datetime.now().replace(second=0, microsecond=0)
+                for faceLoc in facesLoc:
+                    cv2.rectangle(
+                        frame, (faceLoc[3]*2, faceLoc[0]*2), (faceLoc[1]*2, faceLoc[2]*2), (25, 155, 12), 1)
+                if len(facesLoc) > 0:
+                    self.queue.put((
+                                    FrameResize,
+                                    facesLoc, 
+                                    self.encode_known_images,
+                                    self.images_known_names,
+                                    fulldate,
+                                    True))
+                    
+                # update every day at 00:00
+                if datetime.now().strftime("%H:%M")=="00:00":
+                    self.encodeImages()
+                    self.encodeImages("unkown personnes")
                 
-            # update every day at 00:00
-            if datetime.now().strftime("%H:%M")=="00:00":
-                self.encodeImages()
-                self.encodeImages("unkown personnes")
-            
-            cv2.imshow("test", frame)
-            if cv2.waitKey(1) == ord("x"):
-                break
+                cv2.imshow("test", frame)
+                if cv2.waitKey(1) == ord("x"):
+                    break
 
-        self.daemon_process.terminate()
+            self.daemon_process.terminate()
+        except Exception as e:
+            print("no camera detected")
