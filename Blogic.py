@@ -11,28 +11,6 @@ class Blogic:
             "mongodb+srv://zaka:1234@cluster0.uyde97r.mongodb.net/?retryWrites=true&w=majority")
         self.collection = self._Blogic__database.detected_faces.appearance
 
-    def collectImagesName(self, path):
-        className = []
-        myList = os.listdir(path)
-        for cl in myList:
-            className.append(os.path.splitext(cl)[0])
-        return className
-
-    def collectImages(self, path):
-        myList = os.listdir(path)
-        images = []
-        for cl in myList:
-            curImg = cv2.imread(f'{path}/{cl}')
-            images.append(curImg)
-        return images
-
-    def encodeImages(self, images):
-        encodedImages = []
-        for img in images:
-            frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            encodeFrame = face_recognition.face_encodings(frame)[0]
-            encodedImages.append(encodeFrame)
-        return encodedImages
 
     def checkInInsert(self, fulldate, perso_id):
         splittedDate = str(fulldate).split(" ")
