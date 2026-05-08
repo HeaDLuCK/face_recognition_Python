@@ -1,0 +1,10 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+motor>=3.6.0
+httpx>=0.28.0
+pydantic-settings>=2.7.0
+python-multipart>=0.0.20
+insightface>=0.7.3
+onnxruntime>=1.20.0
+opencv-python>=4.10.0.84
+numpy>=1.26.0
