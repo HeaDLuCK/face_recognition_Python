@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\ai_camera_service\.venv
+set VIRTUAL_ENV=C:\Users\dev-7\Desktop\face_recognition_Python\ai_camera_service\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

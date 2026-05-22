@@ -36,7 +36,7 @@ class SyncService:
 
     async def sync_cameras(self) -> dict:
         if self._use_local_dev_camera():
-            cameras = [self._local_dev_camera()]
+            cameras = self._local_dev_cameras()
         else:
             cameras = await self.erp_client.fetch_cameras()
         self.runtime_state.set_cameras(cameras)
@@ -136,15 +136,49 @@ class SyncService:
         settings = self.erp_client.settings
         return settings.environment == "development" and not settings.erp_base_url
 
-    def _local_dev_camera(self) -> CameraConfig:
+    def _local_dev_cameras(self) -> list[CameraConfig]:
         settings = self.erp_client.settings
-        return CameraConfig(
-            tenantId=settings.dev_tenant_id,
-            cameraId=settings.dev_camera_id,
-            name="Local USB Camera",
-            rtspUrl=f"usb://{settings.usb_camera_index}",
-            enabled=True,
-            direction="IN",
-            capabilities=["FACE_RECOGNITION"],
-            zones=[],
-        )
+        rtsp_urls = self._local_rtsp_urls()
+
+        if settings.camera_source_mode == "rtsp" and rtsp_urls:
+            return [
+                CameraConfig(
+                    tenantId=settings.dev_tenant_id,
+                    cameraId=f"RTSP_CAM_{index:02d}",
+                    name=f"Local RTSP Camera {index:02d}",
+                    rtspUrl=rtsp_url,
+                    enabled=True,
+                    direction="IN",
+                    capabilities=["FACE_RECOGNITION"],
+                    zones=[],
+                )
+                for index, rtsp_url in enumerate(rtsp_urls, start=1)
+            ]
+
+        return [
+            CameraConfig(
+                tenantId=settings.dev_tenant_id,
+                cameraId=settings.dev_camera_id,
+                name="Local USB Camera",
+                rtspUrl=f"usb://{settings.usb_camera_index}",
+                enabled=True,
+                direction="IN",
+                capabilities=["FACE_RECOGNITION"],
+                zones=[],
+            )
+        ]
+
+    def _local_rtsp_urls(self) -> list[str]:
+        settings = self.erp_client.settings
+        if settings.rtsp_urls:
+            return [url.strip() for url in settings.rtsp_urls.split(",") if url.strip()]
+
+        if not settings.rtsp_url:
+            return []
+
+        channels = [channel.strip() for channel in settings.rtsp_channels.split(",") if channel.strip()]
+        if not channels:
+            return [settings.rtsp_url]
+
+        base_url = settings.rtsp_url.rsplit("/", 1)[0]
+        return [f"{base_url}/{channel}" for channel in channels]

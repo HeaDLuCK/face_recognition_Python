@@ -35,7 +35,7 @@ import numpy as np
 from scipy.sparse import issparse
 from cython cimport floating, integral
 from libc.math cimport isfinite, INFINITY
-from sklearn.utils._typedefs cimport intp_t
+from ...utils._typedefs cimport intp_t
 cnp.import_array()
 
 

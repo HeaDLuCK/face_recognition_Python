@@ -5,7 +5,7 @@
 
 from libcpp.vector cimport vector
 
-from sklearn.utils._typedefs cimport uint8_t, intp_t
+from ..utils._typedefs cimport uint8_t, intp_t
 
 
 def dbscan_inner(const uint8_t[::1] is_core,

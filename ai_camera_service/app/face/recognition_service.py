@@ -1,3 +1,5 @@
+import asyncio
+
 import numpy as np
 
 from app.face.embedding_service import EmbeddingService
@@ -17,12 +19,12 @@ class RecognitionService:
         return self.face_engine.detect_faces(frame)
 
     async def recognize_frame(self, tenant_id: str, frame, threshold: float) -> list[dict]:
-        detections = self.face_engine.detect_faces(frame)
+        detections = await asyncio.to_thread(self.face_engine.detect_faces, frame)
         stored_embeddings = await self.embedding_service.list_tenant_embeddings(tenant_id)
         return self._match_detections(detections, stored_embeddings, threshold)
 
     async def recognize_image_bytes(self, tenant_id: str, image_bytes: bytes, threshold: float) -> list[dict]:
-        detections = self.face_engine.extract_embeddings_from_image_bytes(image_bytes)
+        detections = await asyncio.to_thread(self.face_engine.extract_embeddings_from_image_bytes, image_bytes)
         stored_embeddings = await self.embedding_service.list_tenant_embeddings(tenant_id)
         return self._match_detections(detections, stored_embeddings, threshold)
 

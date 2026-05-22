@@ -162,6 +162,9 @@ POST /api/test/recognize-image
 
 GET  /api/cameras/grid
 GET  /api/cameras/{cameraId}/stream
+GET  /api/cameras/{cameraId}/stream-flow
+GET  /api/cameras/stream-flows
+POST /api/cameras/discover-channels
 ```
 
 ## Run Modes
@@ -220,6 +223,12 @@ Open one camera stream directly:
 
 ```text
 http://localhost:8000/api/cameras/USB_CAM_01/stream
+```
+
+Calibrate watched motion zones by clicking points on the stream:
+
+```text
+http://localhost:8000/api/cameras/USB_CAM_01/calibrate
 ```
 
 Stop the USB camera:
@@ -282,6 +291,49 @@ or:
 
 With `CAMERA_SOURCE_MODE=auto`, the service treats those as local USB camera index `0`. Normal `rtsp://...` values are treated as IP camera streams.
 
+### Discover Hikvision Channels For ERP
+
+ERP can ask this service to test Hikvision/NVR channels and return only the working RTSP channels.
+
+```powershell
+Invoke-RestMethod -Method POST http://localhost:8000/api/cameras/discover-channels `
+  -ContentType "application/json" `
+  -Body '{
+    "tenantId": "COMPANY_01",
+    "rtspUrl": "rtsp://admin:password@192.168.100.5:554/Streaming/Channels/101",
+    "maxCamera": 16,
+    "timeoutSeconds": 4
+  }'
+```
+
+Response:
+
+```json
+{
+  "tenantId": "COMPANY_01",
+  "count": 3,
+  "workingChannels": [
+    {
+      "channel": "101",
+      "rtspUrl": "rtsp://admin:password@192.168.100.5:554/Streaming/Channels/101",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "rtspChannels": ["101", "201", "301"],
+  "envValue": "101,201,301"
+}
+```
+
+If ERP wants stream information for browser/cloud display, call:
+
+```text
+GET /api/cameras/{cameraId}/stream-flow
+GET /api/cameras/stream-flows
+```
+
+These return the application stream endpoint, not the raw RTSP URL.
+
 ## Typical Flow
 
 Sync all ERP data:
@@ -322,3 +374,73 @@ curl -X POST http://localhost:8000/api/test/recognize-image ^
 - Recognition compares detected embeddings only against `cached_embeddings` for the same `tenantId`.
 - If zones are present on a camera, face detections outside all zones are ignored.
 - `BIDIRECTIONAL` cameras can produce recognition events, but attendance logs are only generated for `IN` or `OUT` cameras.
+
+## Event Clips And Motion Zones
+
+The service keeps a rolling video buffer per running camera. When an unknown face appears, or when movement is detected inside a configured motion zone, it saves a clip from the buffered past seconds.
+
+Configure in `.env`:
+
+```text
+EVENT_CLIP_DIR=event_clips
+EVENT_BUFFER_SECONDS=30
+EVENT_CLIP_FPS=15
+EVENT_CLIP_COOLDOWN_SECONDS=30
+MOTION_ZONES=door:100,120|420,120|420,360|100,360
+MOTION_CHECK_FRAME_SKIP=5
+MOTION_PIXEL_THRESHOLD=35
+MOTION_AREA_RATIO=0.02
+SHOW_MOTION_ZONES=true
+```
+
+`MOTION_ZONES` supports polygons. Use `;` between zones and `|` between points:
+
+```text
+MOTION_ZONES=door:100,120|420,120|420,360|100,360;shelf:600,150|900,150|900,500|600,500
+```
+
+To draw a zone, sync and start the camera, then open:
+
+```text
+http://localhost:8000/api/cameras/RTSP_CAM_01/calibrate
+```
+
+Click around the area to watch, copy the generated `MOTION_ZONES=...` value into `.env`, then restart the API and start the camera again.
+
+## Push Live Streams To Cloud
+
+The office service can push each running camera stream to a cloud WebSocket endpoint. This keeps RTSP cameras private on the office network; only the local service connects outward to your cloud.
+
+Configure `.env`:
+
+```text
+CLOUD_STREAM_WS_URL=wss://your-cloud.example.com/ws/camera-ingest
+CLOUD_STREAM_TOKEN=your-shared-secret
+CLOUD_STREAM_FPS=10
+CLOUD_STREAM_RECONNECT_SECONDS=5
+```
+
+Leave `CLOUD_STREAM_WS_URL` empty to disable cloud pushing.
+
+When a camera starts, the service connects to the cloud endpoint and sends one JSON text message:
+
+```json
+{
+  "type": "camera_start",
+  "tenantId": "DEV_COMPANY",
+  "cameraId": "RTSP_CAM_01",
+  "cameraName": "Local RTSP Camera 01",
+  "token": "your-shared-secret",
+  "timestamp": "2026-05-20T12:00:00"
+}
+```
+
+After that, it sends binary WebSocket messages. Each binary message is one JPEG frame.
+
+Your cloud system should:
+
+- accept the WebSocket connection
+- validate `token`
+- map the connection to `tenantId` and `cameraId`
+- store the latest JPEG frame for that camera
+- serve it to browser users as MJPEG, WebSocket frames, or convert it to HLS/WebRTC
