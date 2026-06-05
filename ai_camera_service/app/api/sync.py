@@ -1,24 +1,49 @@
-from fastapi import APIRouter, Query, Request
+from typing import Any
+
+from fastapi import APIRouter, Body, Query, Request
 
 router = APIRouter()
 
 
 @router.post("/all")
-async def sync_all(request: Request) -> dict:
+async def sync_all(request: Request, payload: Any = Body(default=None)) -> dict:
+    if payload is not None:
+        result = {}
+        if isinstance(payload, dict) and "cameras" in payload:
+            result["cameras"] = await request.app.state.sync_service.sync_cameras_from_payload(payload["cameras"])
+        if isinstance(payload, dict) and "employees" in payload:
+            result["employees"] = await request.app.state.sync_service.sync_employees_from_payload(payload["employees"])
+        if isinstance(payload, dict) and "rules" in payload:
+            result["rules"] = await request.app.state.sync_service.sync_rules_from_payload(payload["rules"])
+        return result
     return await request.app.state.sync_service.sync_all()
 
 
 @router.post("/cameras")
-async def sync_cameras(request: Request) -> dict:
+async def sync_cameras(request: Request, payload: Any = Body(default=None)) -> dict:
+    if payload is not None:
+        return await request.app.state.sync_service.sync_cameras_from_payload(payload)
     return await request.app.state.sync_service.sync_cameras()
 
 
 @router.post("/employees")
-async def sync_employees(request: Request, tenantId: str | None = Query(default=None)) -> dict:
+async def sync_employees(
+    request: Request,
+    tenantId: str | None = Query(default=None),
+    payload: Any = Body(default=None),
+) -> dict:
+    if payload is not None:
+        return await request.app.state.sync_service.sync_employees_from_payload(payload)
     return await request.app.state.sync_service.sync_employees(tenantId)
 
 
 @router.post("/rules")
-async def sync_rules(request: Request, tenantId: str | None = Query(default=None)) -> dict:
+async def sync_rules(
+    request: Request,
+    tenantId: str | None = Query(default=None),
+    payload: Any = Body(default=None),
+) -> dict:
+    if payload is not None:
+        return await request.app.state.sync_service.sync_rules_from_payload(payload)
     return await request.app.state.sync_service.sync_rules(tenantId)
 

@@ -48,13 +48,17 @@ class InsightFaceEngine:
         detections: list[DetectedFace] = []
 
         for face in faces:
+            detection_score = float(face.det_score)
+            if detection_score < self.settings.face_detection_min_score:
+                continue
+
             embedding = self._normalize(face.embedding)
             bbox = [int(value) for value in face.bbox.tolist()]
             detections.append(
                 DetectedFace(
                     bbox=bbox,
                     embedding=embedding.tolist(),
-                    detectionScore=float(face.det_score),
+                    detectionScore=detection_score,
                 )
             )
 

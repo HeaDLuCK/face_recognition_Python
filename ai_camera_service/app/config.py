@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     insightface_model_name: str = "buffalo_l"
     insightface_providers: str = "CPUExecutionProvider"
     insightface_ctx_id: int = -1
+    face_detection_min_score: float = Field(default=0.65, ge=0.0, le=1.0)
     default_recognition_threshold: float = Field(default=0.55, ge=0.0, le=1.0)
     default_duplicate_cooldown_seconds: int = Field(default=60, ge=0)
 
@@ -45,14 +46,18 @@ class Settings(BaseSettings):
     cloud_stream_fps: int = Field(default=10, ge=1, le=30)
     cloud_stream_reconnect_seconds: int = Field(default=5, ge=1)
     event_clip_dir: Path = Path("event_clips")
+    event_buffer_enabled: bool = False
     event_buffer_seconds: int = Field(default=30, ge=1)
     event_clip_fps: int = Field(default=15, ge=1, le=30)
     event_clip_cooldown_seconds: int = Field(default=30, ge=0)
+    event_marker_history_before_seconds: int = Field(default=30, ge=0)
+    event_marker_history_after_seconds: int = Field(default=30, ge=0)
     motion_zones: str = ""
     motion_check_frame_skip: int = Field(default=5, ge=1)
     motion_pixel_threshold: int = Field(default=35, ge=1, le=255)
     motion_area_ratio: float = Field(default=0.02, ge=0.0, le=1.0)
     show_motion_zones: bool = True
+    rtsp_drop_stale_frames: int = Field(default=1, ge=0, le=10)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

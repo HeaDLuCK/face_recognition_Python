@@ -18,26 +18,28 @@ class EventService:
         self.erp_client = erp_client
 
     async def create_camera_event(self, payload: RuntimeEvent, send_to_erp: bool = True) -> dict:
+        should_send_to_erp = self._should_send_to_erp(send_to_erp)
         doc = {
             **payload.model_dump(mode="json"),
             "eventId": str(uuid4()),
             "createdAt": datetime.utcnow(),
-            "erpDeliveryStatus": "pending" if send_to_erp else "not_required",
+            "erpDeliveryStatus": self._initial_delivery_status(send_to_erp),
         }
         await self.db.camera_events.insert_one(doc)
-        if send_to_erp:
+        if should_send_to_erp:
             await self._send_to_erp(doc, "camera_events")
         return doc
 
     async def create_alert_event(self, payload: RuntimeEvent, send_to_erp: bool = True) -> dict:
+        should_send_to_erp = self._should_send_to_erp(send_to_erp)
         doc = {
             **payload.model_dump(mode="json"),
             "alertId": str(uuid4()),
             "createdAt": datetime.utcnow(),
-            "erpDeliveryStatus": "pending" if send_to_erp else "not_required",
+            "erpDeliveryStatus": self._initial_delivery_status(send_to_erp),
         }
         await self.db.alert_events.insert_one(doc)
-        if send_to_erp:
+        if should_send_to_erp:
             await self._send_to_erp(doc, "alert_events")
         return doc
 
@@ -56,6 +58,16 @@ class EventService:
 
         cursor = self.db.camera_events.find(query).sort("timestamp", -1).limit(limit)
         return serialize_mongo_docs(await cursor.to_list(length=limit))
+
+    def _should_send_to_erp(self, send_to_erp: bool) -> bool:
+        return send_to_erp and bool(self.erp_client.settings.erp_base_url)
+
+    def _initial_delivery_status(self, send_to_erp: bool) -> str:
+        if not send_to_erp:
+            return "not_required"
+        if not self.erp_client.settings.erp_base_url:
+            return "not_configured"
+        return "pending"
 
     async def _send_to_erp(self, doc: dict, collection_name: str) -> None:
         payload = ErpEventPayload(

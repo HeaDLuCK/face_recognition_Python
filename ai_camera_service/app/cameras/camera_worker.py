@@ -4,7 +4,7 @@ import logging
 import time
 from collections import deque
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import cv2
 import numpy as np
@@ -45,19 +45,23 @@ class CameraWorker:
         self.settings = settings
         self.reader = RtspReader(camera.rtspUrl, settings)
         self._task: asyncio.Task | None = None
+        self._jpeg_task: asyncio.Task | None = None
         self._recognition_task: asyncio.Task | None = None
         self._cloud_stream_task: asyncio.Task | None = None
         self._stop_event = asyncio.Event()
         self.latest_jpeg: bytes | None = None
+        self.latest_overlay_jpeg: bytes | None = None
         self.latest_detections: list[dict] = []
         self._fps_started_at = time.perf_counter()
         self._fps_frames = 0
         self._display_fps = 0.0
-        self._event_buffer = deque(maxlen=max(settings.event_buffer_seconds * settings.stream_fps, 1))
+        event_buffer_size = max(settings.event_buffer_seconds * settings.stream_fps, 1) if settings.event_buffer_enabled else 0
+        self._event_buffer = deque(maxlen=event_buffer_size)
         self._event_clip_tasks: set[asyncio.Task] = set()
         self._last_event_clip_at: dict[str, float] = {}
         self._motion_zones = self._parse_motion_zones(settings.motion_zones)
         self._previous_motion_gray: np.ndarray | None = None
+        self.overlay_requested = False
 
     @property
     def camera_id(self) -> str:
@@ -89,7 +93,7 @@ class CameraWorker:
                 frame = await asyncio.to_thread(self.reader.read)
                 self._update_fps()
                 self._add_to_event_buffer(frame)
-                self._update_latest_jpeg(frame)
+                self._schedule_latest_jpeg(frame)
                 frame_count += 1
                 if frame_count % self.settings.motion_check_frame_skip == 0:
                     self._check_motion_zones(frame)
@@ -117,6 +121,8 @@ class CameraWorker:
         finally:
             if self._recognition_task and not self._recognition_task.done():
                 self._recognition_task.cancel()
+            if self._jpeg_task and not self._jpeg_task.done():
+                self._jpeg_task.cancel()
             if self._cloud_stream_task and not self._cloud_stream_task.done():
                 self._cloud_stream_task.cancel()
             for task in self._event_clip_tasks:
@@ -134,6 +140,21 @@ class CameraWorker:
             name=f"face-recognition-{self.camera_id}",
         )
 
+    def _schedule_latest_jpeg(self, frame) -> None:
+        if self._jpeg_task and not self._jpeg_task.done():
+            return
+        self._jpeg_task = asyncio.create_task(
+            self._encode_latest_jpeg(frame.copy()),
+            name=f"jpeg-encoder-{self.camera_id}",
+        )
+
+    async def _encode_latest_jpeg(self, frame) -> None:
+        clean_jpeg, overlay_jpeg = await asyncio.to_thread(self._encode_stream_jpegs, frame)
+        if clean_jpeg:
+            self.latest_jpeg = clean_jpeg
+        if overlay_jpeg:
+            self.latest_overlay_jpeg = overlay_jpeg
+
     async def _run_face_recognition(self, frame) -> None:
         await asyncio.sleep(self.settings.recognition_interval_seconds)
         results = await self.recognition_service.recognize_frame(
@@ -150,10 +171,10 @@ class CameraWorker:
             if result["matched"]:
                 await self._handle_recognized(frame, result, zone)
             elif self.rules.saveUnknownFaces:
-                self._schedule_event_clip("unknown_face", result)
+                self._schedule_event_marker("FACE_DETECTION", result)
                 await self._handle_unknown(frame, result, zone)
             else:
-                self._schedule_event_clip("unknown_face", result)
+                self._schedule_event_marker("FACE_DETECTION", result)
                 await self._record_unknown_detection(result, zone)
 
     async def _handle_recognized(self, frame, result: dict, zone: ZoneConfig | None) -> None:
@@ -163,6 +184,47 @@ class CameraWorker:
             self.camera.tenantId,
             self.camera.cameraId,
             snapshot_frame,
+        )
+        metadata = self._metadata(result, zone)
+        await self.snapshot_service.save_metadata(
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_path,
+            "FACE_RECOGNITION",
+            metadata,
+        )
+
+        create_attendance, direction = await self.attendance_service.should_create_attendance(
+            tenant_id=self.camera.tenantId,
+            employee_id=result["employeeId"],
+            camera_direction=self.camera.direction,
+            confidence=result["confidence"],
+            rules=self.rules,
+        )
+        event_type = f"ATTENDANCE_{direction}" if create_attendance and direction else "FACE_RECOGNIZED"
+
+        await self.attendance_service.record_detection(
+            tenant_id=self.camera.tenantId,
+            camera_id=self.camera.cameraId,
+            event_type=event_type,
+            employee_id=result["employeeId"],
+            matched=True,
+            confidence=result["confidence"],
+            snapshot_path=snapshot_path,
+            metadata=metadata,
+        )
+        await self.event_service.create_camera_event(
+            RuntimeEvent(
+                tenantId=self.camera.tenantId,
+                cameraId=self.camera.cameraId,
+                eventType=event_type,
+                employeeId=result["employeeId"],
+                confidence=result["confidence"],
+                snapshotPath=snapshot_path,
+                timestamp=datetime.utcnow(),
+                metadata=metadata,
+            ),
+            send_to_erp=True,
         )
 
     def _start_cloud_stream_push(self) -> None:
@@ -209,47 +271,6 @@ class CameraWorker:
             except Exception as exc:
                 logger.warning("Cloud stream push failed for %s: %s", self.camera_id, exc)
                 await asyncio.sleep(self.settings.cloud_stream_reconnect_seconds)
-        metadata = self._metadata(result, zone)
-        await self.snapshot_service.save_metadata(
-            self.camera.tenantId,
-            self.camera.cameraId,
-            snapshot_path,
-            "FACE_RECOGNITION",
-            metadata,
-        )
-
-        create_attendance, direction = await self.attendance_service.should_create_attendance(
-            tenant_id=self.camera.tenantId,
-            employee_id=result["employeeId"],
-            camera_direction=self.camera.direction,
-            confidence=result["confidence"],
-            rules=self.rules,
-        )
-        event_type = f"ATTENDANCE_{direction}" if create_attendance and direction else "FACE_RECOGNIZED"
-
-        await self.attendance_service.record_detection(
-            tenant_id=self.camera.tenantId,
-            camera_id=self.camera.cameraId,
-            event_type=event_type,
-            employee_id=result["employeeId"],
-            matched=True,
-            confidence=result["confidence"],
-            snapshot_path=snapshot_path,
-            metadata=metadata,
-        )
-        await self.event_service.create_camera_event(
-            RuntimeEvent(
-                tenantId=self.camera.tenantId,
-                cameraId=self.camera.cameraId,
-                eventType=event_type,
-                employeeId=result["employeeId"],
-                confidence=result["confidence"],
-                snapshotPath=snapshot_path,
-                timestamp=datetime.utcnow(),
-                metadata=metadata,
-            ),
-            send_to_erp=True,
-        )
 
     async def _handle_unknown(self, frame, result: dict, zone: ZoneConfig | None) -> None:
         snapshot_frame = self._snapshot_frame(frame, result)
@@ -337,22 +358,34 @@ class CameraWorker:
                 return zone
         return None
 
-    def _update_latest_jpeg(self, frame) -> None:
-        if self.settings.environment == "development" and self.settings.show_motion_zones:
-            self._draw_motion_zones(frame)
-        if self.settings.environment == "development" and self.settings.show_dev_fps:
-            self._draw_fps(frame)
-        if self.settings.environment == "development" and self.settings.show_dev_detections:
-            self._draw_detections(frame)
+    def _encode_stream_jpegs(self, frame) -> tuple[bytes | None, bytes | None]:
         ok, buffer = cv2.imencode(
             ".jpg",
             frame,
             [int(cv2.IMWRITE_JPEG_QUALITY), self.settings.stream_jpeg_quality],
         )
-        if ok:
-            self.latest_jpeg = buffer.tobytes()
+        clean_jpeg = buffer.tobytes() if ok else None
+
+        if not self.overlay_requested:
+            return clean_jpeg, None
+
+        overlay_frame = frame.copy()
+        if self.settings.show_motion_zones:
+            self._draw_motion_zones(overlay_frame)
+        if self.settings.show_dev_fps:
+            self._draw_fps(overlay_frame)
+        self._draw_detections(overlay_frame)
+        ok, buffer = cv2.imencode(
+            ".jpg",
+            overlay_frame,
+            [int(cv2.IMWRITE_JPEG_QUALITY), self.settings.stream_jpeg_quality],
+        )
+        overlay_jpeg = buffer.tobytes() if ok else None
+        return clean_jpeg, overlay_jpeg
 
     def _add_to_event_buffer(self, frame) -> None:
+        if not self.settings.event_buffer_enabled:
+            return
         now = datetime.utcnow()
         self._event_buffer.append((now, frame.copy()))
 
@@ -386,28 +419,55 @@ class CameraWorker:
 
             ratio = changed_pixels / zone_pixels
             if ratio >= self.settings.motion_area_ratio:
-                self._schedule_event_clip(
-                    f"motion_{zone['id']}",
+                self._schedule_event_marker(
+                    "MOTION_DETECTION",
                     {"zoneId": zone["id"], "changedRatio": ratio},
                 )
 
-    def _schedule_event_clip(self, reason: str, metadata: dict | None = None) -> None:
+    def _schedule_event_marker(self, event_type: str, metadata: dict | None = None) -> None:
         now = time.monotonic()
-        last_event_at = self._last_event_clip_at.get(reason, 0)
+        last_event_at = self._last_event_clip_at.get(event_type, 0)
         if now - last_event_at < self.settings.event_clip_cooldown_seconds:
             return
 
-        self._last_event_clip_at[reason] = now
-        buffered_frames = list(self._event_buffer)
-        if not buffered_frames:
-            return
-
+        self._last_event_clip_at[event_type] = now
         task = asyncio.create_task(
-            self._save_event_clip(reason, buffered_frames, metadata or {}),
-            name=f"event-clip-{self.camera_id}-{reason}",
+            self._save_event_marker(event_type, metadata or {}),
+            name=f"event-marker-{self.camera_id}-{event_type}",
         )
         self._event_clip_tasks.add(task)
         task.add_done_callback(self._event_clip_tasks.discard)
+
+    async def _save_event_marker(self, event_type: str, metadata: dict) -> None:
+        timestamp = datetime.utcnow()
+        marker_metadata = {
+            **metadata,
+            "code": event_type,
+            "channel": self._camera_channel(),
+            "playbackStartTime": (
+                timestamp - timedelta(seconds=self.settings.event_marker_history_before_seconds)
+            ).isoformat(),
+            "playbackEndTime": (
+                timestamp + timedelta(seconds=self.settings.event_marker_history_after_seconds)
+            ).isoformat(),
+        }
+        await self.event_service.create_camera_event(
+            RuntimeEvent(
+                tenantId=self.camera.tenantId,
+                cameraId=self.camera.cameraId,
+                eventType=event_type,
+                timestamp=timestamp,
+                metadata=marker_metadata,
+            ),
+            send_to_erp=True,
+        )
+
+    def _camera_channel(self) -> str | None:
+        if "/Streaming/Channels/" in self.camera.rtspUrl:
+            return self.camera.rtspUrl.rsplit("/", 1)[-1]
+        if "/Streaming/tracks/" in self.camera.rtspUrl:
+            return self.camera.rtspUrl.rsplit("/", 1)[-1]
+        return None
 
     async def _save_event_clip(self, reason: str, buffered_frames: list[tuple[datetime, np.ndarray]], metadata: dict) -> None:
         clip_path = await asyncio.to_thread(self._write_event_clip, reason, buffered_frames)

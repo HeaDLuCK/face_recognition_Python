@@ -1,12 +1,13 @@
 import hashlib
 import logging
 from datetime import datetime
+from typing import Any
 
 from app.erp.erp_client import ErpClient
 from app.face.embedding_service import EmbeddingService
 from app.face.insightface_engine import InsightFaceEngine
 from app.runtime_state import RuntimeState
-from app.schemas.erp_schema import CameraConfig, EmployeeConfig
+from app.schemas.erp_schema import AttendanceRules, CameraConfig, EmployeeConfig
 from app.services.log_service import LogService
 
 logger = logging.getLogger(__name__)
@@ -39,9 +40,15 @@ class SyncService:
             cameras = self._local_dev_cameras()
         else:
             cameras = await self.erp_client.fetch_cameras()
+        return await self.set_cameras(cameras, source="ERP")
+
+    async def sync_cameras_from_payload(self, payload: Any) -> dict:
+        cameras = [CameraConfig.model_validate(item) for item in self._items(payload)]
+        return await self.set_cameras(cameras, source="ERP push")
+
+    async def set_cameras(self, cameras: list[CameraConfig], source: str) -> dict:
         self.runtime_state.set_cameras(cameras)
         self.runtime_state.last_sync["cameras"] = datetime.utcnow().isoformat()
-        source = "local USB development config" if self._use_local_dev_camera() else "ERP"
         await self.log_service.write("INFO", f"Synced cameras from {source}", metadata={"count": len(cameras)})
         return {"count": len(cameras), "cameraIds": [camera.cameraId for camera in cameras]}
 
@@ -72,6 +79,23 @@ class SyncService:
         self.runtime_state.last_sync["employees"] = datetime.utcnow().isoformat()
         return {"tenants": results}
 
+    async def sync_employees_from_payload(self, payload: Any) -> dict:
+        employees = [EmployeeConfig.model_validate(item) for item in self._items(payload)]
+        tenant_ids = sorted({employee.tenantId for employee in employees})
+        results = []
+        for current_tenant_id in tenant_ids:
+            tenant_employees = [employee for employee in employees if employee.tenantId == current_tenant_id]
+            embeddings = await self._sync_employee_embeddings(current_tenant_id, tenant_employees)
+            results.append(
+                {
+                    "tenantId": current_tenant_id,
+                    "employees": len(tenant_employees),
+                    "embeddingsProcessed": embeddings,
+                }
+            )
+        self.runtime_state.last_sync["employees"] = datetime.utcnow().isoformat()
+        return {"tenants": results}
+
     async def sync_rules(self, tenant_id: str | None = None) -> dict:
         tenant_ids = [tenant_id] if tenant_id else sorted({camera.tenantId for camera in self.runtime_state.list_cameras()})
         rules = []
@@ -96,6 +120,19 @@ class SyncService:
             )
         self.runtime_state.last_sync["rules"] = datetime.utcnow().isoformat()
         return {"rules": rules}
+
+    async def sync_rules_from_payload(self, payload: Any) -> dict:
+        rules = [AttendanceRules.model_validate(item) for item in self._items(payload)]
+        for rule in rules:
+            self.runtime_state.set_rule(rule)
+            await self.log_service.write(
+                "INFO",
+                "Synced attendance rules from ERP push",
+                tenant_id=rule.tenantId,
+                metadata=rule.model_dump(),
+            )
+        self.runtime_state.last_sync["rules"] = datetime.utcnow().isoformat()
+        return {"rules": [rule.model_dump() for rule in rules]}
 
     async def _sync_employee_embeddings(self, tenant_id: str, employees: list[EmployeeConfig]) -> int:
         processed = 0
@@ -132,6 +169,24 @@ class SyncService:
         digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
         return f"{employee_id}:{digest}"
 
+    @staticmethod
+    def _items(payload: Any) -> list[dict]:
+        if payload is None:
+            return []
+        if isinstance(payload, list):
+            return payload
+        if isinstance(payload, dict):
+            if isinstance(payload.get("items"), list):
+                return payload["items"]
+            if isinstance(payload.get("cameras"), list):
+                return payload["cameras"]
+            if isinstance(payload.get("employees"), list):
+                return payload["employees"]
+            if isinstance(payload.get("rules"), list):
+                return payload["rules"]
+            return [payload]
+        raise ValueError("Payload must be an object, an array, or an object with items/cameras/employees/rules.")
+
     def _use_local_dev_camera(self) -> bool:
         settings = self.erp_client.settings
         return settings.environment == "development" and not settings.erp_base_url
@@ -144,8 +199,8 @@ class SyncService:
             return [
                 CameraConfig(
                     tenantId=settings.dev_tenant_id,
-                    cameraId=f"RTSP_CAM_{index:02d}",
-                    name=f"Local RTSP Camera {index:02d}",
+                    cameraId=self._channel_from_rtsp_url(rtsp_url) or f"RTSP_CAM_{index:02d}",
+                    name=f"Camera {self._channel_from_rtsp_url(rtsp_url) or index}",
                     rtspUrl=rtsp_url,
                     enabled=True,
                     direction="IN",
@@ -182,3 +237,9 @@ class SyncService:
 
         base_url = settings.rtsp_url.rsplit("/", 1)[0]
         return [f"{base_url}/{channel}" for channel in channels]
+
+    @staticmethod
+    def _channel_from_rtsp_url(rtsp_url: str) -> str | None:
+        if "/Streaming/Channels/" not in rtsp_url:
+            return None
+        return rtsp_url.rsplit("/", 1)[-1] or None

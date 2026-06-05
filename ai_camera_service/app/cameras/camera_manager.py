@@ -112,30 +112,32 @@ class CameraManager:
             ],
         }
 
-    async def mjpeg_stream(self, camera_id: str) -> AsyncGenerator[bytes, None]:
+    async def mjpeg_stream(self, camera_id: str, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         camera = self.runtime_state.get_camera(camera_id)
         if camera is None:
             raise KeyError("Camera not found in synced ERP config. Run /api/sync/cameras first.")
 
         worker = self.workers.get(camera_id)
         if worker and worker.is_running:
-            async for chunk in self._worker_stream(worker):
+            async for chunk in self._worker_stream(worker, overlay=overlay):
                 yield chunk
             return
 
-        async for chunk in self._direct_stream(camera.rtspUrl):
+        async for chunk in self._direct_stream(camera.rtspUrl, overlay=overlay):
             yield chunk
 
-    async def _worker_stream(self, worker: CameraWorker) -> AsyncGenerator[bytes, None]:
+    async def _worker_stream(self, worker: CameraWorker, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         delay = 1 / self.settings.stream_fps
+        if overlay:
+            worker.overlay_requested = True
         while worker.is_running:
-            if worker.latest_jpeg:
-                yield self._mjpeg_chunk(worker.latest_jpeg)
+            jpeg = worker.latest_overlay_jpeg if overlay and worker.latest_overlay_jpeg else worker.latest_jpeg
+            if jpeg:
+                yield self._mjpeg_chunk(jpeg)
             await asyncio.sleep(delay)
 
-    async def _direct_stream(self, camera_source: str) -> AsyncGenerator[bytes, None]:
+    async def _direct_stream(self, camera_source: str, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         reader = RtspReader(camera_source, self.settings)
-        delay = 1 / self.settings.stream_fps
         fps_started_at = time.perf_counter()
         fps_frames = 0
         display_fps = 0.0
@@ -149,12 +151,12 @@ class CameraManager:
                     display_fps = fps_frames / elapsed
                     fps_frames = 0
                     fps_started_at = time.perf_counter()
-                if self.settings.environment == "development" and self.settings.show_dev_fps:
+                if overlay and self.settings.show_dev_fps:
                     self._draw_fps(frame, display_fps)
-                jpeg = self._encode_jpeg(frame)
+                jpeg = await asyncio.to_thread(self._encode_jpeg, frame)
                 if jpeg:
                     yield self._mjpeg_chunk(jpeg)
-                await asyncio.sleep(delay)
+                await asyncio.sleep(0)
         finally:
             await asyncio.to_thread(reader.close)
 

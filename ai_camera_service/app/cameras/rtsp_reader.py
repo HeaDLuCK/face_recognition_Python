@@ -1,4 +1,5 @@
 import logging
+import os
 
 import cv2
 
@@ -15,14 +16,33 @@ class RtspReader:
 
     def open(self) -> None:
         resolved_source = self._resolve_source()
-        self.capture = cv2.VideoCapture(resolved_source)
+        if isinstance(resolved_source, str) and resolved_source.startswith("rtsp://"):
+            os.environ.setdefault(
+                "OPENCV_FFMPEG_CAPTURE_OPTIONS",
+                "rtsp_transport;tcp|fflags;nobuffer|max_delay;0",
+            )
+            self.capture = cv2.VideoCapture(
+                resolved_source,
+                cv2.CAP_FFMPEG,
+                [
+                    cv2.CAP_PROP_OPEN_TIMEOUT_MSEC,
+                    5000,
+                    cv2.CAP_PROP_READ_TIMEOUT_MSEC,
+                    5000,
+                ],
+            )
+        else:
+            self.capture = cv2.VideoCapture(resolved_source)
         if not self.capture.isOpened():
             raise RuntimeError(f"Unable to open camera source: {self.camera_source}")
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         logger.info("Opened camera source: %s", self.camera_source)
 
     def read(self):
         if self.capture is None:
             self.open()
+        for _ in range(self.settings.rtsp_drop_stale_frames):
+            self.capture.grab()
         ok, frame = self.capture.read()
         if not ok or frame is None:
             raise RuntimeError("Unable to read frame from camera source")
