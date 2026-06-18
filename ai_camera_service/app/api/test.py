@@ -29,3 +29,26 @@ async def recognize_image(
         "results": results,
     }
 
+
+@router.get("/recognition-debug")
+async def recognition_debug(request: Request, tenantId: str, cameraId: str | None = None) -> dict:
+    embeddings_count = await request.app.state.embedding_service.count_tenant_embeddings(tenantId)
+    camera_status = request.app.state.camera_manager.status()
+    cameras = camera_status["cameras"]
+    if cameraId:
+        cameras = [camera for camera in cameras if camera["cameraId"] == cameraId]
+
+    latest_detections = {}
+    for current_camera_id, worker in request.app.state.camera_manager.workers.items():
+        if cameraId and current_camera_id != cameraId:
+            continue
+        latest_detections[current_camera_id] = worker.latest_detections
+
+    return {
+        "tenantId": tenantId,
+        "embeddingsCount": embeddings_count,
+        "cameras": cameras,
+        "latestDetections": latest_detections,
+        "lastSync": request.app.state.runtime_state.last_sync,
+    }
+

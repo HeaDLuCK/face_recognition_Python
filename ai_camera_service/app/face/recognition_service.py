@@ -62,10 +62,14 @@ class RecognitionService:
                 {
                     "employeeId": best_employee_id if is_match else None,
                     "employeeName": best_employee_name if is_match else None,
+                    "bestCandidateEmployeeId": best_employee_id,
+                    "bestCandidateEmployeeName": best_employee_name,
+                    "bestCandidateScore": best_score if best_score >= 0 else None,
                     "matched": is_match,
                     "confidence": best_score if best_score >= 0 else None,
                     "bbox": detection.bbox,
                     "detectionScore": detection.detectionScore,
+                    "_embedding": detected_embedding.tolist(),
                 }
             )
 

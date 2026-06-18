@@ -65,7 +65,7 @@ class SyncService:
             embeddings = await self._sync_employee_embeddings(current_tenant_id, employees)
             results.append(
                 {
-                    "tenantId": current_tenant_id,
+                    "etsAuth": current_tenant_id,
                     "employees": len(employees),
                     "embeddingsProcessed": embeddings,
                 }
@@ -88,7 +88,7 @@ class SyncService:
             embeddings = await self._sync_employee_embeddings(current_tenant_id, tenant_employees)
             results.append(
                 {
-                    "tenantId": current_tenant_id,
+                    "etsAuth": current_tenant_id,
                     "employees": len(tenant_employees),
                     "embeddingsProcessed": embeddings,
                 }
@@ -111,12 +111,12 @@ class SyncService:
                     duplicateCooldownSeconds=self.erp_client.settings.default_duplicate_cooldown_seconds,
                 )
             self.runtime_state.set_rule(rule)
-            rules.append(rule.model_dump())
+            rules.append(rule.model_dump(by_alias=True))
             await self.log_service.write(
                 "INFO",
                 "Synced attendance rules from ERP",
                 tenant_id=current_tenant_id,
-                metadata=rule.model_dump(),
+                metadata=rule.model_dump(by_alias=True),
             )
         self.runtime_state.last_sync["rules"] = datetime.utcnow().isoformat()
         return {"rules": rules}
@@ -129,10 +129,10 @@ class SyncService:
                 "INFO",
                 "Synced attendance rules from ERP push",
                 tenant_id=rule.tenantId,
-                metadata=rule.model_dump(),
+                metadata=rule.model_dump(by_alias=True),
             )
         self.runtime_state.last_sync["rules"] = datetime.utcnow().isoformat()
-        return {"rules": [rule.model_dump() for rule in rules]}
+        return {"rules": [rule.model_dump(by_alias=True) for rule in rules]}
 
     async def _sync_employee_embeddings(self, tenant_id: str, employees: list[EmployeeConfig]) -> int:
         processed = 0
@@ -142,6 +142,7 @@ class SyncService:
             for index, ref in enumerate(employee.faceImages):
                 try:
                     image_bytes = await self.erp_client.decode_or_download_face_image(ref)
+                    print(image_bytes)
                     if not image_bytes:
                         continue
                     faces = self.face_engine.extract_embeddings_from_image_bytes(image_bytes)

@@ -25,9 +25,18 @@ class Settings(BaseSettings):
     face_detection_min_score: float = Field(default=0.65, ge=0.0, le=1.0)
     default_recognition_threshold: float = Field(default=0.55, ge=0.0, le=1.0)
     default_duplicate_cooldown_seconds: int = Field(default=60, ge=0)
+    recognized_duplicate_cooldown_seconds: int = Field(default=180, ge=0)
+    unknown_duplicate_cooldown_seconds: int = Field(default=3600, ge=0)
+    unknown_duplicate_similarity_threshold: float = Field(default=0.65, ge=0.0, le=1.0)
+    unknown_face_crop_similarity_threshold: float = Field(default=0.45, ge=0.0, le=1.0)
+    unknown_face_min_detection_score: float = Field(default=0.75, ge=0.0, le=1.0)
+    unknown_face_min_height_px: int = Field(default=70, ge=1)
+    unknown_face_min_blur_score: float = Field(default=80.0, ge=0.0)
+    unknown_face_skip_weak_known_margin: float = Field(default=0.10, ge=0.0, le=1.0)
 
     camera_frame_skip: int = Field(default=5, ge=1)
     recognition_interval_seconds: float = Field(default=1.0, ge=0.1)
+    recognition_queue_size: int = Field(default=8, ge=1, le=60)
     camera_source_mode: Literal["auto", "usb", "rtsp"] = "auto"
     usb_camera_index: int = Field(default=0, ge=0)
     rtsp_url: str = ""
@@ -46,6 +55,7 @@ class Settings(BaseSettings):
     cloud_stream_fps: int = Field(default=10, ge=1, le=30)
     cloud_stream_reconnect_seconds: int = Field(default=5, ge=1)
     event_clip_dir: Path = Path("event_clips")
+    history_clip_dir: Path = Path("history_clips")
     event_buffer_enabled: bool = False
     event_buffer_seconds: int = Field(default=30, ge=1)
     event_clip_fps: int = Field(default=15, ge=1, le=30)

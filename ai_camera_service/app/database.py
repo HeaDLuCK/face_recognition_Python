@@ -16,6 +16,7 @@ TENANT_INDEXED_COLLECTIONS = (
     "camera_events",
     "alert_events",
     "snapshot_metadata",
+    "unknown_face_crops",
     "service_logs",
 )
 
@@ -27,6 +28,7 @@ async def connect_to_mongo() -> AsyncIOMotorDatabase:
     client = AsyncIOMotorClient(settings.mongo_url)
     database = client[settings.mongo_db_name]
     await client.admin.command("ping")
+    await migrate_tenant_field(database)
     await ensure_indexes(database)
     logger.info("Connected to MongoDB database '%s'", settings.mongo_db_name)
     return database
@@ -50,17 +52,36 @@ def get_database() -> AsyncIOMotorDatabase:
 
 async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
     for collection_name in TENANT_INDEXED_COLLECTIONS:
-        await db[collection_name].create_index([("tenantId", 1)])
+        await db[collection_name].create_index([("etsAuth", 1)])
 
     await db.cached_embeddings.create_index(
-        [("tenantId", 1), ("employeeId", 1), ("sourceId", 1)],
+        [("etsAuth", 1), ("employeeId", 1), ("sourceId", 1)],
         unique=True,
     )
-    await db.attendance_detections.create_index([("tenantId", 1), ("employeeId", 1), ("timestamp", -1)])
-    await db.camera_events.create_index([("tenantId", 1), ("cameraId", 1), ("timestamp", -1)])
-    await db.alert_events.create_index([("tenantId", 1), ("cameraId", 1), ("timestamp", -1)])
-    await db.snapshot_metadata.create_index([("tenantId", 1), ("cameraId", 1), ("timestamp", -1)])
-    await db.service_logs.create_index([("tenantId", 1), ("createdAt", -1)])
+    await db.attendance_detections.create_index([("etsAuth", 1), ("employeeId", 1), ("timestamp", -1)])
+    await db.camera_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
+    await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
+    await db.snapshot_metadata.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
+    await db.unknown_face_crops.create_index([("etsAuth", 1), ("cameraId", 1), ("createdAt", -1)])
+    await db.service_logs.create_index([("etsAuth", 1), ("createdAt", -1)])
+
+
+async def migrate_tenant_field(db: AsyncIOMotorDatabase) -> None:
+    for collection_name in TENANT_INDEXED_COLLECTIONS:
+        collection = db[collection_name]
+        async for index in collection.list_indexes():
+            keys = dict(index.get("key", {}))
+            if "tenantId" in keys:
+                await collection.drop_index(index["name"])
+
+        await collection.update_many(
+            {"tenantId": {"$exists": True}, "etsAuth": {"$exists": False}},
+            {"$rename": {"tenantId": "etsAuth"}},
+        )
+        await collection.update_many(
+            {"tenantId": {"$exists": True}, "etsAuth": {"$exists": True}},
+            {"$unset": {"tenantId": ""}},
+        )
 
 
 def serialize_mongo_doc(doc: dict[str, Any] | None) -> dict[str, Any] | None:

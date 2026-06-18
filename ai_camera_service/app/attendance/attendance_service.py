@@ -24,7 +24,7 @@ class AttendanceService:
     ) -> dict:
         doc = {
             "detectionId": str(uuid4()),
-            "tenantId": tenant_id,
+            "etsAuth": tenant_id,
             "cameraId": camera_id,
             "eventType": event_type,
             "employeeId": employee_id,
@@ -55,7 +55,7 @@ class AttendanceService:
         cooldown = timedelta(seconds=rules.duplicateCooldownSeconds)
         last_log = await self.db.attendance_detections.find_one(
             {
-                "tenantId": tenant_id,
+                "etsAuth": tenant_id,
                 "employeeId": employee_id,
                 "eventType": f"ATTENDANCE_{direction}",
                 "timestamp": {"$gte": now - cooldown},
@@ -71,13 +71,30 @@ class AttendanceService:
         tenant_id: str,
         limit: int = 100,
         employee_id: str | None = None,
-    ) -> list[dict]:
-        query = {"tenantId": tenant_id, "eventType": {"$in": ["ATTENDANCE_IN", "ATTENDANCE_OUT"]}}
+        camera_id: str | None = None,
+        direction: str | None = None,
+        event_type: str | None = None,
+    ) -> str:
+        query = {"etsAuth": tenant_id}
+        normalized_event_type = self._event_type_filter(direction, event_type)
+        if normalized_event_type:
+            query["eventType"] = normalized_event_type
+        else:
+            query["eventType"] = {"$in": ["ATTENDANCE_IN", "ATTENDANCE_OUT", "FACE_RECOGNIZED"]}
+
         if employee_id:
             query["employeeId"] = employee_id
+        if camera_id:
+            query["cameraId"] = camera_id
 
-        cursor = self.db.attendance_detections.find(query).sort("timestamp", -1).limit(limit)
-        return serialize_mongo_docs(await cursor.to_list(length=limit))
+        cursor = self.db.attendance_detections.find(query).sort("timestamp", 1).limit(limit)
+        data = serialize_mongo_docs(await cursor.to_list(length=limit))
+        result = ""
+        for obj in data:
+            result+=obj["metadata"]["employeeName"]+";"+obj["employeeId"]+";"+str(obj["timestamp"])+"|"
+        
+        return result
+    
 
     @staticmethod
     def _attendance_direction(camera_direction: str) -> str | None:
@@ -85,3 +102,17 @@ class AttendanceService:
         if normalized in {"IN", "OUT"}:
             return normalized
         return None
+
+    @staticmethod
+    def _event_type_filter(direction: str | None, event_type: str | None) -> str | None:
+        if event_type:
+            return event_type.strip().upper()
+        if not direction:
+            return None
+
+        normalized = direction.strip().upper()
+        if normalized in {"IN", "OUT"}:
+            return f"ATTENDANCE_{normalized}"
+        if normalized in {"BIDIRECTIONAL", "BOTH"}:
+            return "FACE_RECOGNIZED"
+        return normalized

@@ -46,7 +46,8 @@ class CameraWorker:
         self.reader = RtspReader(camera.rtspUrl, settings)
         self._task: asyncio.Task | None = None
         self._jpeg_task: asyncio.Task | None = None
-        self._recognition_task: asyncio.Task | None = None
+        self._recognition_worker_task: asyncio.Task | None = None
+        self._recognition_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.recognition_queue_size)
         self._cloud_stream_task: asyncio.Task | None = None
         self._stop_event = asyncio.Event()
         self.latest_jpeg: bytes | None = None
@@ -59,6 +60,9 @@ class CameraWorker:
         self._event_buffer = deque(maxlen=event_buffer_size)
         self._event_clip_tasks: set[asyncio.Task] = set()
         self._last_event_clip_at: dict[str, float] = {}
+        self._recognized_face_cache: dict[str, float] = {}
+        self._unknown_face_cache: deque[tuple[float, np.ndarray]] = deque()
+        self._unknown_face_crop_cache: list[tuple[np.ndarray, str]] = []
         self._motion_zones = self._parse_motion_zones(settings.motion_zones)
         self._previous_motion_gray: np.ndarray | None = None
         self.overlay_requested = False
@@ -88,6 +92,7 @@ class CameraWorker:
             await asyncio.to_thread(self.reader.open)
             await self._emit_camera_event("CAMERA_STARTED", {"startedAt": datetime.utcnow().isoformat()})
             self._start_cloud_stream_push()
+            self._start_recognition_worker()
 
             while not self._stop_event.is_set():
                 frame = await asyncio.to_thread(self.reader.read)
@@ -103,7 +108,7 @@ class CameraWorker:
                     continue
 
                 if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
-                    self._schedule_face_recognition(frame)
+                    self._queue_face_recognition(frame)
 
                 # Future module hooks belong here, one service per capability.
                 await asyncio.sleep(0)
@@ -119,8 +124,8 @@ class CameraWorker:
             )
             await self._emit_camera_event("CAMERA_ERROR", {"error": str(exc)})
         finally:
-            if self._recognition_task and not self._recognition_task.done():
-                self._recognition_task.cancel()
+            if self._recognition_worker_task and not self._recognition_worker_task.done():
+                self._recognition_worker_task.cancel()
             if self._jpeg_task and not self._jpeg_task.done():
                 self._jpeg_task.cancel()
             if self._cloud_stream_task and not self._cloud_stream_task.done():
@@ -132,13 +137,26 @@ class CameraWorker:
             if self._stop_event.is_set():
                 await self._emit_camera_event("CAMERA_STOPPED", {"stoppedAt": datetime.utcnow().isoformat()})
 
-    def _schedule_face_recognition(self, frame) -> None:
-        if self._recognition_task and not self._recognition_task.done():
+    def _start_recognition_worker(self) -> None:
+        if self._recognition_worker_task and not self._recognition_worker_task.done():
             return
-        self._recognition_task = asyncio.create_task(
-            self._run_face_recognition(frame.copy()),
-            name=f"face-recognition-{self.camera_id}",
+        self._recognition_worker_task = asyncio.create_task(
+            self._run_recognition_worker(),
+            name=f"face-recognition-worker-{self.camera_id}",
         )
+
+    def _queue_face_recognition(self, frame) -> None:
+        frame_copy = frame.copy()
+        if self._recognition_queue.full():
+            try:
+                self._recognition_queue.get_nowait()
+                self._recognition_queue.task_done()
+            except asyncio.QueueEmpty:
+                pass
+        try:
+            self._recognition_queue.put_nowait(frame_copy)
+        except asyncio.QueueFull:
+            pass
 
     def _schedule_latest_jpeg(self, frame) -> None:
         if self._jpeg_task and not self._jpeg_task.done():
@@ -155,44 +173,68 @@ class CameraWorker:
         if overlay_jpeg:
             self.latest_overlay_jpeg = overlay_jpeg
 
+    async def _run_recognition_worker(self) -> None:
+        while not self._stop_event.is_set():
+            frame = await self._recognition_queue.get()
+            try:
+                await self._run_face_recognition(frame)
+            finally:
+                self._recognition_queue.task_done()
+
     async def _run_face_recognition(self, frame) -> None:
-        await asyncio.sleep(self.settings.recognition_interval_seconds)
         results = await self.recognition_service.recognize_frame(
             tenant_id=self.camera.tenantId,
             frame=frame,
             threshold=self.rules.recognitionThreshold,
         )
-        self.latest_detections = results
+        self.latest_detections = self._public_detections(results)
+        handled_results = []
         for result in results:
             zone = self._matching_zone(result["bbox"])
             if self.camera.zones and zone is None:
                 continue
 
             if result["matched"]:
-                await self._handle_recognized(frame, result, zone)
+                if self._is_duplicate_recognized(result):
+                    continue
+                handled_results.append(("recognized", result, zone))
             elif self.rules.saveUnknownFaces:
+                if not self._is_good_unknown_candidate(frame, result):
+                    continue
+                if self._is_duplicate_unknown(result):
+                    continue
                 self._schedule_event_marker("FACE_DETECTION", result)
-                await self._handle_unknown(frame, result, zone)
+                handled_results.append(("unknown", result, zone))
             else:
+                if not self._is_good_unknown_candidate(frame, result):
+                    continue
+                if self._is_duplicate_unknown(result):
+                    continue
                 self._schedule_event_marker("FACE_DETECTION", result)
                 await self._record_unknown_detection(result, zone)
 
-    async def _handle_recognized(self, frame, result: dict, zone: ZoneConfig | None) -> None:
-        snapshot_frame = self._snapshot_frame(frame, result)
-        snapshot_path = await asyncio.to_thread(
-            self.snapshot_service.save_frame,
-            self.camera.tenantId,
-            self.camera.cameraId,
-            snapshot_frame,
-        )
+        if not handled_results:
+            return
+
+        snapshot_path = await self._save_frame_snapshot(frame, results) if self.rules.saveFaceSnapshots else None
+        for kind, result, zone in handled_results:
+            if kind == "recognized":
+                await self._handle_recognized(result, zone, snapshot_path)
+            else:
+                face_crop_path = (
+                    await self._save_unknown_face_crop(frame, result)
+                    if self.rules.saveUnknownFaceCrops
+                    else None
+                )
+                await self._handle_unknown(result, zone, snapshot_path, face_crop_path)
+
+    async def _handle_recognized(
+        self,
+        result: dict,
+        zone: ZoneConfig | None,
+        snapshot_path: str | None,
+    ) -> None:
         metadata = self._metadata(result, zone)
-        await self.snapshot_service.save_metadata(
-            self.camera.tenantId,
-            self.camera.cameraId,
-            snapshot_path,
-            "FACE_RECOGNITION",
-            metadata,
-        )
 
         create_attendance, direction = await self.attendance_service.should_create_attendance(
             tenant_id=self.camera.tenantId,
@@ -253,7 +295,7 @@ class CameraWorker:
                         json.dumps(
                             {
                                 "type": "camera_start",
-                                "tenantId": self.camera.tenantId,
+                                "etsAuth": self.camera.tenantId,
                                 "cameraId": self.camera.cameraId,
                                 "cameraName": self.camera.name,
                                 "token": self.settings.cloud_stream_token,
@@ -272,22 +314,16 @@ class CameraWorker:
                 logger.warning("Cloud stream push failed for %s: %s", self.camera_id, exc)
                 await asyncio.sleep(self.settings.cloud_stream_reconnect_seconds)
 
-    async def _handle_unknown(self, frame, result: dict, zone: ZoneConfig | None) -> None:
-        snapshot_frame = self._snapshot_frame(frame, result)
-        snapshot_path = await asyncio.to_thread(
-            self.snapshot_service.save_frame,
-            self.camera.tenantId,
-            self.camera.cameraId,
-            snapshot_frame,
-        )
+    async def _handle_unknown(
+        self,
+        result: dict,
+        zone: ZoneConfig | None,
+        snapshot_path: str | None,
+        face_crop_path: str | None = None,
+    ) -> None:
         metadata = self._metadata(result, zone)
-        await self.snapshot_service.save_metadata(
-            self.camera.tenantId,
-            self.camera.cameraId,
-            snapshot_path,
-            "UNKNOWN_FACE",
-            metadata,
-        )
+        if face_crop_path:
+            metadata["faceCropPath"] = face_crop_path
         await self.attendance_service.record_detection(
             tenant_id=self.camera.tenantId,
             camera_id=self.camera.cameraId,
@@ -544,16 +580,189 @@ class CameraWorker:
         for detection in self.latest_detections:
             self._draw_face_annotation(frame, detection, show_label=True)
 
-    def _snapshot_frame(self, frame, result: dict):
+    async def _save_frame_snapshot(self, frame, detections: list[dict]) -> str:
+        snapshot_frame = self._snapshot_frame(frame, detections)
+        snapshot_path = await asyncio.to_thread(
+            self.snapshot_service.save_frame,
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_frame,
+        )
+        await self.snapshot_service.save_metadata(
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_path,
+            "FACE_DETECTIONS",
+            {"detections": [self._metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
+        )
+        return snapshot_path
+
+    async def _save_unknown_face_crop(self, frame, result: dict) -> str | None:
+        existing_path = self._matched_unknown_face_crop_path(result)
+        if existing_path:
+            return existing_path
+
+        existing_path = await self._find_stored_unknown_face_crop_path(result)
+        if existing_path:
+            self._remember_unknown_face_crop(result, existing_path)
+            return existing_path
+
+        crop = self._face_crop(frame, result.get("bbox"))
+        if crop is None:
+            return None
+        crop_path = await asyncio.to_thread(
+            self.snapshot_service.save_face_crop,
+            self.camera.tenantId,
+            self.camera.cameraId,
+            crop,
+        )
+        self._remember_unknown_face_crop(result, crop_path)
+        await self._register_stored_unknown_face_crop(result, crop_path)
+        return crop_path
+
+    @staticmethod
+    def _face_crop(frame, bbox: list[int] | None):
+        if not bbox or len(bbox) != 4:
+            return None
+
+        height, width = frame.shape[:2]
+        x1, y1, x2, y2 = [int(value) for value in bbox]
+        face_width = max(x2 - x1, 1)
+        face_height = max(y2 - y1, 1)
+        margin_x = int(face_width * 0.45)
+        margin_y = int(face_height * 0.60)
+
+        left = max(x1 - margin_x, 0)
+        top = max(y1 - margin_y, 0)
+        right = min(x2 + margin_x, width)
+        bottom = min(y2 + margin_y, height)
+        if right <= left or bottom <= top:
+            return None
+        return frame[top:bottom, left:right].copy()
+
+    def _matched_unknown_face_crop_path(self, result: dict) -> str | None:
+        embedding = result.get("_embedding")
+        if embedding is None:
+            return None
+
+        current = np.array(embedding, dtype=np.float32)
+        for cached, crop_path in self._unknown_face_crop_cache:
+            score = float(np.dot(current, cached))
+            if score >= self.settings.unknown_face_crop_similarity_threshold:
+                return crop_path
+        return None
+
+    def _remember_unknown_face_crop(self, result: dict, crop_path: str) -> None:
+        embedding = result.get("_embedding")
+        if embedding is None:
+            return
+        self._unknown_face_crop_cache.append((np.array(embedding, dtype=np.float32), crop_path))
+
+    async def _find_stored_unknown_face_crop_path(self, result: dict) -> str | None:
+        embedding = result.get("_embedding")
+        if embedding is None:
+            return None
+        return await self.snapshot_service.find_unknown_face_crop(
+            self.camera.tenantId,
+            self.camera.cameraId,
+            embedding,
+            self.settings.unknown_face_crop_similarity_threshold,
+        )
+
+    async def _register_stored_unknown_face_crop(self, result: dict, crop_path: str) -> None:
+        embedding = result.get("_embedding")
+        if embedding is None:
+            return
+        await self.snapshot_service.register_unknown_face_crop(
+            self.camera.tenantId,
+            self.camera.cameraId,
+            crop_path,
+            embedding,
+            metadata={"bbox": result.get("bbox"), "detectionScore": result.get("detectionScore")},
+        )
+
+    def _is_good_unknown_candidate(self, frame, result: dict) -> bool:
+        detection_score = result.get("detectionScore")
+        if detection_score is None or detection_score < self.settings.unknown_face_min_detection_score:
+            return False
+
+        bbox = result.get("bbox")
+        if not bbox or len(bbox) != 4:
+            return False
+
+        _, y1, _, y2 = [int(value) for value in bbox]
+        if y2 - y1 < self.settings.unknown_face_min_height_px:
+            return False
+
+        best_candidate_score = result.get("bestCandidateScore")
+        if (
+            best_candidate_score is not None
+            and best_candidate_score >= self.rules.recognitionThreshold - self.settings.unknown_face_skip_weak_known_margin
+        ):
+            return False
+
+        crop = self._face_crop(frame, bbox)
+        if crop is None:
+            return False
+
+        blur_score = self._blur_score(crop)
+        return blur_score >= self.settings.unknown_face_min_blur_score
+
+    @staticmethod
+    def _blur_score(frame) -> float:
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        return float(cv2.Laplacian(gray, cv2.CV_64F).var())
+
+    def _is_duplicate_unknown(self, result: dict) -> bool:
+        embedding = result.get("_embedding")
+        if embedding is None or self.settings.unknown_duplicate_cooldown_seconds <= 0:
+            return False
+
+        now = time.monotonic()
+        cooldown = self.settings.unknown_duplicate_cooldown_seconds
+        while self._unknown_face_cache and now - self._unknown_face_cache[0][0] > cooldown:
+            self._unknown_face_cache.popleft()
+
+        current = np.array(embedding, dtype=np.float32)
+        for _, cached in self._unknown_face_cache:
+            score = float(np.dot(current, cached))
+            if score >= self.settings.unknown_duplicate_similarity_threshold:
+                return True
+
+        self._unknown_face_cache.append((now, current))
+        return False
+
+    def _is_duplicate_recognized(self, result: dict) -> bool:
+        employee_id = result.get("employeeId")
+        if not employee_id or self.settings.recognized_duplicate_cooldown_seconds <= 0:
+            return False
+
+        now = time.monotonic()
+        last_seen_at = self._recognized_face_cache.get(employee_id)
+        if last_seen_at is not None and now - last_seen_at < self.settings.recognized_duplicate_cooldown_seconds:
+            return True
+
+        self._recognized_face_cache[employee_id] = now
+        return False
+
+    @staticmethod
+    def _public_detections(detections: list[dict]) -> list[dict]:
+        return [
+            {key: value for key, value in detection.items() if not key.startswith("_")}
+            for detection in detections
+        ]
+
+    def _snapshot_frame(self, frame, detections: list[dict]):
         if not self.settings.draw_face_boxes_on_snapshots:
             return frame
 
         snapshot_frame = frame.copy()
-        self._draw_face_annotation(
-            snapshot_frame,
-            result,
-            show_label=self.settings.draw_face_labels_on_snapshots,
-        )
+        for detection in detections:
+            self._draw_face_annotation(
+                snapshot_frame,
+                detection,
+                show_label=self.settings.draw_face_labels_on_snapshots,
+            )
         return snapshot_frame
 
     @staticmethod

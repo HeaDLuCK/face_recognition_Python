@@ -18,7 +18,7 @@ class LogService:
     ) -> dict:
         doc = {
             "logId": str(uuid4()),
-            "tenantId": tenant_id,
+            "etsAuth": tenant_id,
             "cameraId": camera_id,
             "level": level,
             "message": message,

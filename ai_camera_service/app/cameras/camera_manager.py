@@ -100,7 +100,7 @@ class CameraManager:
             "lastSync": self.runtime_state.last_sync,
             "cameras": [
                 {
-                    "tenantId": camera.tenantId,
+                    "etsAuth": camera.tenantId,
                     "cameraId": camera.cameraId,
                     "name": camera.name,
                     "enabled": camera.enabled,

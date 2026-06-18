@@ -20,7 +20,7 @@ class EventService:
     async def create_camera_event(self, payload: RuntimeEvent, send_to_erp: bool = True) -> dict:
         should_send_to_erp = self._should_send_to_erp(send_to_erp)
         doc = {
-            **payload.model_dump(mode="json"),
+            **payload.model_dump(mode="json", by_alias=True),
             "eventId": str(uuid4()),
             "createdAt": datetime.utcnow(),
             "erpDeliveryStatus": self._initial_delivery_status(send_to_erp),
@@ -33,7 +33,7 @@ class EventService:
     async def create_alert_event(self, payload: RuntimeEvent, send_to_erp: bool = True) -> dict:
         should_send_to_erp = self._should_send_to_erp(send_to_erp)
         doc = {
-            **payload.model_dump(mode="json"),
+            **payload.model_dump(mode="json", by_alias=True),
             "alertId": str(uuid4()),
             "createdAt": datetime.utcnow(),
             "erpDeliveryStatus": self._initial_delivery_status(send_to_erp),
@@ -49,12 +49,17 @@ class EventService:
         limit: int = 100,
         camera_id: str | None = None,
         employee_id: str | None = None,
+        direction: str | None = None,
+        event_type: str | None = None,
     ) -> list[dict]:
-        query = {"tenantId": tenant_id}
+        query = {"etsAuth": tenant_id}
         if camera_id:
             query["cameraId"] = camera_id
         if employee_id:
             query["employeeId"] = employee_id
+        normalized_event_type = self._event_type_filter(direction, event_type)
+        if normalized_event_type:
+            query["eventType"] = normalized_event_type
 
         cursor = self.db.camera_events.find(query).sort("timestamp", -1).limit(limit)
         return serialize_mongo_docs(await cursor.to_list(length=limit))
@@ -69,9 +74,23 @@ class EventService:
             return "not_configured"
         return "pending"
 
+    @staticmethod
+    def _event_type_filter(direction: str | None, event_type: str | None) -> str | None:
+        if event_type:
+            return event_type.strip().upper()
+        if not direction:
+            return None
+
+        normalized = direction.strip().upper()
+        if normalized in {"IN", "OUT"}:
+            return f"ATTENDANCE_{normalized}"
+        if normalized in {"BIDIRECTIONAL", "BOTH"}:
+            return "FACE_RECOGNIZED"
+        return normalized
+
     async def _send_to_erp(self, doc: dict, collection_name: str) -> None:
         payload = ErpEventPayload(
-            tenantId=doc["tenantId"],
+            tenantId=doc["etsAuth"],
             cameraId=doc["cameraId"],
             eventType=doc["eventType"],
             employeeId=doc.get("employeeId"),

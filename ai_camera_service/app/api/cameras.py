@@ -1,5 +1,8 @@
 from html import escape
 import asyncio
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+import uuid
 import time
 from urllib.parse import quote, unquote, urlsplit
 from xml.etree import ElementTree
@@ -7,14 +10,16 @@ from xml.etree import ElementTree
 import cv2
 import httpx
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse, StreamingResponse
-from pydantic import BaseModel, Field
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 router = APIRouter()
 
 
 class ChannelDiscoveryRequest(BaseModel):
-    tenantId: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    tenantId: str | None = Field(default=None, validation_alias=AliasChoices("tenantId", "etsAuth"))
     cameraDeviceId: str | int | None = None
     defaultDirection: str = "BIDIRECTIONAL"
     defaultCapabilities: str = "FACE_RECOGNITION"
@@ -25,6 +30,7 @@ class ChannelDiscoveryRequest(BaseModel):
     username: str | None = None
     password: str | None = None
     rtspPort: int = 554
+    rtspPath: str | None = None
     channels: list[str] | None = None
     maxCamera: int = Field(default=16, ge=1, le=64)
     timeoutSeconds: int = Field(default=2, ge=1, le=20)
@@ -46,6 +52,13 @@ class ChannelDiscoveryResult(BaseModel):
     rtspUrl: str
     width: int
     height: int
+
+
+class HistoryClipRequest(BaseModel):
+    timestamp: str
+    beforeSeconds: int = Field(default=10, ge=0, le=300)
+    afterSeconds: int = Field(default=10, ge=1, le=300)
+    channel: str | None = None
 
 
 @router.get("/grid", response_class=HTMLResponse)
@@ -212,7 +225,7 @@ async def discover_channels(payload: ChannelDiscoveryRequest) -> dict:
     cameras = _group_discovered_cameras(results, payload)
 
     return {
-        "tenantId": payload.tenantId,
+        "etsAuth": payload.tenantId,
         "cameraDeviceId": payload.cameraDeviceId,
         "discoverySource": discovery_source,
         "rtspValidated": payload.validateRtsp or discovery_source == "rtsp_probe",
@@ -230,7 +243,7 @@ async def _discover_channel(
     channel: str,
     semaphore: asyncio.Semaphore,
 ) -> dict | None:
-    rtsp_url = f"{base_url}/{channel}"
+    rtsp_url = _channel_rtsp_url(base_url, channel)
     async with semaphore:
         opened, width, height = await asyncio.to_thread(
             _test_rtsp_channel,
@@ -253,7 +266,7 @@ def _channel_result(
     status: str,
     reachable: bool | None,
 ) -> dict:
-    rtsp_url = f"{base_url}/{channel}"
+    rtsp_url = _channel_rtsp_url(base_url, channel)
     return ChannelDiscoveryResult(
         cameraId=channel,
         libelle=_camera_libelle(payload.libellePrefix, channel),
@@ -375,6 +388,37 @@ async def debug_stream_camera(cameraId: str, request: Request) -> StreamingRespo
         generator,
         media_type="multipart/x-mixed-replace; boundary=frame",
         headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+    )
+
+
+@router.post("/{cameraId}/history-clip")
+async def camera_history_clip(cameraId: str, payload: HistoryClipRequest, request: Request) -> FileResponse:
+    camera = request.app.state.runtime_state.get_camera(cameraId)
+    if camera is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Camera not found in synced ERP config. Run /api/sync/cameras first.",
+        )
+
+    try:
+        clip_path = await asyncio.to_thread(
+            _export_hikvision_history_clip,
+            camera.rtspUrl,
+            payload.timestamp,
+            payload.beforeSeconds,
+            payload.afterSeconds,
+            payload.channel,
+            request.app.state.camera_manager.settings.history_clip_dir,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return FileResponse(
+        clip_path,
+        media_type="video/mp4",
+        filename=Path(clip_path).name,
     )
 
 
@@ -582,7 +626,23 @@ def _channel_base_url(payload: ChannelDiscoveryRequest) -> str:
 
     username = quote(payload.username, safe="")
     password = quote(payload.password, safe="")
-    return f"rtsp://{username}:{password}@{payload.ip}:{payload.rtspPort}/Streaming/Channels"
+    path = _normalize_rtsp_path(payload.rtspPath)
+    return f"rtsp://{username}:{password}@{payload.ip}:{payload.rtspPort}{path}"
+
+
+def _normalize_rtsp_path(path: str | None) -> str:
+    if not path or not path.strip():
+        return "/Streaming/Channels"
+    cleaned = path.strip()
+    if not cleaned.startswith("/"):
+        cleaned = "/" + cleaned
+    return cleaned.rstrip("/")
+
+
+def _channel_rtsp_url(base_url: str, channel: str) -> str:
+    if "{channel}" in base_url:
+        return base_url.replace("{channel}", quote(channel, safe=""))
+    return f"{base_url}/{quote(channel, safe='')}"
 
 
 def _discover_channels_from_isapi(payload: ChannelDiscoveryRequest) -> list[str]:
@@ -657,6 +717,10 @@ def _normalize_stream_type_filter(stream_type: str | None) -> str:
 
 
 def _stream_type_from_camera(camera) -> str:
+    rtsp_url = getattr(camera, "rtspUrl", "")
+    if "/Streaming/Channels/" not in rtsp_url and "/Streaming/tracks/" not in rtsp_url:
+        return "MAIN"
+
     channel = _channel_from_camera(camera)
     return _stream_type(channel)
 
@@ -711,6 +775,150 @@ def _test_rtsp_channel(rtsp_url: str, timeout_seconds: int) -> tuple[bool, int, 
         return False, 0, 0
     finally:
         capture.release()
+
+
+def _export_hikvision_history_clip(
+    camera_rtsp_url: str,
+    timestamp: str,
+    before_seconds: int,
+    after_seconds: int,
+    channel: str | None,
+    output_dir: Path,
+) -> str:
+    info = _parse_hikvision_rtsp(camera_rtsp_url)
+    track_id = channel or info["channel"]
+    event_time = _parse_event_time(timestamp)
+    start = event_time - timedelta(seconds=before_seconds)
+    end = event_time + timedelta(seconds=after_seconds)
+    playback_url = _hikvision_playback_url(
+        host=info["host"],
+        rtsp_port=info["rtsp_port"],
+        username=info["username"],
+        password=info["password"],
+        channel=track_id,
+        start=start,
+        end=end,
+    )
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    clip_path = output_dir / f"{track_id}_{event_time.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:10]}.mp4"
+    _write_rtsp_clip(playback_url, clip_path, max((end - start).total_seconds(), 1))
+    return str(clip_path)
+
+
+def _parse_hikvision_rtsp(rtsp_url: str) -> dict:
+    parsed = urlsplit(rtsp_url)
+    if parsed.scheme != "rtsp":
+        raise ValueError("Camera rtspUrl must start with rtsp://")
+    if not parsed.hostname:
+        raise ValueError("Could not parse camera host from rtspUrl")
+    if not parsed.username or not parsed.password:
+        raise ValueError("Camera rtspUrl must include username and password")
+
+    return {
+        "username": unquote(parsed.username),
+        "password": unquote(parsed.password),
+        "host": parsed.hostname,
+        "rtsp_port": parsed.port or 554,
+        "channel": _extract_hikvision_channel(parsed.path),
+    }
+
+
+def _extract_hikvision_channel(path: str) -> str:
+    if "/Streaming/Channels/" in path:
+        return path.rsplit("/", 1)[-1]
+    if "/Streaming/tracks/" in path:
+        return path.rsplit("/", 1)[-1]
+    return "101"
+
+
+def _parse_event_time(raw_timestamp: str) -> datetime:
+    value = raw_timestamp.strip()
+    if not value:
+        raise ValueError("timestamp is required")
+    if value.endswith("Z"):
+        value = value[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError("timestamp must be ISO format, for example 2026-06-11T16:29:10Z") from exc
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=datetime.now().astimezone().tzinfo)
+    return parsed.astimezone(timezone.utc)
+
+
+def _rtsp_time(value: datetime) -> str:
+    return value.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def _hikvision_playback_url(
+    host: str,
+    rtsp_port: int,
+    username: str,
+    password: str,
+    channel: str,
+    start: datetime,
+    end: datetime,
+) -> str:
+    safe_user = quote(username, safe="")
+    safe_pass = quote(password, safe="")
+    return (
+        f"rtsp://{safe_user}:{safe_pass}@{host}:{rtsp_port}/Streaming/tracks/{channel}"
+        f"?starttime={_rtsp_time(start)}&endtime={_rtsp_time(end)}"
+    )
+
+
+def _write_rtsp_clip(playback_url: str, clip_path: Path, expected_seconds: float) -> None:
+    capture = cv2.VideoCapture(
+        playback_url,
+        cv2.CAP_FFMPEG,
+        [
+            cv2.CAP_PROP_OPEN_TIMEOUT_MSEC,
+            10000,
+            cv2.CAP_PROP_READ_TIMEOUT_MSEC,
+            10000,
+        ],
+    )
+    if not capture.isOpened():
+        capture.release()
+        raise RuntimeError("No Hikvision recording/playback stream is available for that time window")
+
+    writer = None
+    frames_written = 0
+    started_at = time.monotonic()
+    try:
+        source_fps = capture.get(cv2.CAP_PROP_FPS)
+        output_fps = source_fps if source_fps and 1 <= source_fps <= 60 else 15
+        max_runtime = expected_seconds + 15
+        max_frames = int(output_fps * expected_seconds * 1.5) or 1
+
+        while time.monotonic() - started_at < max_runtime and frames_written < max_frames:
+            ok, frame = capture.read()
+            if not ok or frame is None:
+                if frames_written:
+                    break
+                continue
+
+            if writer is None:
+                height, width = frame.shape[:2]
+                writer = cv2.VideoWriter(
+                    str(clip_path),
+                    cv2.VideoWriter_fourcc(*"mp4v"),
+                    output_fps,
+                    (width, height),
+                )
+                if not writer.isOpened():
+                    raise RuntimeError("Could not create history clip file")
+
+            writer.write(frame)
+            frames_written += 1
+    finally:
+        capture.release()
+        if writer is not None:
+            writer.release()
+
+    if frames_written == 0:
+        raise RuntimeError("No frames were returned by Hikvision for that time window")
 
 
 def _stream_flow(request: Request, camera_id: str, camera=None) -> dict:

@@ -31,19 +31,19 @@ class ErpClient:
         return [CameraConfig.model_validate(item) for item in items]
 
     async def fetch_employees(self, tenant_id: str) -> list[EmployeeConfig]:
-        data = await self._get_json("/api/ai/employees", params={"tenantId": tenant_id})
+        data = await self._get_json("/api/ai/employees", params={"etsAuth": tenant_id})
         items = data if isinstance(data, list) else data.get("items", [])
         return [EmployeeConfig.model_validate(item) for item in items]
 
     async def fetch_attendance_rules(self, tenant_id: str) -> AttendanceRules:
-        data = await self._get_json("/api/ai/attendance-rules", params={"tenantId": tenant_id})
+        data = await self._get_json("/api/ai/attendance-rules", params={"etsAuth": tenant_id})
         return AttendanceRules.model_validate(data)
 
     async def send_event(self, payload: ErpEventPayload) -> dict:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 self._url("/api/ai/events"),
-                json=payload.model_dump(exclude_none=True),
+                json=payload.model_dump(exclude_none=True, by_alias=True),
                 headers=self._headers(),
             )
             response.raise_for_status()
@@ -65,6 +65,7 @@ class ErpClient:
             return base64.b64decode(inline)
 
         image_url = ref.imageUrl or ref.url
+        image_url = base64.b64decode(image_url).decode("utf-8")
         if image_url:
             return await self.download_face_image(image_url)
         return None
