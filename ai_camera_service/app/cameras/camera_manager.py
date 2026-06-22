@@ -91,6 +91,14 @@ class CameraManager:
             results.append(await self.stop_camera(camera_id))
         return {"stopped": results}
 
+    async def restart_all(self) -> dict:
+        stopped = await self.stop_all()
+        started = await self.start_all()
+        return {
+            "stopped": stopped["stopped"],
+            "started": started["started"],
+        }
+
     def status(self) -> dict:
         configured = self.runtime_state.list_cameras()
         running_ids = {camera_id for camera_id, worker in self.workers.items() if worker.is_running}

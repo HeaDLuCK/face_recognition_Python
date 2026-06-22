@@ -52,6 +52,7 @@ async def lifespan(app: FastAPI):
         embedding_service=embedding_service,
         face_engine=face_engine,
         log_service=log_service,
+        db=db,
     )
     camera_manager = CameraManager(
         runtime_state=runtime_state,
@@ -75,6 +76,10 @@ async def lifespan(app: FastAPI):
     app.state.log_service = log_service
     app.state.sync_service = sync_service
     app.state.camera_manager = camera_manager
+
+    saved_config = await sync_service.load_saved_config()
+    if settings.auto_start_saved_cameras and saved_config["cameras"] > 0:
+        await camera_manager.start_all()
 
     try:
         yield

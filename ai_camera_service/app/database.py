@@ -17,6 +17,8 @@ TENANT_INDEXED_COLLECTIONS = (
     "alert_events",
     "snapshot_metadata",
     "unknown_face_crops",
+    "camera_configs",
+    "attendance_rules",
     "service_logs",
 )
 
@@ -52,6 +54,8 @@ def get_database() -> AsyncIOMotorDatabase:
 
 async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
     for collection_name in TENANT_INDEXED_COLLECTIONS:
+        if collection_name == "attendance_rules":
+            continue
         await db[collection_name].create_index([("etsAuth", 1)])
 
     await db.cached_embeddings.create_index(
@@ -63,7 +67,22 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
     await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.snapshot_metadata.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.unknown_face_crops.create_index([("etsAuth", 1), ("cameraId", 1), ("createdAt", -1)])
+    await db.camera_configs.create_index([("cameraId", 1)], unique=True)
+    await db.camera_configs.create_index([("etsAuth", 1), ("enabled", 1)])
+    await drop_index_by_name(db.attendance_rules, "etsAuth_1")
+    await db.attendance_rules.create_index(
+        [("etsAuth", 1)],
+        unique=True,
+        name="attendance_rules_etsAuth_unique",
+    )
     await db.service_logs.create_index([("etsAuth", 1), ("createdAt", -1)])
+
+
+async def drop_index_by_name(collection, index_name: str) -> None:
+    async for index in collection.list_indexes():
+        if index.get("name") == index_name:
+            await collection.drop_index(index_name)
+            return
 
 
 async def migrate_tenant_field(db: AsyncIOMotorDatabase) -> None:

@@ -16,14 +16,15 @@ class Settings(BaseSettings):
 
     mongo_url: str = "mongodb://localhost:27017"
     mongo_db_name: str = "ai_camera_service"
+    auto_start_saved_cameras: bool = True
 
     snapshot_dir: Path = Path("snapshots")
 
     insightface_model_name: str = "buffalo_l"
     insightface_providers: str = "CPUExecutionProvider"
     insightface_ctx_id: int = -1
-    face_detection_min_score: float = Field(default=0.65, ge=0.0, le=1.0)
-    default_recognition_threshold: float = Field(default=0.55, ge=0.0, le=1.0)
+    face_detection_min_score: float = Field(default=0.55, ge=0.0, le=1.0)
+    default_recognition_threshold: float = Field(default=0.50, ge=0.0, le=1.0)
     default_duplicate_cooldown_seconds: int = Field(default=60, ge=0)
     recognized_duplicate_cooldown_seconds: int = Field(default=180, ge=0)
     unknown_duplicate_cooldown_seconds: int = Field(default=3600, ge=0)
@@ -36,7 +37,11 @@ class Settings(BaseSettings):
 
     camera_frame_skip: int = Field(default=5, ge=1)
     recognition_interval_seconds: float = Field(default=1.0, ge=0.1)
-    recognition_queue_size: int = Field(default=8, ge=1, le=60)
+    recognition_queue_size: int = Field(default=30, ge=1, le=3000)
+    recognition_drop_old_frames: bool = True
+    recognition_candidate_window_seconds: float = Field(default=2.0, ge=0.1, le=10.0)
+    recognition_candidate_min_hits: int = Field(default=2, ge=1, le=30)
+    recognition_candidate_score_margin: float = Field(default=0.20, ge=0.0, le=0.5)
     camera_source_mode: Literal["auto", "usb", "rtsp"] = "auto"
     usb_camera_index: int = Field(default=0, ge=0)
     rtsp_url: str = ""
@@ -68,6 +73,9 @@ class Settings(BaseSettings):
     motion_area_ratio: float = Field(default=0.02, ge=0.0, le=1.0)
     show_motion_zones: bool = True
     rtsp_drop_stale_frames: int = Field(default=1, ge=0, le=10)
+    rtsp_low_latency: bool = False
+    rtsp_read_retries: int = Field(default=3, ge=0, le=20)
+    rtsp_reconnect_delay_seconds: float = Field(default=0.5, ge=0.0, le=10.0)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

@@ -21,12 +21,14 @@ class SyncService:
         embedding_service: EmbeddingService,
         face_engine: InsightFaceEngine,
         log_service: LogService,
+        db,
     ):
         self.erp_client = erp_client
         self.runtime_state = runtime_state
         self.embedding_service = embedding_service
         self.face_engine = face_engine
         self.log_service = log_service
+        self.db = db
 
     async def sync_all(self) -> dict:
         camera_result = await self.sync_cameras()
@@ -48,6 +50,7 @@ class SyncService:
 
     async def set_cameras(self, cameras: list[CameraConfig], source: str) -> dict:
         self.runtime_state.set_cameras(cameras)
+        await self._persist_cameras(cameras)
         self.runtime_state.last_sync["cameras"] = datetime.utcnow().isoformat()
         await self.log_service.write("INFO", f"Synced cameras from {source}", metadata={"count": len(cameras)})
         return {"count": len(cameras), "cameraIds": [camera.cameraId for camera in cameras]}
@@ -111,6 +114,7 @@ class SyncService:
                     duplicateCooldownSeconds=self.erp_client.settings.default_duplicate_cooldown_seconds,
                 )
             self.runtime_state.set_rule(rule)
+            await self._persist_rule(rule)
             rules.append(rule.model_dump(by_alias=True))
             await self.log_service.write(
                 "INFO",
@@ -125,6 +129,7 @@ class SyncService:
         rules = [AttendanceRules.model_validate(item) for item in self._items(payload)]
         for rule in rules:
             self.runtime_state.set_rule(rule)
+            await self._persist_rule(rule)
             await self.log_service.write(
                 "INFO",
                 "Synced attendance rules from ERP push",
@@ -133,6 +138,56 @@ class SyncService:
             )
         self.runtime_state.last_sync["rules"] = datetime.utcnow().isoformat()
         return {"rules": [rule.model_dump(by_alias=True) for rule in rules]}
+
+    async def load_saved_config(self) -> dict:
+        camera_docs = await self.db.camera_configs.find({}).to_list(length=None)
+        rule_docs = await self.db.attendance_rules.find({}).to_list(length=None)
+
+        cameras = [CameraConfig.model_validate(doc) for doc in camera_docs]
+        rules = [AttendanceRules.model_validate(doc) for doc in rule_docs]
+
+        if cameras:
+            self.runtime_state.set_cameras(cameras)
+            self.runtime_state.last_sync["cameras"] = "loaded_from_mongo"
+        if rules:
+            for rule in rules:
+                self.runtime_state.set_rule(rule)
+            self.runtime_state.last_sync["rules"] = "loaded_from_mongo"
+
+        await self.log_service.write(
+            "INFO",
+            "Loaded saved camera configuration",
+            metadata={"cameras": len(cameras), "rules": len(rules)},
+        )
+        return {"cameras": len(cameras), "rules": len(rules)}
+
+    async def _persist_cameras(self, cameras: list[CameraConfig]) -> None:
+        synced_camera_ids = []
+        for camera in cameras:
+            synced_camera_ids.append(camera.cameraId)
+            doc = {
+                **camera.model_dump(by_alias=True),
+                "updatedAt": datetime.utcnow(),
+            }
+            await self.db.camera_configs.update_one(
+                {"cameraId": camera.cameraId},
+                {"$set": doc, "$setOnInsert": {"createdAt": datetime.utcnow()}},
+                upsert=True,
+            )
+
+        if synced_camera_ids:
+            await self.db.camera_configs.delete_many({"cameraId": {"$nin": synced_camera_ids}})
+
+    async def _persist_rule(self, rule: AttendanceRules) -> None:
+        doc = {
+            **rule.model_dump(by_alias=True),
+            "updatedAt": datetime.utcnow(),
+        }
+        await self.db.attendance_rules.update_one(
+            {"etsAuth": rule.tenantId},
+            {"$set": doc, "$setOnInsert": {"createdAt": datetime.utcnow()}},
+            upsert=True,
+        )
 
     async def _sync_employee_embeddings(self, tenant_id: str, employees: list[EmployeeConfig]) -> int:
         processed = 0

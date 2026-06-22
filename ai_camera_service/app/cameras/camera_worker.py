@@ -61,6 +61,7 @@ class CameraWorker:
         self._event_clip_tasks: set[asyncio.Task] = set()
         self._last_event_clip_at: dict[str, float] = {}
         self._recognized_face_cache: dict[str, float] = {}
+        self._weak_recognition_tracks: dict[str, dict] = {}
         self._unknown_face_cache: deque[tuple[float, np.ndarray]] = deque()
         self._unknown_face_crop_cache: list[tuple[np.ndarray, str]] = []
         self._motion_zones = self._parse_motion_zones(settings.motion_zones)
@@ -108,7 +109,7 @@ class CameraWorker:
                     continue
 
                 if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
-                    self._queue_face_recognition(frame)
+                    await self._queue_face_recognition(frame)
 
                 # Future module hooks belong here, one service per capability.
                 await asyncio.sleep(0)
@@ -145,14 +146,18 @@ class CameraWorker:
             name=f"face-recognition-worker-{self.camera_id}",
         )
 
-    def _queue_face_recognition(self, frame) -> None:
+    async def _queue_face_recognition(self, frame) -> None:
         frame_copy = frame.copy()
-        if self._recognition_queue.full():
+        if not self.settings.recognition_drop_old_frames:
+            await self._recognition_queue.put(frame_copy)
+            return
+
+        while self._recognition_queue.full():
             try:
                 self._recognition_queue.get_nowait()
                 self._recognition_queue.task_done()
             except asyncio.QueueEmpty:
-                pass
+                break
         try:
             self._recognition_queue.put_nowait(frame_copy)
         except asyncio.QueueFull:
@@ -197,7 +202,10 @@ class CameraWorker:
             if result["matched"]:
                 if self._is_duplicate_recognized(result):
                     continue
+                self._weak_recognition_tracks.pop(result.get("employeeId"), None)
                 handled_results.append(("recognized", result, zone))
+            elif self._track_weak_known_candidate(frame, result, zone):
+                continue
             elif self.rules.saveUnknownFaces:
                 if not self._is_good_unknown_candidate(frame, result):
                     continue
@@ -212,6 +220,8 @@ class CameraWorker:
                     continue
                 self._schedule_event_marker("FACE_DETECTION", result)
                 await self._record_unknown_detection(result, zone)
+
+        await self._flush_ready_weak_recognition_tracks()
 
         if not handled_results:
             return
@@ -681,6 +691,94 @@ class CameraWorker:
             metadata={"bbox": result.get("bbox"), "detectionScore": result.get("detectionScore")},
         )
 
+    def _track_weak_known_candidate(self, frame, result: dict, zone: ZoneConfig | None) -> bool:
+        employee_id = result.get("bestCandidateEmployeeId")
+        score = result.get("bestCandidateScore")
+        if not employee_id or score is None:
+            return False
+
+        min_score = self.rules.recognitionThreshold - self.settings.recognition_candidate_score_margin
+        if score < min_score:
+            return False
+
+        now = time.monotonic()
+        track = self._weak_recognition_tracks.get(employee_id)
+        if track is None or now - track["started_at"] > self.settings.recognition_candidate_window_seconds:
+            track = {
+                "started_at": now,
+                "hits": 0,
+                "best_quality_score": -1.0,
+                "best_frame": None,
+                "best_result": None,
+                "best_zone": None,
+            }
+            self._weak_recognition_tracks[employee_id] = track
+
+        track["hits"] += 1
+        quality_score = self._candidate_quality_score(frame, result)
+        if quality_score > track["best_quality_score"]:
+            track["best_quality_score"] = quality_score
+            track["best_frame"] = frame.copy()
+            track["best_result"] = self._promoted_known_result(result)
+            track["best_zone"] = zone
+        return True
+
+    def _candidate_quality_score(self, frame, result: dict) -> float:
+        bbox = result.get("bbox") or [0, 0, 0, 0]
+        x1, y1, x2, y2 = [int(value) for value in bbox]
+        face_height = max(y2 - y1, 1)
+        crop = self._face_crop(frame, bbox)
+        blur_score = min(self._blur_score(crop), 300.0) / 300.0 if crop is not None else 0.0
+        recognition_score = float(result.get("bestCandidateScore") or 0.0)
+        detection_score = float(result.get("detectionScore") or 0.0)
+        size_score = min(face_height / 140.0, 1.0)
+        return recognition_score * 0.55 + detection_score * 0.20 + size_score * 0.15 + blur_score * 0.10
+
+    def _promoted_known_result(self, result: dict) -> dict:
+        promoted = dict(result)
+        raw_score = result.get("bestCandidateScore")
+        promoted["matched"] = True
+        promoted["employeeId"] = result.get("bestCandidateEmployeeId")
+        promoted["employeeName"] = result.get("bestCandidateEmployeeName")
+        promoted["rawCandidateScore"] = raw_score
+        promoted["confidence"] = max(raw_score or 0.0, self.rules.recognitionThreshold)
+        promoted["promotedFromWeakCandidate"] = True
+        return promoted
+
+    async def _flush_ready_weak_recognition_tracks(self) -> None:
+        now = time.monotonic()
+        stale_employee_ids = [
+            employee_id
+            for employee_id, track in self._weak_recognition_tracks.items()
+            if track["hits"] < self.settings.recognition_candidate_min_hits
+            and now - track["started_at"] >= self.settings.recognition_candidate_window_seconds
+        ]
+        for employee_id in stale_employee_ids:
+            self._weak_recognition_tracks.pop(employee_id, None)
+
+        ready_employee_ids = [
+            employee_id
+            for employee_id, track in self._weak_recognition_tracks.items()
+            if track["hits"] >= self.settings.recognition_candidate_min_hits
+            and now - track["started_at"] >= self.settings.recognition_candidate_window_seconds
+        ]
+
+        for employee_id in ready_employee_ids:
+            track = self._weak_recognition_tracks.pop(employee_id, None)
+            if not track or not track["best_result"] or track["best_frame"] is None:
+                continue
+
+            result = track["best_result"]
+            if self._is_duplicate_recognized(result):
+                continue
+
+            snapshot_path = (
+                await self._save_frame_snapshot(track["best_frame"], [result])
+                if self.rules.saveFaceSnapshots
+                else None
+            )
+            await self._handle_recognized(result, track["best_zone"], snapshot_path)
+
     def _is_good_unknown_candidate(self, frame, result: dict) -> bool:
         detection_score = result.get("detectionScore")
         if detection_score is None or detection_score < self.settings.unknown_face_min_detection_score:
@@ -853,6 +951,10 @@ class CameraWorker:
             "detectionScore": result["detectionScore"],
             "employeeName": result.get("employeeName"),
         }
+        if result.get("promotedFromWeakCandidate"):
+            metadata["promotedFromWeakCandidate"] = True
+            metadata["rawCandidateScore"] = result.get("rawCandidateScore")
+            metadata["bestCandidateScore"] = result.get("bestCandidateScore")
         if zone:
             metadata["zoneId"] = zone.zoneId
             metadata["zoneName"] = zone.name
