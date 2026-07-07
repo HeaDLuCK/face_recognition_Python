@@ -1,0 +1,15 @@
+.git
+.venv
+.vscode
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+snapshots
+event_clips
+history_clips
+.pytest_cache
+.mypy_cache
+.ruff_cache

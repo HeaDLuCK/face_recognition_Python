@@ -35,13 +35,14 @@ class Settings(BaseSettings):
     unknown_face_min_blur_score: float = Field(default=80.0, ge=0.0)
     unknown_face_skip_weak_known_margin: float = Field(default=0.10, ge=0.0, le=1.0)
 
-    camera_frame_skip: int = Field(default=5, ge=1)
-    recognition_interval_seconds: float = Field(default=1.0, ge=0.1)
-    recognition_queue_size: int = Field(default=30, ge=1, le=3000)
+    camera_frame_skip: int = Field(default=1, ge=1)
+    recognition_interval_seconds: float = Field(default=0.2, ge=0.1)
+    recognition_queue_size: int = Field(default=2, ge=1, le=3000)
     recognition_drop_old_frames: bool = True
-    recognition_candidate_window_seconds: float = Field(default=2.0, ge=0.1, le=10.0)
+    recognition_candidate_window_seconds: float = Field(default=1.0, ge=0.1, le=10.0)
     recognition_candidate_min_hits: int = Field(default=2, ge=1, le=30)
-    recognition_candidate_score_margin: float = Field(default=0.20, ge=0.0, le=0.5)
+    recognition_candidate_score_margin: float = Field(default=0.25, ge=0.0, le=0.5)
+    recognition_candidate_fast_margin: float = Field(default=0.05, ge=0.0, le=0.2)
     camera_source_mode: Literal["auto", "usb", "rtsp"] = "auto"
     usb_camera_index: int = Field(default=0, ge=0)
     rtsp_url: str = ""
@@ -55,6 +56,27 @@ class Settings(BaseSettings):
     show_dev_detections: bool = True
     draw_face_boxes_on_snapshots: bool = True
     draw_face_labels_on_snapshots: bool = True
+    plate_yolo_model_path: Path = Path("models/moroccan_plate.pt")
+    plate_yolo_confidence: float = Field(default=0.45, ge=0.0, le=1.0)
+    plate_yolo_imgsz: int = Field(default=640, ge=320, le=1920)
+    plate_yolo_device: str = "cpu"
+    plate_yolo_mode: Literal["plate", "characters"] = "plate"
+    plate_yolo_class_is_text: bool = False
+    plate_recognition_interval_seconds: float = Field(default=1.0, ge=0.1)
+    plate_recognition_queue_size: int = Field(default=2, ge=1, le=300)
+    plate_duplicate_cooldown_seconds: int = Field(default=60, ge=0)
+    plate_save_snapshots: bool = True
+    plate_min_characters: int = Field(default=4, ge=1, le=20)
+    plate_max_detections: int = Field(default=5, ge=1, le=50)
+    fire_yolo_model_path: Path = Path("app/fire/model/fire_model.pt")
+    fire_yolo_confidence: float = Field(default=0.45, ge=0.0, le=1.0)
+    fire_yolo_imgsz: int = Field(default=640, ge=320, le=1920)
+    fire_yolo_device: str = "cpu"
+    fire_detection_interval_seconds: float = Field(default=1.0, ge=0.1)
+    fire_detection_queue_size: int = Field(default=2, ge=1, le=300)
+    fire_duplicate_cooldown_seconds: int = Field(default=60, ge=0)
+    fire_save_snapshots: bool = True
+    fire_max_detections: int = Field(default=5, ge=1, le=50)
     cloud_stream_ws_url: str = ""
     cloud_stream_token: str = ""
     cloud_stream_fps: int = Field(default=10, ge=1, le=30)

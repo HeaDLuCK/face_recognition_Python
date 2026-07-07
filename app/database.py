@@ -19,6 +19,7 @@ TENANT_INDEXED_COLLECTIONS = (
     "unknown_face_crops",
     "camera_configs",
     "attendance_rules",
+    "attendance_sync_state",
     "service_logs",
 )
 
@@ -67,6 +68,11 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
     await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.snapshot_metadata.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.unknown_face_crops.create_index([("etsAuth", 1), ("cameraId", 1), ("createdAt", -1)])
+    await db.unknown_face_crops.create_index(
+        [("unknownFaceCropId", 1)],
+        unique=True,
+        partialFilterExpression={"unknownFaceCropId": {"$exists": True}},
+    )
     await db.camera_configs.create_index([("cameraId", 1)], unique=True)
     await db.camera_configs.create_index([("etsAuth", 1), ("enabled", 1)])
     await drop_index_by_name(db.attendance_rules, "etsAuth_1")
@@ -74,6 +80,10 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
         [("etsAuth", 1)],
         unique=True,
         name="attendance_rules_etsAuth_unique",
+    )
+    await db.attendance_sync_state.create_index(
+        [("etsAuth", 1), ("syncKey", 1)],
+        unique=True,
     )
     await db.service_logs.create_index([("etsAuth", 1), ("createdAt", -1)])
 

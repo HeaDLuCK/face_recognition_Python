@@ -11,6 +11,8 @@ from app.cameras.rtsp_reader import RtspReader
 from app.config import Settings
 from app.events.event_service import EventService
 from app.face.recognition_service import RecognitionService
+from app.fire.fire_detection_service import FireDetectionService
+from app.plates.plate_recognition_service import PlateRecognitionService
 from app.runtime_state import RuntimeState
 from app.services.log_service import LogService
 from app.storage.snapshot_service import SnapshotService
@@ -23,6 +25,8 @@ class CameraManager:
         self,
         runtime_state: RuntimeState,
         recognition_service: RecognitionService,
+        plate_recognition_service: PlateRecognitionService,
+        fire_detection_service: FireDetectionService,
         snapshot_service: SnapshotService,
         event_service: EventService,
         attendance_service: AttendanceService,
@@ -31,6 +35,8 @@ class CameraManager:
     ):
         self.runtime_state = runtime_state
         self.recognition_service = recognition_service
+        self.plate_recognition_service = plate_recognition_service
+        self.fire_detection_service = fire_detection_service
         self.snapshot_service = snapshot_service
         self.event_service = event_service
         self.attendance_service = attendance_service
@@ -55,6 +61,8 @@ class CameraManager:
             camera=camera,
             rules=self.runtime_state.get_rules(camera.tenantId),
             recognition_service=self.recognition_service,
+            plate_recognition_service=self.plate_recognition_service,
+            fire_detection_service=self.fire_detection_service,
             snapshot_service=self.snapshot_service,
             event_service=self.event_service,
             attendance_service=self.attendance_service,
@@ -136,13 +144,15 @@ class CameraManager:
 
     async def _worker_stream(self, worker: CameraWorker, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         delay = 1 / self.settings.stream_fps
-        if overlay:
-            worker.overlay_requested = True
-        while worker.is_running:
-            jpeg = worker.latest_overlay_jpeg if overlay and worker.latest_overlay_jpeg else worker.latest_jpeg
-            if jpeg:
-                yield self._mjpeg_chunk(jpeg)
-            await asyncio.sleep(delay)
+        worker.add_stream_viewer(overlay=overlay)
+        try:
+            while worker.is_running:
+                jpeg = worker.latest_overlay_jpeg if overlay and worker.latest_overlay_jpeg else worker.latest_jpeg
+                if jpeg:
+                    yield self._mjpeg_chunk(jpeg)
+                await asyncio.sleep(delay)
+        finally:
+            worker.remove_stream_viewer(overlay=overlay)
 
     async def _direct_stream(self, camera_source: str, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         reader = RtspReader(camera_source, self.settings)

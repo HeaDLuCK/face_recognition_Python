@@ -74,26 +74,72 @@ class AttendanceService:
         camera_id: str | None = None,
         direction: str | None = None,
         event_type: str | None = None,
+        since: datetime | None = None,
     ) -> str:
-        query = {"etsAuth": tenant_id}
-        normalized_event_type = self._event_type_filter(direction, event_type)
-        if normalized_event_type:
-            query["eventType"] = normalized_event_type
-        else:
-            query["eventType"] = {"$in": ["ATTENDANCE_IN", "ATTENDANCE_OUT", "FACE_RECOGNIZED"]}
-
-        if employee_id:
-            query["employeeId"] = employee_id
-        if camera_id:
-            query["cameraId"] = camera_id
-
+        query = self._attendance_query(
+            tenant_id=tenant_id,
+            employee_id=employee_id,
+            camera_id=camera_id,
+            direction=direction,
+            event_type=event_type,
+            since=since,
+        )
         cursor = self.db.attendance_detections.find(query).sort("timestamp", 1).limit(limit)
         data = serialize_mongo_docs(await cursor.to_list(length=limit))
-        result = ""
-        for obj in data:
-            result+=obj["metadata"]["employeeName"]+";"+obj["employeeId"]+";"+str(obj["timestamp"])+"|"
-        
-        return result
+        return self._format_attendance_rows(data)
+
+    async def sync_attendance(
+        self,
+        tenant_id: str,
+        limit: int = 500,
+        employee_id: str | None = None,
+        camera_id: str | None = None,
+        direction: str | None = None,
+        event_type: str | None = None,
+        reset: bool = False,
+        since: datetime | None = None,
+    ) -> str:
+        sync_key = self._sync_key(
+            employee_id=employee_id,
+            camera_id=camera_id,
+            direction=direction,
+            event_type=event_type,
+        )
+        state_query = {"etsAuth": tenant_id, "syncKey": sync_key}
+        if reset:
+            await self.db.attendance_sync_state.delete_one(state_query)
+
+        state = await self.db.attendance_sync_state.find_one(state_query)
+        last_synced_at = since or (state or {}).get("lastSyncedAt")
+        query = self._attendance_query(
+            tenant_id=tenant_id,
+            employee_id=employee_id,
+            camera_id=camera_id,
+            direction=direction,
+            event_type=event_type,
+            since=last_synced_at,
+        )
+        cursor = self.db.attendance_detections.find(query).sort("timestamp", 1).limit(limit)
+        data = serialize_mongo_docs(await cursor.to_list(length=limit))
+
+        update_doc = {
+            "etsAuth": tenant_id,
+            "syncKey": sync_key,
+            "employeeId": employee_id,
+            "cameraId": camera_id,
+            "direction": direction,
+            "eventType": event_type,
+            "lastCheckedAt": datetime.utcnow(),
+        }
+        if data:
+            update_doc["lastSyncedAt"] = max(item["timestamp"] for item in data)
+
+        await self.db.attendance_sync_state.update_one(
+            state_query,
+            {"$set": update_doc, "$setOnInsert": {"createdAt": datetime.utcnow()}},
+            upsert=True,
+        )
+        return self._format_attendance_rows(data)
     
 
     @staticmethod
@@ -116,3 +162,54 @@ class AttendanceService:
         if normalized in {"BIDIRECTIONAL", "BOTH"}:
             return "FACE_RECOGNIZED"
         return normalized
+
+    def _attendance_query(
+        self,
+        tenant_id: str,
+        employee_id: str | None = None,
+        camera_id: str | None = None,
+        direction: str | None = None,
+        event_type: str | None = None,
+        since: datetime | None = None,
+    ) -> dict:
+        query = {"etsAuth": tenant_id}
+        normalized_event_type = self._event_type_filter(direction, event_type)
+        if normalized_event_type:
+            query["eventType"] = normalized_event_type
+        else:
+            query["eventType"] = {"$in": ["ATTENDANCE_IN", "ATTENDANCE_OUT", "FACE_RECOGNIZED"]}
+
+        if employee_id:
+            query["employeeId"] = employee_id
+        if camera_id:
+            query["cameraId"] = camera_id
+        if since:
+            query["timestamp"] = {"$gt": since}
+        return query
+
+    @staticmethod
+    def _format_attendance_rows(data: list[dict]) -> str:
+        result = ""
+        for obj in data:
+            metadata = obj.get("metadata") or {}
+            employee_name = metadata.get("employeeName") or ""
+            employee_id = obj.get("employeeId") or ""
+            timestamp = obj.get("timestamp") or ""
+            result += f"{employee_name};{employee_id};{timestamp}|"
+        return result
+
+    @staticmethod
+    def _sync_key(
+        employee_id: str | None = None,
+        camera_id: str | None = None,
+        direction: str | None = None,
+        event_type: str | None = None,
+    ) -> str:
+        return "|".join(
+            [
+                f"employee={employee_id or '*'}",
+                f"camera={camera_id or '*'}",
+                f"direction={(direction or '*').upper()}",
+                f"eventType={(event_type or '*').upper()}",
+            ]
+        )

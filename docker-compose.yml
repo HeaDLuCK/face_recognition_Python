@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: face-recognition-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: face-recognition-api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      APP_NAME: AI Camera Service
+      ENVIRONMENT: development
+      LOG_LEVEL: INFO
+      MONGO_URL: mongodb://mongo:27017
+      MONGO_DB_NAME: ai_camera_service
+      SNAPSHOT_DIR: /app/snapshots
+      EVENT_CLIP_DIR: /app/event_clips
+      HISTORY_CLIP_DIR: /app/history_clips
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./snapshots:/app/snapshots
+      - ./event_clips:/app/event_clips
+      - ./history_clips:/app/history_clips
+
+volumes:
+  mongo_data:

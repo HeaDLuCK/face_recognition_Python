@@ -36,6 +36,7 @@ class ChannelDiscoveryRequest(BaseModel):
     timeoutSeconds: int = Field(default=2, ge=1, le=20)
     discoveryConcurrency: int = Field(default=8, ge=1, le=32)
     validateRtsp: bool = True
+    includeOffline: bool = False
 
 
 class ChannelDiscoveryResult(BaseModel):
@@ -199,6 +200,7 @@ async def discover_channels(payload: ChannelDiscoveryRequest) -> dict:
     candidate_channels = payload.channels
     discovery_source = "request"
 
+
     if candidate_channels is None:
         candidate_channels = await asyncio.to_thread(_discover_channels_from_isapi, payload)
         discovery_source = "isapi"
@@ -222,7 +224,10 @@ async def discover_channels(payload: ChannelDiscoveryRequest) -> dict:
             for channel in candidate_channels
         ]
 
-    cameras = _group_discovered_cameras(results, payload)
+    working_results = [item for item in results if item.get("reachable") is True or item.get("status") == "ONLINE"]
+    offline_results = [item for item in results if item not in working_results]
+    camera_results = results if payload.includeOffline else working_results
+    cameras = _group_discovered_cameras(camera_results, payload)
 
     return {
         "etsAuth": payload.tenantId,
@@ -231,9 +236,11 @@ async def discover_channels(payload: ChannelDiscoveryRequest) -> dict:
         "rtspValidated": payload.validateRtsp or discovery_source == "rtsp_probe",
         "count": len(cameras),
         "cameras": cameras,
-        "workingChannels": results,
-        "rtspChannels": [item["channel"] for item in results],
-        "envValue": ",".join(item["channel"] for item in results),
+        "workingChannels": working_results,
+        "offlineChannels": offline_results,
+        "checkedChannels": results,
+        "rtspChannels": [item["channel"] for item in working_results],
+        "envValue": ",".join(item["channel"] for item in working_results),
     }
 
 

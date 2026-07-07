@@ -14,6 +14,8 @@ from app.cameras.rtsp_reader import RtspReader
 from app.config import Settings
 from app.events.event_service import EventService
 from app.face.recognition_service import RecognitionService
+from app.fire.fire_detection_service import FireDetectionService
+from app.plates.plate_recognition_service import PlateRecognitionService
 from app.schemas.erp_schema import AiCapability, AttendanceRules, CameraConfig, ZoneConfig
 from app.schemas.runtime_schema import RuntimeEvent
 from app.services.log_service import LogService
@@ -29,6 +31,8 @@ class CameraWorker:
         camera: CameraConfig,
         rules: AttendanceRules,
         recognition_service: RecognitionService,
+        plate_recognition_service: PlateRecognitionService,
+        fire_detection_service: FireDetectionService,
         snapshot_service: SnapshotService,
         event_service: EventService,
         attendance_service: AttendanceService,
@@ -38,6 +42,8 @@ class CameraWorker:
         self.camera = camera
         self.rules = rules
         self.recognition_service = recognition_service
+        self.plate_recognition_service = plate_recognition_service
+        self.fire_detection_service = fire_detection_service
         self.snapshot_service = snapshot_service
         self.event_service = event_service
         self.attendance_service = attendance_service
@@ -48,25 +54,38 @@ class CameraWorker:
         self._jpeg_task: asyncio.Task | None = None
         self._recognition_worker_task: asyncio.Task | None = None
         self._recognition_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.recognition_queue_size)
+        self._plate_recognition_worker_task: asyncio.Task | None = None
+        self._plate_recognition_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.plate_recognition_queue_size)
+        self._fire_detection_worker_task: asyncio.Task | None = None
+        self._fire_detection_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.fire_detection_queue_size)
         self._cloud_stream_task: asyncio.Task | None = None
         self._stop_event = asyncio.Event()
         self.latest_jpeg: bytes | None = None
         self.latest_overlay_jpeg: bytes | None = None
         self.latest_detections: list[dict] = []
+        self.latest_plate_detections: list[dict] = []
+        self.latest_fire_detections: list[dict] = []
         self._fps_started_at = time.perf_counter()
         self._fps_frames = 0
         self._display_fps = 0.0
+        self._last_jpeg_queued_at = 0.0
+        self._last_recognition_queued_at = 0.0
+        self._last_plate_recognition_queued_at = 0.0
+        self._last_fire_detection_queued_at = 0.0
         event_buffer_size = max(settings.event_buffer_seconds * settings.stream_fps, 1) if settings.event_buffer_enabled else 0
         self._event_buffer = deque(maxlen=event_buffer_size)
         self._event_clip_tasks: set[asyncio.Task] = set()
         self._last_event_clip_at: dict[str, float] = {}
+        self._plate_event_cache: dict[str, float] = {}
+        self._fire_event_cache: dict[str, float] = {}
         self._recognized_face_cache: dict[str, float] = {}
         self._weak_recognition_tracks: dict[str, dict] = {}
         self._unknown_face_cache: deque[tuple[float, np.ndarray]] = deque()
         self._unknown_face_crop_cache: list[tuple[np.ndarray, str]] = []
         self._motion_zones = self._parse_motion_zones(settings.motion_zones)
         self._previous_motion_gray: np.ndarray | None = None
-        self.overlay_requested = False
+        self._stream_viewers = 0
+        self._overlay_viewers = 0
 
     @property
     def camera_id(self) -> str:
@@ -94,12 +113,17 @@ class CameraWorker:
             await self._emit_camera_event("CAMERA_STARTED", {"startedAt": datetime.utcnow().isoformat()})
             self._start_cloud_stream_push()
             self._start_recognition_worker()
+            if is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION):
+                self._start_plate_recognition_worker()
+            if is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION):
+                self._start_fire_detection_worker()
 
             while not self._stop_event.is_set():
                 frame = await asyncio.to_thread(self.reader.read)
                 self._update_fps()
                 self._add_to_event_buffer(frame)
-                self._schedule_latest_jpeg(frame)
+                if self.stream_requested:
+                    self._schedule_latest_jpeg(frame)
                 frame_count += 1
                 if frame_count % self.settings.motion_check_frame_skip == 0:
                     self._check_motion_zones(frame)
@@ -108,10 +132,15 @@ class CameraWorker:
                     await asyncio.sleep(0)
                     continue
 
-                if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
+                if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION) and self._should_queue_face_recognition():
                     await self._queue_face_recognition(frame)
 
-                # Future module hooks belong here, one service per capability.
+                if is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION) and self._should_queue_plate_recognition():
+                    await self._queue_plate_recognition(frame)
+
+                if is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION) and self._should_queue_fire_detection():
+                    await self._queue_fire_detection(frame)
+
                 await asyncio.sleep(0)
 
         except Exception as exc:
@@ -127,6 +156,10 @@ class CameraWorker:
         finally:
             if self._recognition_worker_task and not self._recognition_worker_task.done():
                 self._recognition_worker_task.cancel()
+            if self._plate_recognition_worker_task and not self._plate_recognition_worker_task.done():
+                self._plate_recognition_worker_task.cancel()
+            if self._fire_detection_worker_task and not self._fire_detection_worker_task.done():
+                self._fire_detection_worker_task.cancel()
             if self._jpeg_task and not self._jpeg_task.done():
                 self._jpeg_task.cancel()
             if self._cloud_stream_task and not self._cloud_stream_task.done():
@@ -146,13 +179,54 @@ class CameraWorker:
             name=f"face-recognition-worker-{self.camera_id}",
         )
 
+    def _start_plate_recognition_worker(self) -> None:
+        if self._plate_recognition_worker_task and not self._plate_recognition_worker_task.done():
+            return
+        self._plate_recognition_worker_task = asyncio.create_task(
+            self._run_plate_recognition_worker(),
+            name=f"plate-recognition-worker-{self.camera_id}",
+        )
+
+    def _start_fire_detection_worker(self) -> None:
+        if self._fire_detection_worker_task and not self._fire_detection_worker_task.done():
+            return
+        self._fire_detection_worker_task = asyncio.create_task(
+            self._run_fire_detection_worker(),
+            name=f"fire-detection-worker-{self.camera_id}",
+        )
+
+    @property
+    def stream_requested(self) -> bool:
+        return self._stream_viewers > 0 or bool(self.settings.cloud_stream_ws_url)
+
+    @property
+    def overlay_requested(self) -> bool:
+        return self._overlay_viewers > 0
+
+    def add_stream_viewer(self, overlay: bool = False) -> None:
+        self._stream_viewers += 1
+        if overlay:
+            self._overlay_viewers += 1
+
+    def remove_stream_viewer(self, overlay: bool = False) -> None:
+        self._stream_viewers = max(self._stream_viewers - 1, 0)
+        if overlay:
+            self._overlay_viewers = max(self._overlay_viewers - 1, 0)
+
+    def _should_queue_face_recognition(self) -> bool:
+        now = time.monotonic()
+        if now - self._last_recognition_queued_at < self.settings.recognition_interval_seconds:
+            return False
+        self._last_recognition_queued_at = now
+        return True
+
     async def _queue_face_recognition(self, frame) -> None:
         frame_copy = frame.copy()
         if not self.settings.recognition_drop_old_frames:
             await self._recognition_queue.put(frame_copy)
             return
 
-        while self._recognition_queue.full():
+        while True:
             try:
                 self._recognition_queue.get_nowait()
                 self._recognition_queue.task_done()
@@ -163,9 +237,61 @@ class CameraWorker:
         except asyncio.QueueFull:
             pass
 
+    def _should_queue_plate_recognition(self) -> bool:
+        now = time.monotonic()
+        if now - self._last_plate_recognition_queued_at < self.settings.plate_recognition_interval_seconds:
+            return False
+        self._last_plate_recognition_queued_at = now
+        return True
+
+    async def _queue_plate_recognition(self, frame) -> None:
+        frame_copy = frame.copy()
+        if not self.settings.recognition_drop_old_frames:
+            await self._plate_recognition_queue.put(frame_copy)
+            return
+
+        while True:
+            try:
+                self._plate_recognition_queue.get_nowait()
+                self._plate_recognition_queue.task_done()
+            except asyncio.QueueEmpty:
+                break
+        try:
+            self._plate_recognition_queue.put_nowait(frame_copy)
+        except asyncio.QueueFull:
+            pass
+
+    def _should_queue_fire_detection(self) -> bool:
+        now = time.monotonic()
+        if now - self._last_fire_detection_queued_at < self.settings.fire_detection_interval_seconds:
+            return False
+        self._last_fire_detection_queued_at = now
+        return True
+
+    async def _queue_fire_detection(self, frame) -> None:
+        frame_copy = frame.copy()
+        if not self.settings.recognition_drop_old_frames:
+            await self._fire_detection_queue.put(frame_copy)
+            return
+
+        while True:
+            try:
+                self._fire_detection_queue.get_nowait()
+                self._fire_detection_queue.task_done()
+            except asyncio.QueueEmpty:
+                break
+        try:
+            self._fire_detection_queue.put_nowait(frame_copy)
+        except asyncio.QueueFull:
+            pass
+
     def _schedule_latest_jpeg(self, frame) -> None:
+        now = time.monotonic()
+        if now - self._last_jpeg_queued_at < 1 / self.settings.stream_fps:
+            return
         if self._jpeg_task and not self._jpeg_task.done():
             return
+        self._last_jpeg_queued_at = now
         self._jpeg_task = asyncio.create_task(
             self._encode_latest_jpeg(frame.copy()),
             name=f"jpeg-encoder-{self.camera_id}",
@@ -185,6 +311,22 @@ class CameraWorker:
                 await self._run_face_recognition(frame)
             finally:
                 self._recognition_queue.task_done()
+
+    async def _run_plate_recognition_worker(self) -> None:
+        while not self._stop_event.is_set():
+            frame = await self._plate_recognition_queue.get()
+            try:
+                await self._run_plate_recognition(frame)
+            finally:
+                self._plate_recognition_queue.task_done()
+
+    async def _run_fire_detection_worker(self) -> None:
+        while not self._stop_event.is_set():
+            frame = await self._fire_detection_queue.get()
+            try:
+                await self._run_fire_detection(frame)
+            finally:
+                self._fire_detection_queue.task_done()
 
     async def _run_face_recognition(self, frame) -> None:
         results = await self.recognition_service.recognize_frame(
@@ -237,6 +379,98 @@ class CameraWorker:
                     else None
                 )
                 await self._handle_unknown(result, zone, snapshot_path, face_crop_path)
+
+    async def _run_plate_recognition(self, frame) -> None:
+        results = await asyncio.to_thread(self.plate_recognition_service.recognize_frame, frame)
+        self.latest_plate_detections = self._public_detections(results)
+
+        for result in results:
+            zone = self._matching_zone(result["bbox"])
+            if self.camera.zones and zone is None:
+                continue
+            if self._is_duplicate_plate(result):
+                continue
+            await self._handle_plate_detection(frame, result, zone)
+
+    async def _handle_plate_detection(self, frame, result: dict, zone: ZoneConfig | None) -> None:
+        event_type = "PLATE_RECOGNIZED" if result.get("plateText") else "PLATE_DETECTED"
+        timestamp = datetime.utcnow()
+        snapshot_path = (
+            await self._save_plate_snapshot(frame, [result])
+            if self.settings.plate_save_snapshots
+            else None
+        )
+        metadata = self._plate_metadata(result, zone)
+        metadata.update(
+            {
+                "code": event_type,
+                "channel": self._camera_channel(),
+                "playbackStartTime": (
+                    timestamp - timedelta(seconds=self.settings.event_marker_history_before_seconds)
+                ).isoformat(),
+                "playbackEndTime": (
+                    timestamp + timedelta(seconds=self.settings.event_marker_history_after_seconds)
+                ).isoformat(),
+            }
+        )
+        await self.event_service.create_camera_event(
+            RuntimeEvent(
+                tenantId=self.camera.tenantId,
+                cameraId=self.camera.cameraId,
+                eventType=event_type,
+                confidence=result.get("confidence"),
+                snapshotPath=snapshot_path,
+                timestamp=timestamp,
+                metadata=metadata,
+            ),
+            send_to_erp=True,
+        )
+
+    async def _run_fire_detection(self, frame) -> None:
+        results = await asyncio.to_thread(self.fire_detection_service.detect_frame, frame)
+        self.latest_fire_detections = self._public_detections(results)
+
+        for result in results:
+            zone = self._matching_zone(result["bbox"])
+            if self.camera.zones and zone is None:
+                continue
+            if self._is_duplicate_fire(result):
+                continue
+            await self._handle_fire_detection(frame, result, zone)
+
+    async def _handle_fire_detection(self, frame, result: dict, zone: ZoneConfig | None) -> None:
+        event_type = self._fire_event_type(result)
+        timestamp = datetime.utcnow()
+        snapshot_path = (
+            await self._save_fire_snapshot(frame, [result])
+            if self.settings.fire_save_snapshots
+            else None
+        )
+        metadata = self._fire_metadata(result, zone)
+        metadata.update(
+            {
+                "code": event_type,
+                "channel": self._camera_channel(),
+                "playbackStartTime": (
+                    timestamp - timedelta(seconds=self.settings.event_marker_history_before_seconds)
+                ).isoformat(),
+                "playbackEndTime": (
+                    timestamp + timedelta(seconds=self.settings.event_marker_history_after_seconds)
+                ).isoformat(),
+            }
+        )
+        await self.event_service.create_camera_event(
+            RuntimeEvent(
+                tenantId=self.camera.tenantId,
+                cameraId=self.camera.cameraId,
+                eventType=event_type,
+                confidence=result.get("confidence"),
+                snapshotPath=snapshot_path,
+                timestamp=timestamp,
+                metadata=metadata,
+            ),
+            send_to_erp=True,
+        )
 
     async def _handle_recognized(
         self,
@@ -589,6 +823,10 @@ class CameraWorker:
     def _draw_detections(self, frame) -> None:
         for detection in self.latest_detections:
             self._draw_face_annotation(frame, detection, show_label=True)
+        for detection in self.latest_plate_detections:
+            self._draw_plate_annotation(frame, detection, show_label=True)
+        for detection in self.latest_fire_detections:
+            self._draw_fire_annotation(frame, detection, show_label=True)
 
     async def _save_frame_snapshot(self, frame, detections: list[dict]) -> str:
         snapshot_frame = self._snapshot_frame(frame, detections)
@@ -604,6 +842,40 @@ class CameraWorker:
             snapshot_path,
             "FACE_DETECTIONS",
             {"detections": [self._metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
+        )
+        return snapshot_path
+
+    async def _save_plate_snapshot(self, frame, detections: list[dict]) -> str:
+        snapshot_frame = self._plate_snapshot_frame(frame, detections)
+        snapshot_path = await asyncio.to_thread(
+            self.snapshot_service.save_frame,
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_frame,
+        )
+        await self.snapshot_service.save_metadata(
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_path,
+            "PLATE_DETECTIONS",
+            {"detections": [self._plate_metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
+        )
+        return snapshot_path
+
+    async def _save_fire_snapshot(self, frame, detections: list[dict]) -> str:
+        snapshot_frame = self._fire_snapshot_frame(frame, detections)
+        snapshot_path = await asyncio.to_thread(
+            self.snapshot_service.save_frame,
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_frame,
+        )
+        await self.snapshot_service.save_metadata(
+            self.camera.tenantId,
+            self.camera.cameraId,
+            snapshot_path,
+            "FIRE_DETECTIONS",
+            {"detections": [self._fire_metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
         )
         return snapshot_path
 
@@ -703,7 +975,11 @@ class CameraWorker:
 
         now = time.monotonic()
         track = self._weak_recognition_tracks.get(employee_id)
-        if track is None or now - track["started_at"] > self.settings.recognition_candidate_window_seconds:
+        track_expired = track is not None and now - track["started_at"] > self.settings.recognition_candidate_window_seconds
+        if (
+            track is None
+            or (track_expired and track["hits"] < self.settings.recognition_candidate_min_hits)
+        ):
             track = {
                 "started_at": now,
                 "hits": 0,
@@ -759,8 +1035,7 @@ class CameraWorker:
         ready_employee_ids = [
             employee_id
             for employee_id, track in self._weak_recognition_tracks.items()
-            if track["hits"] >= self.settings.recognition_candidate_min_hits
-            and now - track["started_at"] >= self.settings.recognition_candidate_window_seconds
+            if self._weak_recognition_track_is_ready(track, now)
         ]
 
         for employee_id in ready_employee_ids:
@@ -778,6 +1053,16 @@ class CameraWorker:
                 else None
             )
             await self._handle_recognized(result, track["best_zone"], snapshot_path)
+
+    def _weak_recognition_track_is_ready(self, track: dict, now: float) -> bool:
+        if track["hits"] < self.settings.recognition_candidate_min_hits:
+            return False
+
+        result = track.get("best_result") or {}
+        raw_score = result.get("rawCandidateScore") or result.get("bestCandidateScore") or 0.0
+        near_threshold = raw_score >= self.rules.recognitionThreshold - self.settings.recognition_candidate_fast_margin
+        window_elapsed = now - track["started_at"] >= self.settings.recognition_candidate_window_seconds
+        return near_threshold or window_elapsed
 
     def _is_good_unknown_candidate(self, frame, result: dict) -> bool:
         detection_score = result.get("detectionScore")
@@ -843,6 +1128,45 @@ class CameraWorker:
         self._recognized_face_cache[employee_id] = now
         return False
 
+    def _is_duplicate_plate(self, result: dict) -> bool:
+        if self.settings.plate_duplicate_cooldown_seconds <= 0:
+            return False
+
+        plate_text = (result.get("plateText") or "").strip().upper()
+        if plate_text:
+            cache_key = f"text:{plate_text}"
+        else:
+            bbox = result.get("bbox") or [0, 0, 0, 0]
+            center_x = int((bbox[0] + bbox[2]) / 20)
+            center_y = int((bbox[1] + bbox[3]) / 20)
+            cache_key = f"bbox:{center_x}:{center_y}"
+
+        now = time.monotonic()
+        last_seen_at = self._plate_event_cache.get(cache_key)
+        if last_seen_at is not None and now - last_seen_at < self.settings.plate_duplicate_cooldown_seconds:
+            return True
+
+        self._plate_event_cache[cache_key] = now
+        return False
+
+    def _is_duplicate_fire(self, result: dict) -> bool:
+        if self.settings.fire_duplicate_cooldown_seconds <= 0:
+            return False
+
+        class_name = (result.get("className") or "fire").strip().lower()
+        bbox = result.get("bbox") or [0, 0, 0, 0]
+        center_x = int((bbox[0] + bbox[2]) / 40)
+        center_y = int((bbox[1] + bbox[3]) / 40)
+        cache_key = f"{class_name}:{center_x}:{center_y}"
+
+        now = time.monotonic()
+        last_seen_at = self._fire_event_cache.get(cache_key)
+        if last_seen_at is not None and now - last_seen_at < self.settings.fire_duplicate_cooldown_seconds:
+            return True
+
+        self._fire_event_cache[cache_key] = now
+        return False
+
     @staticmethod
     def _public_detections(detections: list[dict]) -> list[dict]:
         return [
@@ -863,6 +1187,18 @@ class CameraWorker:
             )
         return snapshot_frame
 
+    def _plate_snapshot_frame(self, frame, detections: list[dict]):
+        snapshot_frame = frame.copy()
+        for detection in detections:
+            self._draw_plate_annotation(snapshot_frame, detection, show_label=True)
+        return snapshot_frame
+
+    def _fire_snapshot_frame(self, frame, detections: list[dict]):
+        snapshot_frame = frame.copy()
+        for detection in detections:
+            self._draw_fire_annotation(snapshot_frame, detection, show_label=True)
+        return snapshot_frame
+
     @staticmethod
     def _draw_face_annotation(frame, detection: dict, show_label: bool = True) -> None:
         bbox = detection.get("bbox")
@@ -879,6 +1215,65 @@ class CameraWorker:
 
         if matched and (employee_name or employee_id):
             label = employee_name or employee_id
+        if confidence is not None:
+            label = f"{label} {confidence:.2f}"
+
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+        if not show_label:
+            return
+
+        label_y = max(y1 - 10, 20)
+        cv2.putText(
+            frame,
+            label,
+            (x1, label_y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.65,
+            color,
+            2,
+            cv2.LINE_AA,
+        )
+
+    @staticmethod
+    def _draw_plate_annotation(frame, detection: dict, show_label: bool = True) -> None:
+        bbox = detection.get("bbox")
+        if not bbox or len(bbox) != 4:
+            return
+
+        x1, y1, x2, y2 = [int(value) for value in bbox]
+        color = (255, 180, 0)
+        plate_text = detection.get("plateText")
+        confidence = detection.get("confidence")
+        label = plate_text or detection.get("className") or "PLATE"
+        if confidence is not None:
+            label = f"{label} {confidence:.2f}"
+
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+        if not show_label:
+            return
+
+        label_y = max(y1 - 10, 20)
+        cv2.putText(
+            frame,
+            label,
+            (x1, label_y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.65,
+            color,
+            2,
+            cv2.LINE_AA,
+        )
+
+    @staticmethod
+    def _draw_fire_annotation(frame, detection: dict, show_label: bool = True) -> None:
+        bbox = detection.get("bbox")
+        if not bbox or len(bbox) != 4:
+            return
+
+        x1, y1, x2, y2 = [int(value) for value in bbox]
+        color = (0, 80, 255)
+        confidence = detection.get("confidence")
+        label = detection.get("className") or "FIRE"
         if confidence is not None:
             label = f"{label} {confidence:.2f}"
 
@@ -955,6 +1350,45 @@ class CameraWorker:
             metadata["promotedFromWeakCandidate"] = True
             metadata["rawCandidateScore"] = result.get("rawCandidateScore")
             metadata["bestCandidateScore"] = result.get("bestCandidateScore")
+        if zone:
+            metadata["zoneId"] = zone.zoneId
+            metadata["zoneName"] = zone.name
+        return metadata
+
+    @staticmethod
+    def _plate_metadata(result: dict, zone: ZoneConfig | None) -> dict:
+        metadata = {
+            "bbox": result["bbox"],
+            "detectionScore": result.get("detectionScore"),
+            "confidence": result.get("confidence"),
+            "plateText": result.get("plateText"),
+            "className": result.get("className"),
+            "classId": result.get("classId"),
+            "characters": result.get("characters"),
+            "source": result.get("source"),
+        }
+        if zone:
+            metadata["zoneId"] = zone.zoneId
+            metadata["zoneName"] = zone.name
+        return metadata
+
+    @staticmethod
+    def _fire_event_type(result: dict) -> str:
+        class_name = str(result.get("className") or "").lower()
+        if "smoke" in class_name:
+            return "SMOKE_DETECTED"
+        return "FIRE_DETECTED"
+
+    @staticmethod
+    def _fire_metadata(result: dict, zone: ZoneConfig | None) -> dict:
+        metadata = {
+            "bbox": result["bbox"],
+            "detectionScore": result.get("detectionScore"),
+            "confidence": result.get("confidence"),
+            "className": result.get("className"),
+            "classId": result.get("classId"),
+            "source": result.get("source"),
+        }
         if zone:
             metadata["zoneId"] = zone.zoneId
             metadata["zoneName"] = zone.name

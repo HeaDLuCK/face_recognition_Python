@@ -1,14 +1,16 @@
 from app.schemas.erp_schema import AiCapability
 
 
-IMPLEMENTED_CAPABILITIES = {AiCapability.FACE_RECOGNITION}
+IMPLEMENTED_CAPABILITIES = {
+    AiCapability.FACE_RECOGNITION,
+    AiCapability.PLATE_RECOGNITION,
+    AiCapability.FIRE_DETECTION,
+}
 
 FUTURE_CAPABILITIES = {
-    AiCapability.PLATE_RECOGNITION,
     AiCapability.OBJECT_COUNTING,
     AiCapability.PERSON_COUNTING,
     AiCapability.SMOKE_DETECTION,
-    AiCapability.FIRE_DETECTION,
     AiCapability.SUSPICIOUS_BEHAVIOR,
     AiCapability.POSTURE_DETECTION,
 }

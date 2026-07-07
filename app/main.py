@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api import attendance, cameras, events, health, sync, test
+from app.api import attendance, cameras, events, health, sync, test, unknown_faces
 from app.attendance.attendance_service import AttendanceService
 from app.cameras.camera_manager import CameraManager
 from app.config import get_settings
@@ -13,6 +13,8 @@ from app.events.event_service import EventService
 from app.face.embedding_service import EmbeddingService
 from app.face.insightface_engine import InsightFaceEngine
 from app.face.recognition_service import RecognitionService
+from app.fire.fire_detection_service import FireDetectionService
+from app.plates.plate_recognition_service import PlateRecognitionService
 from app.runtime_state import RuntimeState
 from app.services.log_service import LogService
 from app.services.sync_service import SyncService
@@ -42,6 +44,8 @@ async def lifespan(app: FastAPI):
         embedding_service=embedding_service,
         face_engine=face_engine,
     )
+    plate_recognition_service = PlateRecognitionService(settings)
+    fire_detection_service = FireDetectionService(settings)
     log_service = LogService(db)
     snapshot_service = SnapshotService(settings.snapshot_dir, db)
     event_service = EventService(db, erp_client)
@@ -57,6 +61,8 @@ async def lifespan(app: FastAPI):
     camera_manager = CameraManager(
         runtime_state=runtime_state,
         recognition_service=recognition_service,
+        plate_recognition_service=plate_recognition_service,
+        fire_detection_service=fire_detection_service,
         snapshot_service=snapshot_service,
         event_service=event_service,
         attendance_service=attendance_service,
@@ -70,6 +76,8 @@ async def lifespan(app: FastAPI):
     app.state.face_engine = face_engine
     app.state.embedding_service = embedding_service
     app.state.recognition_service = recognition_service
+    app.state.plate_recognition_service = plate_recognition_service
+    app.state.fire_detection_service = fire_detection_service
     app.state.snapshot_service = snapshot_service
     app.state.event_service = event_service
     app.state.attendance_service = attendance_service
@@ -96,3 +104,4 @@ app.include_router(cameras.router, prefix="/api/cameras", tags=["camera-control"
 app.include_router(events.router, prefix="/api/events", tags=["events"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["attendance"])
 app.include_router(test.router, prefix="/api/test", tags=["recognition-test"])
+app.include_router(unknown_faces.router, prefix="/api/unknown-faces", tags=["unknown-faces"])
