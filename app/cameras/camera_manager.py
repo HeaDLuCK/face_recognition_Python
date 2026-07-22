@@ -10,6 +10,7 @@ from app.cameras.camera_worker import CameraWorker
 from app.cameras.rtsp_reader import RtspReader
 from app.config import Settings
 from app.events.event_service import EventService
+from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
 from app.fire.fire_detection_service import FireDetectionService
 from app.plates.plate_recognition_service import PlateRecognitionService
@@ -42,6 +43,7 @@ class CameraManager:
         self.attendance_service = attendance_service
         self.log_service = log_service
         self.settings = settings
+        self.face_recognition_scheduler = FaceRecognitionScheduler()
         self.workers: dict[str, CameraWorker] = {}
 
     async def start_camera(self, camera_id: str) -> dict:
@@ -59,8 +61,12 @@ class CameraManager:
 
         worker = CameraWorker(
             camera=camera,
-            rules=self.runtime_state.get_rules(camera.tenantId),
+            rules_by_tenant={
+                assignment.tenantId: self.runtime_state.get_rules(assignment.tenantId)
+                for assignment in camera.activeAssignments
+            },
             recognition_service=self.recognition_service,
+            recognition_scheduler=self.face_recognition_scheduler,
             plate_recognition_service=self.plate_recognition_service,
             fire_detection_service=self.fire_detection_service,
             snapshot_service=self.snapshot_service,
@@ -94,10 +100,23 @@ class CameraManager:
         return {"started": results}
 
     async def stop_all(self) -> dict:
-        results = []
-        for camera_id in list(self.workers.keys()):
-            results.append(await self.stop_camera(camera_id))
+        camera_ids = list(self.workers.keys())
+        stopped = await asyncio.gather(
+            *(self.stop_camera(camera_id) for camera_id in camera_ids),
+            return_exceptions=True,
+        )
+        results = [
+            result
+            if not isinstance(result, Exception)
+            else {"cameraId": camera_id, "status": "error", "message": str(result)}
+            for camera_id, result in zip(camera_ids, stopped)
+        ]
         return {"stopped": results}
+
+    async def shutdown(self) -> dict:
+        stopped = await self.stop_all()
+        await self.face_recognition_scheduler.close()
+        return stopped
 
     async def restart_all(self) -> dict:
         stopped = await self.stop_all()
@@ -117,11 +136,16 @@ class CameraManager:
             "cameras": [
                 {
                     "etsAuth": camera.tenantId,
+                    "etsAuths": camera.tenantIds,
                     "cameraId": camera.cameraId,
                     "name": camera.name,
                     "enabled": camera.enabled,
                     "direction": camera.direction,
                     "capabilities": [capability.value for capability in camera.capabilities],
+                    "assignments": [
+                        assignment.model_dump(mode="json", by_alias=True)
+                        for assignment in camera.assignments
+                    ],
                     "status": "running" if camera.cameraId in running_ids else "stopped",
                 }
                 for camera in configured
@@ -156,6 +180,7 @@ class CameraManager:
 
     async def _direct_stream(self, camera_source: str, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         reader = RtspReader(camera_source, self.settings)
+        delay = 1 / self.settings.stream_fps
         fps_started_at = time.perf_counter()
         fps_frames = 0
         display_fps = 0.0
@@ -174,7 +199,7 @@ class CameraManager:
                 jpeg = await asyncio.to_thread(self._encode_jpeg, frame)
                 if jpeg:
                     yield self._mjpeg_chunk(jpeg)
-                await asyncio.sleep(0)
+                await asyncio.sleep(delay)
         finally:
             await asyncio.to_thread(reader.close)
 

@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
 
 class ErpBaseModel(BaseModel):
@@ -31,8 +31,20 @@ class ZoneConfig(ErpBaseModel):
     height: int = Field(..., gt=0)
 
 
-class CameraConfig(ErpBaseModel):
+class CameraAssignment(ErpBaseModel):
     tenantId: str = Field(validation_alias=AliasChoices("tenantId", "etsAuth"), serialization_alias="etsAuth")
+    enabled: bool = True
+    direction: CameraDirection = "BIDIRECTIONAL"
+    capabilities: list[AiCapability] = Field(default_factory=list)
+    zones: list[ZoneConfig] = Field(default_factory=list)
+
+
+class CameraConfig(ErpBaseModel):
+    tenantId: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tenantId", "etsAuth"),
+        serialization_alias="etsAuth",
+    )
     cameraId: str
     name: str
     rtspUrl: str
@@ -40,6 +52,61 @@ class CameraConfig(ErpBaseModel):
     direction: CameraDirection = "BIDIRECTIONAL"
     capabilities: list[AiCapability] = Field(default_factory=list)
     zones: list[ZoneConfig] = Field(default_factory=list)
+    assignments: list[CameraAssignment] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def normalize_assignments(self):
+        if not self.assignments:
+            if not self.tenantId:
+                raise ValueError("Camera requires etsAuth/tenantId or assignments")
+            self.assignments = [
+                CameraAssignment(
+                    tenantId=self.tenantId,
+                    enabled=self.enabled,
+                    direction=self.direction,
+                    capabilities=self.capabilities,
+                    zones=self.zones,
+                )
+            ]
+
+        assignments_by_tenant = {
+            assignment.tenantId: assignment
+            for assignment in self.assignments
+        }
+        self.assignments = list(assignments_by_tenant.values())
+        self.enabled = any(assignment.enabled for assignment in self.assignments)
+        primary_assignment = next(
+            (assignment for assignment in self.assignments if assignment.enabled),
+            self.assignments[0],
+        )
+        self.tenantId = primary_assignment.tenantId
+
+        effective_capabilities = []
+        for assignment in self.assignments:
+            if not assignment.enabled:
+                continue
+            for capability in assignment.capabilities:
+                if capability not in effective_capabilities:
+                    effective_capabilities.append(capability)
+        self.capabilities = effective_capabilities
+        self.direction = primary_assignment.direction
+        self.zones = primary_assignment.zones
+        return self
+
+    @property
+    def tenantIds(self) -> list[str]:
+        return [assignment.tenantId for assignment in self.assignments]
+
+    @property
+    def activeAssignments(self) -> list[CameraAssignment]:
+        return [assignment for assignment in self.assignments if assignment.enabled]
+
+    def assignments_for(self, capability: AiCapability) -> list[CameraAssignment]:
+        return [
+            assignment
+            for assignment in self.activeAssignments
+            if capability in assignment.capabilities
+        ]
 
 
 class FaceImageRef(ErpBaseModel):
@@ -66,6 +133,11 @@ class AttendanceRules(ErpBaseModel):
     saveUnknownFaces: bool = True
     saveUnknownFaceCrops: bool = True
     sendUnknownFaceAlert: bool = False
+    imageRetentionDays: int = Field(
+        default=0,
+        ge=0,
+        validation_alias=AliasChoices("imageRetentionDays", "snapshotRetentionDays", "purgeImagesAfterDays"),
+    )
 
 
 class ErpEventPayload(ErpBaseModel):

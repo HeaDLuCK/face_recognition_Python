@@ -10,6 +10,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.config import get_settings
 from app.face.insightface_engine import DetectedFace, InsightFaceEngine
+from app.services.url_utils import redact_url_credentials
 
 
 def parse_args() -> argparse.Namespace:
@@ -166,7 +167,7 @@ async def main_async() -> int:
     if not faces:
         raise RuntimeError(f"No face found in image: {args.image}")
 
-    print(f"Mongo: {settings.mongo_url}")
+    print(f"Mongo: {redact_url_credentials(settings.mongo_url)}")
     print(f"Database: {settings.mongo_db_name}")
     print(f"etsAuth: {ets_auth}")
     print(f"Model: {settings.insightface_model_name}")

@@ -4,8 +4,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 ENV SNAPSHOT_DIR=/app/snapshots
-ENV EVENT_CLIPS_DIR=/app/event_clips
-ENV HISTORY_CLIPS_DIR=/app/history_clips
+ENV EVENT_CLIP_DIR=/app/event_clips
+ENV HISTORY_CLIP_DIR=/app/history_clips
 
 WORKDIR /app
 

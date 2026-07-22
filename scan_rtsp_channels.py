@@ -8,8 +8,6 @@ import cv2
 
 def load_env(path=".env"):
     if not os.path.exists(path):
-        print("im here")
-        print(os.path.exists(".env"))
         return
 
     with open(path, "r", encoding="utf-8") as env_file:
@@ -31,17 +29,16 @@ def build_url(base_url, channel):
 def test_channel(url, timeout_seconds=5):
     started_at = time.time()
     cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)
-
-    while time.time() - started_at < timeout_seconds:
-        ok, frame = cap.read()
-        if ok and frame is not None:
-            height, width = frame.shape[:2]
-            cap.release()
-            return True, width, height
-        time.sleep(0.1)
-
-    cap.release()
-    return False, None, None
+    try:
+        while time.time() - started_at < timeout_seconds:
+            ok, frame = cap.read()
+            if ok and frame is not None:
+                height, width = frame.shape[:2]
+                return True, width, height
+            time.sleep(0.1)
+        return False, None, None
+    finally:
+        cap.release()
 
 
 def main():

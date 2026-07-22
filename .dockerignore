@@ -13,3 +13,5 @@ history_clips
 .pytest_cache
 .mypy_cache
 .ruff_cache
+ffmpeg
+pythonproject-*.tar

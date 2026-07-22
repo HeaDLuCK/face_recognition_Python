@@ -60,6 +60,7 @@ class AttendanceService:
                 "eventType": f"ATTENDANCE_{direction}",
                 "timestamp": {"$gte": now - cooldown},
             },
+            {"_id": 1},
             sort=[("timestamp", -1)],
         )
         if last_log:
@@ -189,14 +190,11 @@ class AttendanceService:
 
     @staticmethod
     def _format_attendance_rows(data: list[dict]) -> str:
-        result = ""
-        for obj in data:
-            metadata = obj.get("metadata") or {}
-            employee_name = metadata.get("employeeName") or ""
-            employee_id = obj.get("employeeId") or ""
-            timestamp = obj.get("timestamp") or ""
-            result += f"{employee_name};{employee_id};{timestamp}|"
-        return result
+        return "".join(
+            f"{(obj.get('metadata') or {}).get('employeeName') or ''};"
+            f"{obj.get('employeeId') or ''};{obj.get('timestamp') or ''}|"
+            for obj in data
+        )
 
     @staticmethod
     def _sync_key(

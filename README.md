@@ -12,6 +12,8 @@ Implemented now:
 - Local cached employee face embeddings with InsightFace.
 - RTSP frame reading with OpenCV.
 - Capability-gated `FACE_RECOGNITION`.
+- Capability-gated YOLO `PLATE_RECOGNITION` and `FIRE_DETECTION`.
+- Fair round-robin face inference across running cameras.
 - Zone filtering for detections when ERP provides zones.
 - Attendance rules:
   - camera direction `IN` / `OUT`
@@ -22,11 +24,9 @@ Implemented now:
 
 Architecture placeholders exist for future modules:
 
-- `PLATE_RECOGNITION`
 - `OBJECT_COUNTING`
 - `PERSON_COUNTING`
 - `SMOKE_DETECTION`
-- `FIRE_DETECTION`
 - `SUSPICIOUS_BEHAVIOR`
 - `POSTURE_DETECTION`
 
@@ -375,16 +375,13 @@ curl -X POST http://localhost:8000/api/test/recognize-image ^
 - If zones are present on a camera, face detections outside all zones are ignored.
 - `BIDIRECTIONAL` cameras can produce recognition events, but attendance logs are only generated for `IN` or `OUT` cameras.
 
-## Event Clips And Motion Zones
+## Event Markers, History, And Motion Zones
 
-The service keeps a rolling video buffer per running camera. When an unknown face appears, or when movement is detected inside a configured motion zone, it saves a clip from the buffered past seconds.
+The service does not keep a full-frame rolling video buffer in Python. Face, plate, fire, and motion events store a timestamp plus playback start/end metadata. The ERP can request that time window from Hikvision through `POST /api/cameras/{cameraId}/history-clip`; the generated temporary MP4 is deleted after the response is delivered.
 
 Configure in `.env`:
 
 ```text
-EVENT_CLIP_DIR=event_clips
-EVENT_BUFFER_SECONDS=30
-EVENT_CLIP_FPS=15
 EVENT_CLIP_COOLDOWN_SECONDS=30
 MOTION_ZONES=door:100,120|420,120|420,360|100,360
 MOTION_CHECK_FRAME_SKIP=5
@@ -392,6 +389,22 @@ MOTION_PIXEL_THRESHOLD=35
 MOTION_AREA_RATIO=0.02
 SHOW_MOTION_ZONES=true
 ```
+
+## Performance Controls
+
+Defaults are conservative for computers that run several cameras on CPU:
+
+```text
+OPENCV_NUM_THREADS=1
+INSIGHTFACE_DET_SIZE=640
+FACE_CANDIDATE_BUFFER_SIZE=4
+FACE_CANDIDATE_WINDOW_SECONDS=0.5
+UNKNOWN_FACE_CACHE_MAX_ENTRIES=1000
+UNKNOWN_FACE_CROP_CACHE_MAX_ENTRIES=500
+UNKNOWN_FACE_DB_MATCH_LIMIT=500
+```
+
+Face inference is serialized by one shared round-robin scheduler. Every camera keeps one latest pending candidate, so slow hardware does not build a stale frame queue. Increase `INSIGHTFACE_DET_SIZE` only when hardware capacity and face distance require it.
 
 `MOTION_ZONES` supports polygons. Use `;` between zones and `|` between points:
 

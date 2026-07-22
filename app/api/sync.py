@@ -14,7 +14,10 @@ async def sync_all(
     if payload is not None:
         result = {}
         if isinstance(payload, dict) and "cameras" in payload:
-            result["cameras"] = await request.app.state.sync_service.sync_cameras_from_payload(payload["cameras"])
+            try:
+                result["cameras"] = await request.app.state.sync_service.sync_cameras_from_payload(payload["cameras"])
+            except ValueError as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
         if isinstance(payload, dict) and "employees" in payload:
             result["employees"] = await request.app.state.sync_service.sync_employees_from_payload(payload["employees"])
         if isinstance(payload, dict) and "rules" in payload:
@@ -30,10 +33,13 @@ async def sync_cameras(
     payload: Any = Body(default=None),
     restart: bool = Query(default=True),
 ) -> dict:
-    if payload is not None:
-        result = await request.app.state.sync_service.sync_cameras_from_payload(payload)
-    else:
-        result = await request.app.state.sync_service.sync_cameras()
+    try:
+        if payload is not None:
+            result = await request.app.state.sync_service.sync_cameras_from_payload(payload)
+        else:
+            result = await request.app.state.sync_service.sync_cameras()
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     return await _restart_if_requested(request, result, restart)
 
 

@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from threading import RLock
 
 import numpy as np
 
@@ -12,38 +13,41 @@ class PlateRecognitionService:
     def __init__(self, settings: Settings):
         self.settings = settings
         self._model = None
+        self._model_lock = RLock()
 
     def recognize_frame(self, frame: np.ndarray) -> list[dict]:
-        model = self._load_model()
-        predictions = model.predict(
-            source=frame,
-            conf=self.settings.plate_yolo_confidence,
-            imgsz=self.settings.plate_yolo_imgsz,
-            device=self.settings.plate_yolo_device,
-            verbose=False,
-        )
+        with self._model_lock:
+            model = self._load_model()
+            predictions = model.predict(
+                source=frame,
+                conf=self.settings.plate_yolo_confidence,
+                imgsz=self.settings.plate_yolo_imgsz,
+                device=self.settings.plate_yolo_device,
+                verbose=False,
+            )
 
-        raw_detections = self._raw_detections(predictions)
+            raw_detections = self._raw_detections(predictions)
         if self.settings.plate_yolo_mode == "characters":
             return self._character_detections_to_plate(raw_detections)
         return self._plate_box_detections(raw_detections)
 
     def _load_model(self):
-        if self._model is not None:
+        with self._model_lock:
+            if self._model is not None:
+                return self._model
+
+            model_path = Path(self.settings.plate_yolo_model_path)
+            if not model_path.exists():
+                raise RuntimeError(f"Plate YOLO model does not exist: {model_path}")
+
+            try:
+                from ultralytics import YOLO
+            except ImportError as exc:
+                raise RuntimeError("ultralytics is not installed. Run: pip install ultralytics") from exc
+
+            self._model = YOLO(str(model_path))
+            logger.info("Loaded plate YOLO model: %s", model_path)
             return self._model
-
-        model_path = Path(self.settings.plate_yolo_model_path)
-        if not model_path.exists():
-            raise RuntimeError(f"Plate YOLO model does not exist: {model_path}")
-
-        try:
-            from ultralytics import YOLO
-        except ImportError as exc:
-            raise RuntimeError("ultralytics is not installed. Run: pip install ultralytics") from exc
-
-        self._model = YOLO(str(model_path))
-        logger.info("Loaded plate YOLO model: %s", model_path)
-        return self._model
 
     def _raw_detections(self, predictions) -> list[dict]:
         model = self._load_model()

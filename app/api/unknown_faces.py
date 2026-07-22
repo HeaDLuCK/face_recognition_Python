@@ -1,3 +1,4 @@
+import asyncio
 import base64
 from datetime import datetime
 from pathlib import Path
@@ -76,7 +77,7 @@ async def list_unknown_faces_cloud_payload(
             skipped.append({"unknownFaceCropId": unknown_face_id, "reason": "image_file_not_found"})
             continue
 
-        image_bytes = path.read_bytes()
+        image_bytes = await asyncio.to_thread(path.read_bytes)
         faces.append(
             {
                 "unknownFaceCropId": unknown_face_id,
@@ -142,7 +143,9 @@ async def list_unknown_faces_base64(
                 "status": item.get("status", "NEW"),
                 "fileName": path.name,
                 "contentType": "image/jpeg",
-                "imageBase64": base64.b64encode(path.read_bytes()).decode("ascii"),
+                "imageBase64": base64.b64encode(
+                    await asyncio.to_thread(path.read_bytes)
+                ).decode("ascii"),
             }
         )
 

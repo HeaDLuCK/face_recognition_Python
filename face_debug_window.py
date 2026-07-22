@@ -9,6 +9,7 @@ import cv2
 
 from app.config import get_settings
 from app.face.insightface_engine import InsightFaceEngine
+from app.services.url_utils import redact_url_credentials
 
 
 def build_channel_url(base_url: str, channel: str | None) -> str:
@@ -85,7 +86,7 @@ def main() -> None:
     detections_by_frame = {}
     executor = ThreadPoolExecutor(max_workers=1)
     window_name = "Face AI Debug - press q to quit"
-    print(f"Opened {source}")
+    print(f"Opened {redact_url_credentials(source)}")
     print(f"AI runs every {args.every} frame(s). Press q in the video window to quit.")
 
     try:
@@ -150,7 +151,7 @@ def main() -> None:
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
     finally:
-        executor.shutdown(wait=False, cancel_futures=True)
+        executor.shutdown(wait=True, cancel_futures=True)
         capture.release()
         cv2.destroyAllWindows()
 

@@ -12,6 +12,7 @@ import httpx
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
+from starlette.background import BackgroundTask
 
 router = APIRouter()
 
@@ -73,7 +74,7 @@ async def camera_grid(request: Request) -> HTMLResponse:
         _camera_card(
             camera_id=camera.cameraId,
             name=camera.name,
-            tenant_id=camera.tenantId,
+            tenant_id=", ".join(camera.tenantIds),
             status=status_by_id.get(camera.cameraId, "stopped"),
         )
         for camera in cameras
@@ -426,6 +427,7 @@ async def camera_history_clip(cameraId: str, payload: HistoryClipRequest, reques
         clip_path,
         media_type="video/mp4",
         filename=Path(clip_path).name,
+        background=BackgroundTask(_delete_file_safely, Path(clip_path)),
     )
 
 
@@ -809,7 +811,11 @@ def _export_hikvision_history_clip(
 
     output_dir.mkdir(parents=True, exist_ok=True)
     clip_path = output_dir / f"{track_id}_{event_time.strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:10]}.mp4"
-    _write_rtsp_clip(playback_url, clip_path, max((end - start).total_seconds(), 1))
+    try:
+        _write_rtsp_clip(playback_url, clip_path, max((end - start).total_seconds(), 1))
+    except Exception:
+        _delete_file_safely(clip_path)
+        raise
     return str(clip_path)
 
 
@@ -904,6 +910,7 @@ def _write_rtsp_clip(playback_url: str, clip_path: Path, expected_seconds: float
             if not ok or frame is None:
                 if frames_written:
                     break
+                time.sleep(0.02)
                 continue
 
             if writer is None:
@@ -926,6 +933,13 @@ def _write_rtsp_clip(playback_url: str, clip_path: Path, expected_seconds: float
 
     if frames_written == 0:
         raise RuntimeError("No frames were returned by Hikvision for that time window")
+
+
+def _delete_file_safely(path: Path) -> None:
+    try:
+        path.unlink(missing_ok=True)
+    except OSError:
+        pass
 
 
 def _stream_flow(request: Request, camera_id: str, camera=None) -> dict:

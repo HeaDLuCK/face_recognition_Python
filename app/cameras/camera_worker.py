@@ -3,8 +3,8 @@ import json
 import logging
 import time
 from collections import deque
-from pathlib import Path
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -13,10 +13,11 @@ from app.attendance.attendance_service import AttendanceService
 from app.cameras.rtsp_reader import RtspReader
 from app.config import Settings
 from app.events.event_service import EventService
+from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
 from app.fire.fire_detection_service import FireDetectionService
 from app.plates.plate_recognition_service import PlateRecognitionService
-from app.schemas.erp_schema import AiCapability, AttendanceRules, CameraConfig, ZoneConfig
+from app.schemas.erp_schema import AiCapability, AttendanceRules, CameraAssignment, CameraConfig, ZoneConfig
 from app.schemas.runtime_schema import RuntimeEvent
 from app.services.log_service import LogService
 from app.services.module_registry import is_enabled
@@ -29,8 +30,9 @@ class CameraWorker:
     def __init__(
         self,
         camera: CameraConfig,
-        rules: AttendanceRules,
+        rules_by_tenant: dict[str, AttendanceRules],
         recognition_service: RecognitionService,
+        recognition_scheduler: FaceRecognitionScheduler,
         plate_recognition_service: PlateRecognitionService,
         fire_detection_service: FireDetectionService,
         snapshot_service: SnapshotService,
@@ -40,8 +42,9 @@ class CameraWorker:
         settings: Settings,
     ):
         self.camera = camera
-        self.rules = rules
+        self.rules_by_tenant = rules_by_tenant
         self.recognition_service = recognition_service
+        self.recognition_scheduler = recognition_scheduler
         self.plate_recognition_service = plate_recognition_service
         self.fire_detection_service = fire_detection_service
         self.snapshot_service = snapshot_service
@@ -52,12 +55,12 @@ class CameraWorker:
         self.reader = RtspReader(camera.rtspUrl, settings)
         self._task: asyncio.Task | None = None
         self._jpeg_task: asyncio.Task | None = None
-        self._recognition_worker_task: asyncio.Task | None = None
-        self._recognition_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.recognition_queue_size)
         self._plate_recognition_worker_task: asyncio.Task | None = None
         self._plate_recognition_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.plate_recognition_queue_size)
+        self._plate_recognition_disabled = False
         self._fire_detection_worker_task: asyncio.Task | None = None
         self._fire_detection_queue: asyncio.Queue[np.ndarray] = asyncio.Queue(maxsize=settings.fire_detection_queue_size)
+        self._fire_detection_disabled = False
         self._cloud_stream_task: asyncio.Task | None = None
         self._stop_event = asyncio.Event()
         self.latest_jpeg: bytes | None = None
@@ -72,16 +75,23 @@ class CameraWorker:
         self._last_recognition_queued_at = 0.0
         self._last_plate_recognition_queued_at = 0.0
         self._last_fire_detection_queued_at = 0.0
-        event_buffer_size = max(settings.event_buffer_seconds * settings.stream_fps, 1) if settings.event_buffer_enabled else 0
-        self._event_buffer = deque(maxlen=event_buffer_size)
-        self._event_clip_tasks: set[asyncio.Task] = set()
-        self._last_event_clip_at: dict[str, float] = {}
+        self._face_candidates: deque[tuple[float, float, np.ndarray]] = deque(
+            maxlen=settings.face_candidate_buffer_size
+        )
+        self._face_candidate_window_started_at: float | None = None
+        self._last_face_candidate_at = 0.0
+        self._event_marker_tasks: set[asyncio.Task] = set()
+        self._last_event_marker_at: dict[str, float] = {}
         self._plate_event_cache: dict[str, float] = {}
         self._fire_event_cache: dict[str, float] = {}
-        self._recognized_face_cache: dict[str, float] = {}
-        self._weak_recognition_tracks: dict[str, dict] = {}
-        self._unknown_face_cache: deque[tuple[float, np.ndarray]] = deque()
-        self._unknown_face_crop_cache: list[tuple[np.ndarray, str]] = []
+        self._recognized_face_cache: dict[tuple[str, str], float] = {}
+        self._weak_recognition_tracks: dict[tuple[str, str], dict] = {}
+        self._unknown_face_cache: deque[tuple[float, str, np.ndarray]] = deque(
+            maxlen=settings.unknown_face_cache_max_entries
+        )
+        self._unknown_face_crop_cache: deque[tuple[str, np.ndarray, str]] = deque(
+            maxlen=settings.unknown_face_crop_cache_max_entries
+        )
         self._motion_zones = self._parse_motion_zones(settings.motion_zones)
         self._previous_motion_gray: np.ndarray | None = None
         self._stream_viewers = 0
@@ -90,6 +100,19 @@ class CameraWorker:
     @property
     def camera_id(self) -> str:
         return self.camera.cameraId
+
+    @property
+    def primary_assignment(self) -> CameraAssignment:
+        return self.camera.activeAssignments[0]
+
+    def _rules_for(self, tenant_id: str) -> AttendanceRules:
+        return self.rules_by_tenant[tenant_id]
+
+    def _face_snapshots_enabled(self) -> bool:
+        return any(
+            self._rules_for(assignment.tenantId).saveFaceSnapshots
+            for assignment in self.camera.assignments_for(AiCapability.FACE_RECOGNITION)
+        )
 
     @property
     def is_running(self) -> bool:
@@ -112,7 +135,8 @@ class CameraWorker:
             await asyncio.to_thread(self.reader.open)
             await self._emit_camera_event("CAMERA_STARTED", {"startedAt": datetime.utcnow().isoformat()})
             self._start_cloud_stream_push()
-            self._start_recognition_worker()
+            if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
+                self.recognition_scheduler.register(self.camera_id, self._run_face_recognition)
             if is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION):
                 self._start_plate_recognition_worker()
             if is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION):
@@ -121,7 +145,6 @@ class CameraWorker:
             while not self._stop_event.is_set():
                 frame = await asyncio.to_thread(self.reader.read)
                 self._update_fps()
-                self._add_to_event_buffer(frame)
                 if self.stream_requested:
                     self._schedule_latest_jpeg(frame)
                 frame_count += 1
@@ -132,13 +155,25 @@ class CameraWorker:
                     await asyncio.sleep(0)
                     continue
 
-                if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION) and self._should_queue_face_recognition():
-                    await self._queue_face_recognition(frame)
+                if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
+                    self._collect_face_candidate(frame)
+                    if self._face_candidate_window_ready() and self._should_queue_face_recognition():
+                        candidate = self._take_best_face_candidate()
+                        if candidate is not None:
+                            await self._queue_face_recognition(candidate)
 
-                if is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION) and self._should_queue_plate_recognition():
+                if (
+                    not self._plate_recognition_disabled
+                    and is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION)
+                    and self._should_queue_plate_recognition()
+                ):
                     await self._queue_plate_recognition(frame)
 
-                if is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION) and self._should_queue_fire_detection():
+                if (
+                    not self._fire_detection_disabled
+                    and is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION)
+                    and self._should_queue_fire_detection()
+                ):
                     await self._queue_fire_detection(frame)
 
                 await asyncio.sleep(0)
@@ -148,36 +183,59 @@ class CameraWorker:
             await self.log_service.write(
                 "ERROR",
                 "Camera worker failed",
-                tenant_id=self.camera.tenantId,
+                tenant_id=self.primary_assignment.tenantId,
                 camera_id=self.camera_id,
-                metadata={"error": str(exc)},
+                metadata={"error": str(exc), "etsAuths": self.camera.tenantIds},
             )
             await self._emit_camera_event("CAMERA_ERROR", {"error": str(exc)})
         finally:
-            if self._recognition_worker_task and not self._recognition_worker_task.done():
-                self._recognition_worker_task.cancel()
-            if self._plate_recognition_worker_task and not self._plate_recognition_worker_task.done():
-                self._plate_recognition_worker_task.cancel()
-            if self._fire_detection_worker_task and not self._fire_detection_worker_task.done():
-                self._fire_detection_worker_task.cancel()
-            if self._jpeg_task and not self._jpeg_task.done():
-                self._jpeg_task.cancel()
-            if self._cloud_stream_task and not self._cloud_stream_task.done():
-                self._cloud_stream_task.cancel()
-            for task in self._event_clip_tasks:
-                if not task.done():
-                    task.cancel()
+            self.recognition_scheduler.unregister(self.camera_id)
+            await self._cancel_background_tasks()
+            self._clear_runtime_buffers()
             await asyncio.to_thread(self.reader.close)
             if self._stop_event.is_set():
                 await self._emit_camera_event("CAMERA_STOPPED", {"stoppedAt": datetime.utcnow().isoformat()})
 
-    def _start_recognition_worker(self) -> None:
-        if self._recognition_worker_task and not self._recognition_worker_task.done():
-            return
-        self._recognition_worker_task = asyncio.create_task(
-            self._run_recognition_worker(),
-            name=f"face-recognition-worker-{self.camera_id}",
-        )
+    async def _cancel_background_tasks(self) -> None:
+        tasks = {
+            task
+            for task in (
+                self._plate_recognition_worker_task,
+                self._fire_detection_worker_task,
+                self._jpeg_task,
+                self._cloud_stream_task,
+                *self._event_marker_tasks,
+            )
+            if task is not None
+        }
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
+        self._event_marker_tasks.clear()
+
+    def _clear_runtime_buffers(self) -> None:
+        self._face_candidates.clear()
+        self._face_candidate_window_started_at = None
+        self._last_face_candidate_at = 0.0
+        self._unknown_face_cache.clear()
+        self._unknown_face_crop_cache.clear()
+        self._weak_recognition_tracks.clear()
+        self._recognized_face_cache.clear()
+        self._plate_event_cache.clear()
+        self._fire_event_cache.clear()
+        self._drain_queue(self._plate_recognition_queue)
+        self._drain_queue(self._fire_detection_queue)
+
+    @staticmethod
+    def _drain_queue(queue: asyncio.Queue) -> None:
+        while True:
+            try:
+                queue.get_nowait()
+                queue.task_done()
+            except asyncio.QueueEmpty:
+                return
 
     def _start_plate_recognition_worker(self) -> None:
         if self._plate_recognition_worker_task and not self._plate_recognition_worker_task.done():
@@ -220,22 +278,63 @@ class CameraWorker:
         self._last_recognition_queued_at = now
         return True
 
-    async def _queue_face_recognition(self, frame) -> None:
-        frame_copy = frame.copy()
-        if not self.settings.recognition_drop_old_frames:
-            await self._recognition_queue.put(frame_copy)
+    def _collect_face_candidate(self, frame: np.ndarray) -> None:
+        captured_at = time.monotonic()
+        sampling_interval = (
+            self.settings.face_candidate_window_seconds
+            / self.settings.face_candidate_buffer_size
+        )
+        if captured_at - self._last_face_candidate_at < sampling_interval:
             return
 
-        while True:
-            try:
-                self._recognition_queue.get_nowait()
-                self._recognition_queue.task_done()
-            except asyncio.QueueEmpty:
-                break
-        try:
-            self._recognition_queue.put_nowait(frame_copy)
-        except asyncio.QueueFull:
-            pass
+        self._last_face_candidate_at = captured_at
+        if self._face_candidate_window_started_at is None:
+            self._face_candidate_window_started_at = captured_at
+        self._face_candidates.append(
+            (captured_at, self._face_frame_quality_score(frame), frame)
+        )
+
+    def _face_candidate_window_ready(self) -> bool:
+        if not self._face_candidates or self._face_candidate_window_started_at is None:
+            return False
+        return (
+            time.monotonic() - self._face_candidate_window_started_at
+            >= self.settings.face_candidate_window_seconds
+        )
+
+    def _take_best_face_candidate(self) -> np.ndarray | None:
+        if not self._face_candidates:
+            return None
+        _, _, best_frame = max(self._face_candidates, key=lambda candidate: candidate[1])
+        self._face_candidates.clear()
+        self._face_candidate_window_started_at = None
+        return best_frame
+
+    @staticmethod
+    def _face_frame_quality_score(frame: np.ndarray) -> float:
+        height, width = frame.shape[:2]
+        longest_side = max(height, width)
+        if longest_side > 320:
+            scale = 320.0 / longest_side
+            sample = cv2.resize(
+                frame,
+                (max(1, int(width * scale)), max(1, int(height * scale))),
+                interpolation=cv2.INTER_AREA,
+            )
+        else:
+            sample = frame
+
+        gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
+        sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+        brightness = float(gray.mean())
+        contrast = float(gray.std())
+
+        exposure_score = max(0.0, 1.0 - abs(brightness - 127.5) / 127.5)
+        contrast_score = min(contrast / 48.0, 1.0)
+        return sharpness * (0.5 + 0.35 * exposure_score + 0.15 * contrast_score)
+
+    async def _queue_face_recognition(self, frame) -> None:
+        self.recognition_scheduler.submit(self.camera_id, frame)
 
     def _should_queue_plate_recognition(self) -> bool:
         now = time.monotonic()
@@ -304,19 +403,17 @@ class CameraWorker:
         if overlay_jpeg:
             self.latest_overlay_jpeg = overlay_jpeg
 
-    async def _run_recognition_worker(self) -> None:
-        while not self._stop_event.is_set():
-            frame = await self._recognition_queue.get()
-            try:
-                await self._run_face_recognition(frame)
-            finally:
-                self._recognition_queue.task_done()
-
     async def _run_plate_recognition_worker(self) -> None:
         while not self._stop_event.is_set():
             frame = await self._plate_recognition_queue.get()
             try:
                 await self._run_plate_recognition(frame)
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                self._plate_recognition_disabled = True
+                logger.exception("Plate recognition disabled for camera %s after an error", self.camera_id)
+                return
             finally:
                 self._plate_recognition_queue.task_done()
 
@@ -325,78 +422,124 @@ class CameraWorker:
             frame = await self._fire_detection_queue.get()
             try:
                 await self._run_fire_detection(frame)
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                self._fire_detection_disabled = True
+                logger.exception("Fire detection disabled for camera %s after an error", self.camera_id)
+                return
             finally:
                 self._fire_detection_queue.task_done()
 
     async def _run_face_recognition(self, frame) -> None:
-        results = await self.recognition_service.recognize_frame(
-            tenant_id=self.camera.tenantId,
+        assignments = self.camera.assignments_for(AiCapability.FACE_RECOGNITION)
+        if not assignments:
+            return
+
+        results = await self.recognition_service.recognize_frame_for_tenants(
+            tenant_thresholds={
+                assignment.tenantId: self._rules_for(assignment.tenantId).recognitionThreshold
+                for assignment in assignments
+            },
             frame=frame,
-            threshold=self.rules.recognitionThreshold,
         )
         self.latest_detections = self._public_detections(results)
         handled_results = []
         for result in results:
-            zone = self._matching_zone(result["bbox"])
-            if self.camera.zones and zone is None:
-                continue
-
             if result["matched"]:
-                if self._is_duplicate_recognized(result):
+                assignment = self._assignment_for_tenant(result["tenantId"])
+                if assignment is None:
                     continue
-                self._weak_recognition_tracks.pop(result.get("employeeId"), None)
-                handled_results.append(("recognized", result, zone))
-            elif self._track_weak_known_candidate(frame, result, zone):
-                continue
-            elif self.rules.saveUnknownFaces:
-                if not self._is_good_unknown_candidate(frame, result):
+                zone = self._matching_zone(result["bbox"], assignment)
+                if assignment.zones and zone is None:
                     continue
-                if self._is_duplicate_unknown(result):
+                if self._is_duplicate_recognized(result, assignment.tenantId):
                     continue
-                self._schedule_event_marker("FACE_DETECTION", result)
-                handled_results.append(("unknown", result, zone))
+                self._weak_recognition_tracks.pop(
+                    (assignment.tenantId, result.get("employeeId")),
+                    None,
+                )
+                handled_results.append(("recognized", result, assignment, zone))
             else:
-                if not self._is_good_unknown_candidate(frame, result):
-                    continue
-                if self._is_duplicate_unknown(result):
-                    continue
-                self._schedule_event_marker("FACE_DETECTION", result)
-                await self._record_unknown_detection(result, zone)
+                for assignment in assignments:
+                    tenant_result = self._result_for_tenant(result, assignment.tenantId)
+                    if self._track_weak_known_candidate(frame, tenant_result):
+                        continue
+                    rules = self._rules_for(assignment.tenantId)
+                    if not rules.saveUnknownFaces:
+                        continue
+                    zone = self._matching_zone(tenant_result["bbox"], assignment)
+                    if assignment.zones and zone is None:
+                        continue
+                    if not self._is_good_unknown_candidate(frame, tenant_result, rules):
+                        continue
+                    if self._is_duplicate_unknown(tenant_result, assignment.tenantId):
+                        continue
+                    self._schedule_event_marker(
+                        "FACE_DETECTION",
+                        tenant_result,
+                        tenant_ids=[assignment.tenantId],
+                    )
+                    handled_results.append(("unknown", tenant_result, assignment, zone))
 
         await self._flush_ready_weak_recognition_tracks()
 
         if not handled_results:
             return
 
-        snapshot_path = await self._save_frame_snapshot(frame, results) if self.rules.saveFaceSnapshots else None
-        for kind, result, zone in handled_results:
-            if kind == "recognized":
-                await self._handle_recognized(result, zone, snapshot_path)
-            else:
-                face_crop_path = (
-                    await self._save_unknown_face_crop(frame, result)
-                    if self.rules.saveUnknownFaceCrops
+        save_snapshots = self._face_snapshots_enabled()
+        snapshot_paths: dict[str, str | None] = {}
+        for kind, result, assignment, zone in handled_results:
+            tenant_id = assignment.tenantId
+            rules = self._rules_for(tenant_id)
+            if tenant_id not in snapshot_paths:
+                snapshot_paths[tenant_id] = (
+                    await self._save_frame_snapshot(frame, results, tenant_id)
+                    if save_snapshots
                     else None
                 )
-                await self._handle_unknown(result, zone, snapshot_path, face_crop_path)
+            snapshot_path = snapshot_paths[tenant_id]
+            if kind == "recognized":
+                await self._handle_recognized(result, assignment, zone, snapshot_path)
+            else:
+                face_crop_path = (
+                    await self._save_unknown_face_crop(frame, result, tenant_id)
+                    if rules.saveUnknownFaceCrops
+                    else None
+                )
+                await self._handle_unknown(
+                    result,
+                    assignment,
+                    zone,
+                    snapshot_path,
+                    face_crop_path,
+                )
 
     async def _run_plate_recognition(self, frame) -> None:
         results = await asyncio.to_thread(self.plate_recognition_service.recognize_frame, frame)
         self.latest_plate_detections = self._public_detections(results)
+        assignments = self.camera.assignments_for(AiCapability.PLATE_RECOGNITION)
 
         for result in results:
-            zone = self._matching_zone(result["bbox"])
-            if self.camera.zones and zone is None:
-                continue
             if self._is_duplicate_plate(result):
                 continue
-            await self._handle_plate_detection(frame, result, zone)
+            for assignment in assignments:
+                zone = self._matching_zone(result["bbox"], assignment)
+                if assignment.zones and zone is None:
+                    continue
+                await self._handle_plate_detection(frame, result, assignment, zone)
 
-    async def _handle_plate_detection(self, frame, result: dict, zone: ZoneConfig | None) -> None:
+    async def _handle_plate_detection(
+        self,
+        frame,
+        result: dict,
+        assignment: CameraAssignment,
+        zone: ZoneConfig | None,
+    ) -> None:
         event_type = "PLATE_RECOGNIZED" if result.get("plateText") else "PLATE_DETECTED"
         timestamp = datetime.utcnow()
         snapshot_path = (
-            await self._save_plate_snapshot(frame, [result])
+            await self._save_plate_snapshot(frame, [result], assignment.tenantId)
             if self.settings.plate_save_snapshots
             else None
         )
@@ -415,7 +558,7 @@ class CameraWorker:
         )
         await self.event_service.create_camera_event(
             RuntimeEvent(
-                tenantId=self.camera.tenantId,
+                tenantId=assignment.tenantId,
                 cameraId=self.camera.cameraId,
                 eventType=event_type,
                 confidence=result.get("confidence"),
@@ -429,20 +572,28 @@ class CameraWorker:
     async def _run_fire_detection(self, frame) -> None:
         results = await asyncio.to_thread(self.fire_detection_service.detect_frame, frame)
         self.latest_fire_detections = self._public_detections(results)
+        assignments = self.camera.assignments_for(AiCapability.FIRE_DETECTION)
 
         for result in results:
-            zone = self._matching_zone(result["bbox"])
-            if self.camera.zones and zone is None:
-                continue
             if self._is_duplicate_fire(result):
                 continue
-            await self._handle_fire_detection(frame, result, zone)
+            for assignment in assignments:
+                zone = self._matching_zone(result["bbox"], assignment)
+                if assignment.zones and zone is None:
+                    continue
+                await self._handle_fire_detection(frame, result, assignment, zone)
 
-    async def _handle_fire_detection(self, frame, result: dict, zone: ZoneConfig | None) -> None:
+    async def _handle_fire_detection(
+        self,
+        frame,
+        result: dict,
+        assignment: CameraAssignment,
+        zone: ZoneConfig | None,
+    ) -> None:
         event_type = self._fire_event_type(result)
         timestamp = datetime.utcnow()
         snapshot_path = (
-            await self._save_fire_snapshot(frame, [result])
+            await self._save_fire_snapshot(frame, [result], assignment.tenantId)
             if self.settings.fire_save_snapshots
             else None
         )
@@ -461,7 +612,7 @@ class CameraWorker:
         )
         await self.event_service.create_camera_event(
             RuntimeEvent(
-                tenantId=self.camera.tenantId,
+                tenantId=assignment.tenantId,
                 cameraId=self.camera.cameraId,
                 eventType=event_type,
                 confidence=result.get("confidence"),
@@ -475,22 +626,24 @@ class CameraWorker:
     async def _handle_recognized(
         self,
         result: dict,
+        assignment: CameraAssignment,
         zone: ZoneConfig | None,
         snapshot_path: str | None,
     ) -> None:
         metadata = self._metadata(result, zone)
+        rules = self._rules_for(assignment.tenantId)
 
         create_attendance, direction = await self.attendance_service.should_create_attendance(
-            tenant_id=self.camera.tenantId,
+            tenant_id=assignment.tenantId,
             employee_id=result["employeeId"],
-            camera_direction=self.camera.direction,
+            camera_direction=assignment.direction,
             confidence=result["confidence"],
-            rules=self.rules,
+            rules=rules,
         )
         event_type = f"ATTENDANCE_{direction}" if create_attendance and direction else "FACE_RECOGNIZED"
 
         await self.attendance_service.record_detection(
-            tenant_id=self.camera.tenantId,
+            tenant_id=assignment.tenantId,
             camera_id=self.camera.cameraId,
             event_type=event_type,
             employee_id=result["employeeId"],
@@ -501,7 +654,7 @@ class CameraWorker:
         )
         await self.event_service.create_camera_event(
             RuntimeEvent(
-                tenantId=self.camera.tenantId,
+                tenantId=assignment.tenantId,
                 cameraId=self.camera.cameraId,
                 eventType=event_type,
                 employeeId=result["employeeId"],
@@ -539,7 +692,8 @@ class CameraWorker:
                         json.dumps(
                             {
                                 "type": "camera_start",
-                                "etsAuth": self.camera.tenantId,
+                                "etsAuth": self.primary_assignment.tenantId,
+                                "etsAuths": self.camera.tenantIds,
                                 "cameraId": self.camera.cameraId,
                                 "cameraName": self.camera.name,
                                 "token": self.settings.cloud_stream_token,
@@ -561,6 +715,7 @@ class CameraWorker:
     async def _handle_unknown(
         self,
         result: dict,
+        assignment: CameraAssignment,
         zone: ZoneConfig | None,
         snapshot_path: str | None,
         face_crop_path: str | None = None,
@@ -569,7 +724,7 @@ class CameraWorker:
         if face_crop_path:
             metadata["faceCropPath"] = face_crop_path
         await self.attendance_service.record_detection(
-            tenant_id=self.camera.tenantId,
+            tenant_id=assignment.tenantId,
             camera_id=self.camera.cameraId,
             event_type="UNKNOWN_FACE",
             employee_id=None,
@@ -580,7 +735,7 @@ class CameraWorker:
         )
         await self.event_service.create_camera_event(
             RuntimeEvent(
-                tenantId=self.camera.tenantId,
+                tenantId=assignment.tenantId,
                 cameraId=self.camera.cameraId,
                 eventType="UNKNOWN_FACE",
                 confidence=result["confidence"],
@@ -590,10 +745,10 @@ class CameraWorker:
             ),
             send_to_erp=True,
         )
-        if self.rules.sendUnknownFaceAlert:
+        if self._rules_for(assignment.tenantId).sendUnknownFaceAlert:
             await self.event_service.create_alert_event(
                 RuntimeEvent(
-                    tenantId=self.camera.tenantId,
+                    tenantId=assignment.tenantId,
                     cameraId=self.camera.cameraId,
                     eventType="UNKNOWN_FACE_ALERT",
                     confidence=result["confidence"],
@@ -604,36 +759,57 @@ class CameraWorker:
                 send_to_erp=True,
             )
 
-    async def _record_unknown_detection(self, result: dict, zone: ZoneConfig | None) -> None:
-        await self.attendance_service.record_detection(
-            tenant_id=self.camera.tenantId,
-            camera_id=self.camera.cameraId,
-            event_type="UNKNOWN_FACE",
-            employee_id=None,
-            matched=False,
-            confidence=result["confidence"],
-            snapshot_path=None,
-            metadata=self._metadata(result, zone),
-        )
-
     async def _emit_camera_event(self, event_type: str, metadata: dict) -> None:
-        await self.event_service.create_camera_event(
-            RuntimeEvent(
-                tenantId=self.camera.tenantId,
-                cameraId=self.camera.cameraId,
-                eventType=event_type,
-                timestamp=datetime.utcnow(),
-                metadata=metadata,
+        for assignment in self.camera.activeAssignments:
+            await self.event_service.create_camera_event(
+                RuntimeEvent(
+                    tenantId=assignment.tenantId,
+                    cameraId=self.camera.cameraId,
+                    eventType=event_type,
+                    timestamp=datetime.utcnow(),
+                    metadata=metadata,
+                ),
+                send_to_erp=True,
+            )
+
+    def _assignment_for_tenant(self, tenant_id: str | None) -> CameraAssignment | None:
+        if not tenant_id:
+            return None
+        return next(
+            (
+                assignment
+                for assignment in self.camera.activeAssignments
+                if assignment.tenantId == tenant_id
             ),
-            send_to_erp=True,
+            None,
         )
 
-    def _matching_zone(self, bbox: list[int]) -> ZoneConfig | None:
-        if not self.camera.zones:
+    @staticmethod
+    def _result_for_tenant(result: dict, tenant_id: str) -> dict:
+        candidate = (result.get("_tenantCandidates") or {}).get(tenant_id) or {}
+        return {
+            **result,
+            "tenantId": tenant_id,
+            "employeeId": None,
+            "employeeName": None,
+            "bestCandidateTenantId": tenant_id if candidate else None,
+            "bestCandidateEmployeeId": candidate.get("employeeId"),
+            "bestCandidateEmployeeName": candidate.get("employeeName"),
+            "bestCandidateScore": candidate.get("score"),
+            "matched": False,
+            "confidence": candidate.get("score"),
+        }
+
+    @staticmethod
+    def _matching_zone(
+        bbox: list[int],
+        assignment: CameraAssignment,
+    ) -> ZoneConfig | None:
+        if not assignment.zones:
             return None
         center_x = (bbox[0] + bbox[2]) / 2
         center_y = (bbox[1] + bbox[3]) / 2
-        for zone in self.camera.zones:
+        for zone in assignment.zones:
             if zone.x <= center_x <= zone.x + zone.width and zone.y <= center_y <= zone.y + zone.height:
                 return zone
         return None
@@ -654,7 +830,8 @@ class CameraWorker:
             self._draw_motion_zones(overlay_frame)
         if self.settings.show_dev_fps:
             self._draw_fps(overlay_frame)
-        self._draw_detections(overlay_frame)
+        if self.settings.show_dev_detections:
+            self._draw_detections(overlay_frame)
         ok, buffer = cv2.imencode(
             ".jpg",
             overlay_frame,
@@ -662,12 +839,6 @@ class CameraWorker:
         )
         overlay_jpeg = buffer.tobytes() if ok else None
         return clean_jpeg, overlay_jpeg
-
-    def _add_to_event_buffer(self, frame) -> None:
-        if not self.settings.event_buffer_enabled:
-            return
-        now = datetime.utcnow()
-        self._event_buffer.append((now, frame.copy()))
 
     def _check_motion_zones(self, frame) -> None:
         if not self._motion_zones:
@@ -704,21 +875,42 @@ class CameraWorker:
                     {"zoneId": zone["id"], "changedRatio": ratio},
                 )
 
-    def _schedule_event_marker(self, event_type: str, metadata: dict | None = None) -> None:
+    def _schedule_event_marker(
+        self,
+        event_type: str,
+        metadata: dict | None = None,
+        tenant_ids: list[str] | None = None,
+    ) -> None:
+        target_tenant_ids = tenant_ids or self.camera.tenantIds
+        cache_key = f"{event_type}:{','.join(sorted(target_tenant_ids))}"
         now = time.monotonic()
-        last_event_at = self._last_event_clip_at.get(event_type, 0)
+        last_event_at = self._last_event_marker_at.get(cache_key, 0)
         if now - last_event_at < self.settings.event_clip_cooldown_seconds:
             return
 
-        self._last_event_clip_at[event_type] = now
+        self._remember_detection_cache(self._last_event_marker_at, cache_key, now)
         task = asyncio.create_task(
-            self._save_event_marker(event_type, metadata or {}),
+            self._save_event_marker(event_type, metadata or {}, target_tenant_ids),
             name=f"event-marker-{self.camera_id}-{event_type}",
         )
-        self._event_clip_tasks.add(task)
-        task.add_done_callback(self._event_clip_tasks.discard)
+        self._event_marker_tasks.add(task)
+        task.add_done_callback(self._event_marker_done)
 
-    async def _save_event_marker(self, event_type: str, metadata: dict) -> None:
+    def _event_marker_done(self, task: asyncio.Task) -> None:
+        self._event_marker_tasks.discard(task)
+        if task.cancelled():
+            return
+        try:
+            task.result()
+        except Exception:
+            logger.exception("Event marker failed for camera %s", self.camera_id)
+
+    async def _save_event_marker(
+        self,
+        event_type: str,
+        metadata: dict,
+        tenant_ids: list[str],
+    ) -> None:
         timestamp = datetime.utcnow()
         marker_metadata = {
             **metadata,
@@ -731,16 +923,17 @@ class CameraWorker:
                 timestamp + timedelta(seconds=self.settings.event_marker_history_after_seconds)
             ).isoformat(),
         }
-        await self.event_service.create_camera_event(
-            RuntimeEvent(
-                tenantId=self.camera.tenantId,
-                cameraId=self.camera.cameraId,
-                eventType=event_type,
-                timestamp=timestamp,
-                metadata=marker_metadata,
-            ),
-            send_to_erp=True,
-        )
+        for tenant_id in tenant_ids:
+            await self.event_service.create_camera_event(
+                RuntimeEvent(
+                    tenantId=tenant_id,
+                    cameraId=self.camera.cameraId,
+                    eventType=event_type,
+                    timestamp=timestamp,
+                    metadata=marker_metadata,
+                ),
+                send_to_erp=True,
+            )
 
     def _camera_channel(self) -> str | None:
         if "/Streaming/Channels/" in self.camera.rtspUrl:
@@ -748,62 +941,6 @@ class CameraWorker:
         if "/Streaming/tracks/" in self.camera.rtspUrl:
             return self.camera.rtspUrl.rsplit("/", 1)[-1]
         return None
-
-    async def _save_event_clip(self, reason: str, buffered_frames: list[tuple[datetime, np.ndarray]], metadata: dict) -> None:
-        clip_path = await asyncio.to_thread(self._write_event_clip, reason, buffered_frames)
-        await self.event_service.create_camera_event(
-            RuntimeEvent(
-                tenantId=self.camera.tenantId,
-                cameraId=self.camera.cameraId,
-                eventType="EVENT_CLIP_SAVED",
-                snapshotPath=str(clip_path),
-                timestamp=datetime.utcnow(),
-                metadata={"reason": reason, **metadata},
-            ),
-            send_to_erp=bool(self.settings.erp_base_url),
-        )
-
-    def _write_event_clip(self, reason: str, buffered_frames: list[tuple[datetime, np.ndarray]]) -> Path:
-        tenant_dir = self.settings.event_clip_dir / self.camera.tenantId / self.camera.cameraId
-        tenant_dir.mkdir(parents=True, exist_ok=True)
-        clean_reason = "".join(char if char.isalnum() or char in ("-", "_") else "_" for char in reason)
-        filename = f"{datetime.utcnow().strftime('%Y%m%dT%H%M%S%f')}_{clean_reason}.mp4"
-        clip_path = tenant_dir / filename
-
-        sampled_frames = self._sample_clip_frames(buffered_frames)
-        first_frame = sampled_frames[0][1]
-        height, width = first_frame.shape[:2]
-        writer = cv2.VideoWriter(
-            str(clip_path),
-            cv2.VideoWriter_fourcc(*"mp4v"),
-            self.settings.event_clip_fps,
-            (width, height),
-        )
-        try:
-            for _, frame in sampled_frames:
-                if frame.shape[1] != width or frame.shape[0] != height:
-                    frame = cv2.resize(frame, (width, height))
-                writer.write(frame)
-        finally:
-            writer.release()
-
-        logger.info("Saved event clip for camera %s: %s", self.camera_id, clip_path)
-        return clip_path
-
-    def _sample_clip_frames(self, buffered_frames: list[tuple[datetime, np.ndarray]]) -> list[tuple[datetime, np.ndarray]]:
-        if len(buffered_frames) <= 1:
-            return buffered_frames
-
-        min_delta = 1 / self.settings.event_clip_fps
-        sampled = []
-        last_timestamp = None
-        for timestamp, frame in buffered_frames:
-            current_timestamp = timestamp.timestamp()
-            if last_timestamp is None or current_timestamp - last_timestamp >= min_delta:
-                sampled.append((timestamp, frame))
-                last_timestamp = current_timestamp
-
-        return sampled or [buffered_frames[-1]]
 
     def _draw_motion_zones(self, frame) -> None:
         for zone in self._motion_zones:
@@ -828,65 +965,102 @@ class CameraWorker:
         for detection in self.latest_fire_detections:
             self._draw_fire_annotation(frame, detection, show_label=True)
 
-    async def _save_frame_snapshot(self, frame, detections: list[dict]) -> str:
+    async def _save_frame_snapshot(
+        self,
+        frame,
+        detections: list[dict],
+        tenant_id: str,
+    ) -> str:
+        assignment = self._assignment_for_tenant(tenant_id)
         snapshot_frame = self._snapshot_frame(frame, detections)
         snapshot_path = await asyncio.to_thread(
             self.snapshot_service.save_frame,
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             snapshot_frame,
         )
         await self.snapshot_service.save_metadata(
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             snapshot_path,
             "FACE_DETECTIONS",
-            {"detections": [self._metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
+            {
+                "detections": [
+                    self._metadata(
+                        detection,
+                        self._matching_zone(detection["bbox"], assignment) if assignment else None,
+                    )
+                    for detection in detections
+                ]
+            },
         )
         return snapshot_path
 
-    async def _save_plate_snapshot(self, frame, detections: list[dict]) -> str:
+    async def _save_plate_snapshot(self, frame, detections: list[dict], tenant_id: str) -> str:
+        assignment = self._assignment_for_tenant(tenant_id)
         snapshot_frame = self._plate_snapshot_frame(frame, detections)
         snapshot_path = await asyncio.to_thread(
             self.snapshot_service.save_frame,
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             snapshot_frame,
         )
         await self.snapshot_service.save_metadata(
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             snapshot_path,
             "PLATE_DETECTIONS",
-            {"detections": [self._plate_metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
+            {
+                "detections": [
+                    self._plate_metadata(
+                        detection,
+                        self._matching_zone(detection["bbox"], assignment) if assignment else None,
+                    )
+                    for detection in detections
+                ]
+            },
         )
         return snapshot_path
 
-    async def _save_fire_snapshot(self, frame, detections: list[dict]) -> str:
+    async def _save_fire_snapshot(self, frame, detections: list[dict], tenant_id: str) -> str:
+        assignment = self._assignment_for_tenant(tenant_id)
         snapshot_frame = self._fire_snapshot_frame(frame, detections)
         snapshot_path = await asyncio.to_thread(
             self.snapshot_service.save_frame,
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             snapshot_frame,
         )
         await self.snapshot_service.save_metadata(
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             snapshot_path,
             "FIRE_DETECTIONS",
-            {"detections": [self._fire_metadata(detection, self._matching_zone(detection["bbox"])) for detection in detections]},
+            {
+                "detections": [
+                    self._fire_metadata(
+                        detection,
+                        self._matching_zone(detection["bbox"], assignment) if assignment else None,
+                    )
+                    for detection in detections
+                ]
+            },
         )
         return snapshot_path
 
-    async def _save_unknown_face_crop(self, frame, result: dict) -> str | None:
-        existing_path = self._matched_unknown_face_crop_path(result)
+    async def _save_unknown_face_crop(
+        self,
+        frame,
+        result: dict,
+        tenant_id: str,
+    ) -> str | None:
+        existing_path = self._matched_unknown_face_crop_path(result, tenant_id)
         if existing_path:
             return existing_path
 
-        existing_path = await self._find_stored_unknown_face_crop_path(result)
+        existing_path = await self._find_stored_unknown_face_crop_path(result, tenant_id)
         if existing_path:
-            self._remember_unknown_face_crop(result, existing_path)
+            self._remember_unknown_face_crop(result, existing_path, tenant_id)
             return existing_path
 
         crop = self._face_crop(frame, result.get("bbox"))
@@ -894,12 +1068,12 @@ class CameraWorker:
             return None
         crop_path = await asyncio.to_thread(
             self.snapshot_service.save_face_crop,
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             crop,
         )
-        self._remember_unknown_face_crop(result, crop_path)
-        await self._register_stored_unknown_face_crop(result, crop_path)
+        self._remember_unknown_face_crop(result, crop_path, tenant_id)
+        await self._register_stored_unknown_face_crop(result, crop_path, tenant_id)
         return crop_path
 
     @staticmethod
@@ -922,59 +1096,80 @@ class CameraWorker:
             return None
         return frame[top:bottom, left:right].copy()
 
-    def _matched_unknown_face_crop_path(self, result: dict) -> str | None:
+    def _matched_unknown_face_crop_path(self, result: dict, tenant_id: str) -> str | None:
         embedding = result.get("_embedding")
         if embedding is None:
             return None
 
         current = np.array(embedding, dtype=np.float32)
-        for cached, crop_path in self._unknown_face_crop_cache:
+        for cached_tenant_id, cached, crop_path in self._unknown_face_crop_cache:
+            if cached_tenant_id != tenant_id:
+                continue
             score = float(np.dot(current, cached))
             if score >= self.settings.unknown_face_crop_similarity_threshold:
-                return crop_path
+                path = Path(crop_path)
+                if not path.is_absolute():
+                    path = Path.cwd() / path
+                if path.is_file():
+                    return crop_path
         return None
 
-    def _remember_unknown_face_crop(self, result: dict, crop_path: str) -> None:
+    def _remember_unknown_face_crop(self, result: dict, crop_path: str, tenant_id: str) -> None:
         embedding = result.get("_embedding")
         if embedding is None:
             return
-        self._unknown_face_crop_cache.append((np.array(embedding, dtype=np.float32), crop_path))
+        self._unknown_face_crop_cache.append(
+            (tenant_id, np.array(embedding, dtype=np.float32), crop_path)
+        )
 
-    async def _find_stored_unknown_face_crop_path(self, result: dict) -> str | None:
+    async def _find_stored_unknown_face_crop_path(self, result: dict, tenant_id: str) -> str | None:
         embedding = result.get("_embedding")
         if embedding is None:
             return None
         return await self.snapshot_service.find_unknown_face_crop(
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             embedding,
             self.settings.unknown_face_crop_similarity_threshold,
         )
 
-    async def _register_stored_unknown_face_crop(self, result: dict, crop_path: str) -> None:
+    async def _register_stored_unknown_face_crop(
+        self,
+        result: dict,
+        crop_path: str,
+        tenant_id: str,
+    ) -> None:
         embedding = result.get("_embedding")
         if embedding is None:
             return
         await self.snapshot_service.register_unknown_face_crop(
-            self.camera.tenantId,
+            tenant_id,
             self.camera.cameraId,
             crop_path,
             embedding,
             metadata={"bbox": result.get("bbox"), "detectionScore": result.get("detectionScore")},
         )
 
-    def _track_weak_known_candidate(self, frame, result: dict, zone: ZoneConfig | None) -> bool:
+    def _track_weak_known_candidate(self, frame, result: dict) -> bool:
+        tenant_id = result.get("bestCandidateTenantId")
         employee_id = result.get("bestCandidateEmployeeId")
         score = result.get("bestCandidateScore")
-        if not employee_id or score is None:
+        assignment = self._assignment_for_tenant(tenant_id)
+        if not tenant_id or not employee_id or score is None or assignment is None:
             return False
 
-        min_score = self.rules.recognitionThreshold - self.settings.recognition_candidate_score_margin
+        zone = self._matching_zone(result["bbox"], assignment)
+        if assignment.zones and zone is None:
+            return False
+
+        rules = self._rules_for(tenant_id)
+        min_score = rules.recognitionThreshold - self.settings.recognition_candidate_score_margin
         if score < min_score:
             return False
 
         now = time.monotonic()
-        track = self._weak_recognition_tracks.get(employee_id)
+        track_key = (tenant_id, employee_id)
+        track = self._weak_recognition_tracks.get(track_key)
         track_expired = track is not None and now - track["started_at"] > self.settings.recognition_candidate_window_seconds
         if (
             track is None
@@ -987,15 +1182,16 @@ class CameraWorker:
                 "best_frame": None,
                 "best_result": None,
                 "best_zone": None,
+                "assignment": assignment,
             }
-            self._weak_recognition_tracks[employee_id] = track
+            self._weak_recognition_tracks[track_key] = track
 
         track["hits"] += 1
         quality_score = self._candidate_quality_score(frame, result)
         if quality_score > track["best_quality_score"]:
             track["best_quality_score"] = quality_score
             track["best_frame"] = frame.copy()
-            track["best_result"] = self._promoted_known_result(result)
+            track["best_result"] = self._promoted_known_result(result, tenant_id, rules)
             track["best_zone"] = zone
         return True
 
@@ -1010,61 +1206,85 @@ class CameraWorker:
         size_score = min(face_height / 140.0, 1.0)
         return recognition_score * 0.55 + detection_score * 0.20 + size_score * 0.15 + blur_score * 0.10
 
-    def _promoted_known_result(self, result: dict) -> dict:
+    def _promoted_known_result(
+        self,
+        result: dict,
+        tenant_id: str,
+        rules: AttendanceRules,
+    ) -> dict:
         promoted = dict(result)
         raw_score = result.get("bestCandidateScore")
         promoted["matched"] = True
         promoted["employeeId"] = result.get("bestCandidateEmployeeId")
         promoted["employeeName"] = result.get("bestCandidateEmployeeName")
+        promoted["tenantId"] = tenant_id
         promoted["rawCandidateScore"] = raw_score
-        promoted["confidence"] = max(raw_score or 0.0, self.rules.recognitionThreshold)
+        promoted["confidence"] = max(raw_score or 0.0, rules.recognitionThreshold)
         promoted["promotedFromWeakCandidate"] = True
         return promoted
 
     async def _flush_ready_weak_recognition_tracks(self) -> None:
         now = time.monotonic()
-        stale_employee_ids = [
-            employee_id
-            for employee_id, track in self._weak_recognition_tracks.items()
+        stale_track_keys = [
+            track_key
+            for track_key, track in self._weak_recognition_tracks.items()
             if track["hits"] < self.settings.recognition_candidate_min_hits
             and now - track["started_at"] >= self.settings.recognition_candidate_window_seconds
         ]
-        for employee_id in stale_employee_ids:
-            self._weak_recognition_tracks.pop(employee_id, None)
+        for track_key in stale_track_keys:
+            self._weak_recognition_tracks.pop(track_key, None)
 
-        ready_employee_ids = [
-            employee_id
-            for employee_id, track in self._weak_recognition_tracks.items()
+        ready_track_keys = [
+            track_key
+            for track_key, track in self._weak_recognition_tracks.items()
             if self._weak_recognition_track_is_ready(track, now)
         ]
 
-        for employee_id in ready_employee_ids:
-            track = self._weak_recognition_tracks.pop(employee_id, None)
+        for track_key in ready_track_keys:
+            track = self._weak_recognition_tracks.pop(track_key, None)
             if not track or not track["best_result"] or track["best_frame"] is None:
                 continue
 
             result = track["best_result"]
-            if self._is_duplicate_recognized(result):
+            assignment = track["assignment"]
+            rules = self._rules_for(assignment.tenantId)
+            if self._is_duplicate_recognized(result, assignment.tenantId):
                 continue
 
             snapshot_path = (
-                await self._save_frame_snapshot(track["best_frame"], [result])
-                if self.rules.saveFaceSnapshots
+                await self._save_frame_snapshot(
+                    track["best_frame"],
+                    [result],
+                    assignment.tenantId,
+                )
+                if self._face_snapshots_enabled()
                 else None
             )
-            await self._handle_recognized(result, track["best_zone"], snapshot_path)
+            await self._handle_recognized(
+                result,
+                assignment,
+                track["best_zone"],
+                snapshot_path,
+            )
 
     def _weak_recognition_track_is_ready(self, track: dict, now: float) -> bool:
         if track["hits"] < self.settings.recognition_candidate_min_hits:
             return False
 
         result = track.get("best_result") or {}
+        assignment = track["assignment"]
+        rules = self._rules_for(assignment.tenantId)
         raw_score = result.get("rawCandidateScore") or result.get("bestCandidateScore") or 0.0
-        near_threshold = raw_score >= self.rules.recognitionThreshold - self.settings.recognition_candidate_fast_margin
+        near_threshold = raw_score >= rules.recognitionThreshold - self.settings.recognition_candidate_fast_margin
         window_elapsed = now - track["started_at"] >= self.settings.recognition_candidate_window_seconds
         return near_threshold or window_elapsed
 
-    def _is_good_unknown_candidate(self, frame, result: dict) -> bool:
+    def _is_good_unknown_candidate(
+        self,
+        frame,
+        result: dict,
+        rules: AttendanceRules,
+    ) -> bool:
         detection_score = result.get("detectionScore")
         if detection_score is None or detection_score < self.settings.unknown_face_min_detection_score:
             return False
@@ -1080,7 +1300,7 @@ class CameraWorker:
         best_candidate_score = result.get("bestCandidateScore")
         if (
             best_candidate_score is not None
-            and best_candidate_score >= self.rules.recognitionThreshold - self.settings.unknown_face_skip_weak_known_margin
+            and best_candidate_score >= rules.recognitionThreshold - self.settings.unknown_face_skip_weak_known_margin
         ):
             return False
 
@@ -1096,7 +1316,7 @@ class CameraWorker:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         return float(cv2.Laplacian(gray, cv2.CV_64F).var())
 
-    def _is_duplicate_unknown(self, result: dict) -> bool:
+    def _is_duplicate_unknown(self, result: dict, tenant_id: str) -> bool:
         embedding = result.get("_embedding")
         if embedding is None or self.settings.unknown_duplicate_cooldown_seconds <= 0:
             return False
@@ -1107,25 +1327,28 @@ class CameraWorker:
             self._unknown_face_cache.popleft()
 
         current = np.array(embedding, dtype=np.float32)
-        for _, cached in self._unknown_face_cache:
+        for _, cached_tenant_id, cached in self._unknown_face_cache:
+            if cached_tenant_id != tenant_id:
+                continue
             score = float(np.dot(current, cached))
             if score >= self.settings.unknown_duplicate_similarity_threshold:
                 return True
 
-        self._unknown_face_cache.append((now, current))
+        self._unknown_face_cache.append((now, tenant_id, current))
         return False
 
-    def _is_duplicate_recognized(self, result: dict) -> bool:
+    def _is_duplicate_recognized(self, result: dict, tenant_id: str) -> bool:
         employee_id = result.get("employeeId")
         if not employee_id or self.settings.recognized_duplicate_cooldown_seconds <= 0:
             return False
 
         now = time.monotonic()
-        last_seen_at = self._recognized_face_cache.get(employee_id)
+        cache_key = (tenant_id, employee_id)
+        last_seen_at = self._recognized_face_cache.get(cache_key)
         if last_seen_at is not None and now - last_seen_at < self.settings.recognized_duplicate_cooldown_seconds:
             return True
 
-        self._recognized_face_cache[employee_id] = now
+        self._remember_detection_cache(self._recognized_face_cache, cache_key, now)
         return False
 
     def _is_duplicate_plate(self, result: dict) -> bool:
@@ -1146,7 +1369,7 @@ class CameraWorker:
         if last_seen_at is not None and now - last_seen_at < self.settings.plate_duplicate_cooldown_seconds:
             return True
 
-        self._plate_event_cache[cache_key] = now
+        self._remember_detection_cache(self._plate_event_cache, cache_key, now)
         return False
 
     def _is_duplicate_fire(self, result: dict) -> bool:
@@ -1164,8 +1387,13 @@ class CameraWorker:
         if last_seen_at is not None and now - last_seen_at < self.settings.fire_duplicate_cooldown_seconds:
             return True
 
-        self._fire_event_cache[cache_key] = now
+        self._remember_detection_cache(self._fire_event_cache, cache_key, now)
         return False
+
+    def _remember_detection_cache(self, cache: dict, key, timestamp: float) -> None:
+        cache[key] = timestamp
+        while len(cache) > self.settings.detection_event_cache_max_entries:
+            cache.pop(next(iter(cache)))
 
     @staticmethod
     def _public_detections(detections: list[dict]) -> list[dict]:

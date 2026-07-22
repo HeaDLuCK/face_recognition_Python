@@ -1,6 +1,8 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
+import cv2
 from fastapi import FastAPI
 
 from app.api import attendance, cameras, events, health, sync, test, unknown_faces
@@ -20,6 +22,8 @@ from app.services.log_service import LogService
 from app.services.sync_service import SyncService
 from app.storage.snapshot_service import SnapshotService
 
+logger = logging.getLogger(__name__)
+
 
 def configure_logging() -> None:
     settings = get_settings()
@@ -33,6 +37,7 @@ def configure_logging() -> None:
 async def lifespan(app: FastAPI):
     configure_logging()
     settings = get_settings()
+    cv2.setNumThreads(settings.opencv_num_threads)
     settings.snapshot_dir.mkdir(parents=True, exist_ok=True)
 
     db = await connect_to_mongo()
@@ -47,7 +52,12 @@ async def lifespan(app: FastAPI):
     plate_recognition_service = PlateRecognitionService(settings)
     fire_detection_service = FireDetectionService(settings)
     log_service = LogService(db)
-    snapshot_service = SnapshotService(settings.snapshot_dir, db)
+    snapshot_service = SnapshotService(
+        settings.snapshot_dir,
+        db,
+        unknown_face_db_match_limit=settings.unknown_face_db_match_limit,
+        purge_batch_size=settings.snapshot_purge_batch_size,
+    )
     event_service = EventService(db, erp_client)
     attendance_service = AttendanceService(db)
     sync_service = SyncService(
@@ -56,6 +66,7 @@ async def lifespan(app: FastAPI):
         embedding_service=embedding_service,
         face_engine=face_engine,
         log_service=log_service,
+        snapshot_service=snapshot_service,
         db=db,
     )
     camera_manager = CameraManager(
@@ -85,15 +96,27 @@ async def lifespan(app: FastAPI):
     app.state.sync_service = sync_service
     app.state.camera_manager = camera_manager
 
-    saved_config = await sync_service.load_saved_config()
-    if settings.auto_start_saved_cameras and saved_config["cameras"] > 0:
-        await camera_manager.start_all()
-
+    image_purge_task = None
     try:
+        saved_config = await sync_service.load_saved_config()
+        image_purge_task = asyncio.create_task(
+            _run_image_purge_loop(sync_service),
+            name="image-retention-purge",
+        )
+        if settings.auto_start_saved_cameras and saved_config["cameras"] > 0:
+            await camera_manager.start_all()
         yield
     finally:
-        await camera_manager.stop_all()
-        await close_mongo_connection()
+        if image_purge_task is not None:
+            image_purge_task.cancel()
+            await asyncio.gather(image_purge_task, return_exceptions=True)
+        try:
+            await camera_manager.shutdown()
+        finally:
+            try:
+                await erp_client.aclose()
+            finally:
+                await close_mongo_connection()
 
 
 app = FastAPI(title=get_settings().app_name, version="0.2.0", lifespan=lifespan)
@@ -105,3 +128,14 @@ app.include_router(events.router, prefix="/api/events", tags=["events"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["attendance"])
 app.include_router(test.router, prefix="/api/test", tags=["recognition-test"])
 app.include_router(unknown_faces.router, prefix="/api/unknown-faces", tags=["unknown-faces"])
+
+
+async def _run_image_purge_loop(sync_service: SyncService) -> None:
+    while True:
+        await asyncio.sleep(3600)
+        try:
+            await sync_service.purge_images_for_loaded_rules()
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Image retention purge failed")

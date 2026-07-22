@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, unquote, urlsplit
@@ -8,6 +9,8 @@ from xml.etree import ElementTree
 
 import cv2
 import httpx
+
+from app.services.url_utils import redact_url_credentials
 
 
 def load_env(path=".env"):
@@ -140,6 +143,7 @@ def test_playback_rtsp(url, timeout_seconds=10):
             if ok and frame is not None:
                 height, width = frame.shape[:2]
                 return True, width, height
+            time.sleep(0.02)
         return False, 0, 0
     finally:
         capture.release()
@@ -203,7 +207,7 @@ def main():
         start=start,
         end=end,
     )
-    print(url)
+    print(redact_url_credentials(url))
     ok, width, height = test_playback_rtsp(url)
     if ok:
         print(f"Playback RTSP OK. First frame: {width}x{height}")
