@@ -566,7 +566,6 @@ class CameraWorker:
                 timestamp=timestamp,
                 metadata=metadata,
             ),
-            send_to_erp=True,
         )
 
     async def _run_fire_detection(self, frame) -> None:
@@ -620,7 +619,6 @@ class CameraWorker:
                 timestamp=timestamp,
                 metadata=metadata,
             ),
-            send_to_erp=True,
         )
 
     async def _handle_recognized(
@@ -663,7 +661,6 @@ class CameraWorker:
                 timestamp=datetime.utcnow(),
                 metadata=metadata,
             ),
-            send_to_erp=True,
         )
 
     def _start_cloud_stream_push(self) -> None:
@@ -743,7 +740,6 @@ class CameraWorker:
                 timestamp=datetime.utcnow(),
                 metadata=metadata,
             ),
-            send_to_erp=True,
         )
         if self._rules_for(assignment.tenantId).sendUnknownFaceAlert:
             await self.event_service.create_alert_event(
@@ -756,7 +752,6 @@ class CameraWorker:
                     timestamp=datetime.utcnow(),
                     metadata=metadata,
                 ),
-                send_to_erp=True,
             )
 
     async def _emit_camera_event(self, event_type: str, metadata: dict) -> None:
@@ -769,7 +764,6 @@ class CameraWorker:
                     timestamp=datetime.utcnow(),
                     metadata=metadata,
                 ),
-                send_to_erp=True,
             )
 
     def _assignment_for_tenant(self, tenant_id: str | None) -> CameraAssignment | None:
@@ -932,7 +926,6 @@ class CameraWorker:
                     timestamp=timestamp,
                     metadata=marker_metadata,
                 ),
-                send_to_erp=True,
             )
 
     def _camera_channel(self) -> str | None:

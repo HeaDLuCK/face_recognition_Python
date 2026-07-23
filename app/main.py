@@ -10,7 +10,6 @@ from app.attendance.attendance_service import AttendanceService
 from app.cameras.camera_manager import CameraManager
 from app.config import get_settings
 from app.database import close_mongo_connection, connect_to_mongo
-from app.erp.erp_client import ErpClient
 from app.events.event_service import EventService
 from app.face.embedding_service import EmbeddingService
 from app.face.insightface_engine import InsightFaceEngine
@@ -41,7 +40,6 @@ async def lifespan(app: FastAPI):
     settings.snapshot_dir.mkdir(parents=True, exist_ok=True)
 
     db = await connect_to_mongo()
-    erp_client = ErpClient(settings)
     runtime_state = RuntimeState(settings)
     face_engine = InsightFaceEngine(settings)
     embedding_service = EmbeddingService(db)
@@ -58,10 +56,9 @@ async def lifespan(app: FastAPI):
         unknown_face_db_match_limit=settings.unknown_face_db_match_limit,
         purge_batch_size=settings.snapshot_purge_batch_size,
     )
-    event_service = EventService(db, erp_client)
+    event_service = EventService(db)
     attendance_service = AttendanceService(db)
     sync_service = SyncService(
-        erp_client=erp_client,
         runtime_state=runtime_state,
         embedding_service=embedding_service,
         face_engine=face_engine,
@@ -82,7 +79,6 @@ async def lifespan(app: FastAPI):
     )
 
     app.state.db = db
-    app.state.erp_client = erp_client
     app.state.runtime_state = runtime_state
     app.state.face_engine = face_engine
     app.state.embedding_service = embedding_service
@@ -113,10 +109,7 @@ async def lifespan(app: FastAPI):
         try:
             await camera_manager.shutdown()
         finally:
-            try:
-                await erp_client.aclose()
-            finally:
-                await close_mongo_connection()
+            await close_mongo_connection()
 
 
 app = FastAPI(title=get_settings().app_name, version="0.2.0", lifespan=lifespan)
