@@ -24,7 +24,7 @@ def build_channel_url(base_url: str, channel: str | None) -> str:
     return urlunsplit((parts.scheme, parts.netloc, path, parts.query, parts.fragment))
 
 
-def draw_faces(frame, detections, processed_at: float) -> None:
+def draw_faces(frame, detections, processed_at: float, source_frame_id: int | None = None) -> None:
     for index, detection in enumerate(detections, start=1):
         x1, y1, x2, y2 = detection.bbox
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 220, 255), 2)
@@ -41,7 +41,7 @@ def draw_faces(frame, detections, processed_at: float) -> None:
 
     cv2.putText(
         frame,
-        f"faces: {len(detections)}   last AI: {processed_at:.1f}s",
+        f"faces: {len(detections)}   last AI: {processed_at:.1f}s   ai_frame: {source_frame_id or '-'}",
         (12, 30),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
@@ -83,6 +83,9 @@ def main() -> None:
     ai_future = None
     display_buffer = deque(maxlen=max(args.display_delay + 1, 1))
     detections_by_frame = {}
+    latest_detections = []
+    latest_processed_at = 0.0
+    latest_detection_frame_id = None
     executor = ThreadPoolExecutor(max_workers=1)
     window_name = "Face AI Debug - press q to quit"
     print(f"Opened {source}")
@@ -111,6 +114,9 @@ def main() -> None:
             if not args.plain and ai_future is not None and ai_future.done():
                 result_frame_id, result_detections, result_processed_at = ai_future.result()
                 detections_by_frame[result_frame_id] = (result_detections, result_processed_at)
+                latest_detections = result_detections
+                latest_processed_at = result_processed_at
+                latest_detection_frame_id = result_frame_id
                 oldest_frame_id = display_buffer[0][0] if display_buffer else result_frame_id
                 detections_by_frame = {
                     frame_id: value
@@ -134,8 +140,11 @@ def main() -> None:
                 ai_future = executor.submit(process_frame)
 
             if not args.plain:
-                detections, processed_at = detections_by_frame.get(display_frame_id, ([], 0.0))
-                draw_faces(display_frame, detections, processed_at)
+                detections, processed_at = detections_by_frame.get(
+                    display_frame_id,
+                    (latest_detections, latest_processed_at),
+                )
+                draw_faces(display_frame, detections, processed_at, latest_detection_frame_id)
 
             if args.resize_width and display_frame.shape[1] > args.resize_width:
                 ratio = args.resize_width / display_frame.shape[1]
