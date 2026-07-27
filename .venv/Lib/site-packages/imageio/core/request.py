@@ -6,6 +6,7 @@ Definition of the Request object, which acts as a kind of bridge between
 what the user wants and what the plugins can.
 """
 
+import errno
 import os
 from io import BytesIO
 import zipfile
@@ -52,12 +53,12 @@ class ImageMode(str, enum.Enum):
     ``Request.ImageMode`` and ``Request.IOMode``. The image mode that tells the
     plugin the desired (and expected) image shape. Available values are
 
-    - single_image ("i"): Return a single image extending in two spacial
+    - single_image ("i"): Return a single image extending in two spatial
       dimensions
-    - multi_image ("I"): Return a list of images extending in two spacial
+    - multi_image ("I"): Return a list of images extending in two spatial
       dimensions
     - single_volume ("v"): Return an image extending into multiple dimensions.
-      E.g. three spacial dimensions for image stacks, or two spatial and one
+      E.g. three spatial dimensions for image stacks, or two spatial and one
       time dimension for videos
     - multi_volume ("V"): Return a list of images extending into multiple
       dimensions.
@@ -162,7 +163,7 @@ RETURN_BYTES = "<bytes>"
 EXAMPLE_IMAGES = {
     "astronaut.png": "Image of the astronaut Eileen Collins",
     "camera.png": "A grayscale image of a photographer",
-    "checkerboard.png": "Black and white image of a chekerboard",
+    "checkerboard.png": "Black and white image of a checkerboard",
     "wood.jpg": "A (repeatable) texture of wooden planks",
     "bricks.jpg": "A (repeatable) texture of stone bricks",
     "clock.png": "Photo of a clock with motion blur (Stefan van der Walt)",
@@ -407,12 +408,16 @@ class Request(object):
             if is_read_request:
                 # Reading: check that the file exists (but is allowed a dir)
                 if not os.path.exists(fn):
-                    raise FileNotFoundError("No such file: '%s'" % fn)
+                    raise FileNotFoundError(
+                        errno.ENOENT, "No such file or directory", fn
+                    )
             else:
                 # Writing: check that the directory to write to does exist
                 dn = os.path.dirname(fn)
                 if not os.path.exists(dn):
-                    raise FileNotFoundError("The directory %r does not exist" % dn)
+                    raise FileNotFoundError(
+                        errno.ENOENT, "The directory does not exist", dn
+                    )
 
     @property
     def filename(self):

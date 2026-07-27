@@ -10,7 +10,7 @@ import glob
 import onnxruntime
 from .arcface_onnx import *
 from .retinaface import *
-#from .scrfd import *
+from .scrfd import *
 from .landmark import *
 from .attribute import Attribute
 from .inswapper import INSwapper
@@ -45,7 +45,7 @@ class ModelRouter:
         outputs = session.get_outputs()
 
         if len(outputs)>=5:
-            return RetinaFace(model_file=self.onnx_file, session=session)
+            return SCRFD(model_file=self.onnx_file, session=session)
         elif input_shape[2]==192 and input_shape[3]==192:
             return Landmark(model_file=self.onnx_file, session=session)
         elif input_shape[2]==96 and input_shape[3]==96:
@@ -61,7 +61,7 @@ class ModelRouter:
 def find_onnx_file(dir_path):
     if not os.path.exists(dir_path):
         return None
-    paths = glob.glob("%s/*.onnx" % dir_path)
+    paths = glob.glob(osp.join(dir_path, "*.onnx"))
     if len(paths) == 0:
         return None
     paths = sorted(paths)
@@ -95,4 +95,3 @@ def get_model(name, **kwargs):
     provider_options = kwargs.get('provider_options', get_default_provider_options())
     model = router.get_model(providers=providers, provider_options=provider_options)
     return model
-

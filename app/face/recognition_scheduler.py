@@ -1,6 +1,9 @@
 import asyncio
 import logging
+import time
+from collections import OrderedDict
 from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -9,16 +12,25 @@ logger = logging.getLogger(__name__)
 FaceRecognitionHandler = Callable[[Any], Awaitable[None]]
 
 
-class FaceRecognitionScheduler:
-    """Run one face inference at a time and rotate fairly across cameras."""
+@dataclass
+class _PendingRecognition:
+    payload: Any
+    quality: float | None
 
-    def __init__(self) -> None:
+
+class FaceRecognitionScheduler:
+    """Run one face inference at a time and rotate fairly across cameras and tracks."""
+
+    def __init__(self, max_pending_per_camera: int = 12) -> None:
+        self.max_pending_per_camera = max_pending_per_camera
         self._camera_order: list[str] = []
         self._handlers: dict[str, FaceRecognitionHandler] = {}
-        self._pending_frames: dict[str, Any] = {}
+        self._pending_frames: dict[str, OrderedDict[str, _PendingRecognition]] = {}
         self._cursor = 0
         self._wake_event = asyncio.Event()
         self._task: asyncio.Task | None = None
+        self._active = False
+        self._last_completed_at = 0.0
 
     def register(self, camera_id: str, handler: FaceRecognitionHandler) -> None:
         if camera_id not in self._handlers:
@@ -38,14 +50,51 @@ class FaceRecognitionScheduler:
         self._normalize_cursor()
         logger.info("Unregistered camera %s from face AI scheduler", camera_id)
 
-    def submit(self, camera_id: str, frame: Any) -> bool:
+    def submit(
+        self,
+        camera_id: str,
+        frame: Any,
+        job_id: str | int | None = None,
+        quality: float | None = None,
+    ) -> bool:
         if camera_id not in self._handlers:
             return False
 
-        # One slot per camera prevents stale-frame queues while preserving fairness.
-        self._pending_frames[camera_id] = frame.copy()
+        pending = self._pending_frames.setdefault(camera_id, OrderedDict())
+        key = str(job_id) if job_id is not None else "__latest_camera_frame__"
+        existing = pending.get(key)
+        if (
+            existing is not None
+            and quality is not None
+            and existing.quality is not None
+            and quality <= existing.quality
+        ):
+            return False
+
+        if existing is None and len(pending) >= self.max_pending_per_camera:
+            return False
+        payload = frame.copy() if hasattr(frame, "copy") else frame
+        pending[key] = _PendingRecognition(payload=payload, quality=quality)
         self._wake_event.set()
         return True
+
+    @property
+    def pending_jobs(self) -> int:
+        return sum(len(pending) for pending in self._pending_frames.values())
+
+    @property
+    def is_idle(self) -> bool:
+        return not self._active and self.pending_jobs == 0
+
+    async def wait_until_idle(self, idle_seconds: float, timeout_seconds: float) -> bool:
+        started_at = time.monotonic()
+        while time.monotonic() - started_at < timeout_seconds:
+            if self.is_idle:
+                quiet_for = time.monotonic() - self._last_completed_at
+                if self._last_completed_at == 0.0 or quiet_for >= idle_seconds:
+                    return True
+            await asyncio.sleep(0.05)
+        return False
 
     async def close(self) -> None:
         if self._task and not self._task.done():
@@ -60,6 +109,7 @@ class FaceRecognitionScheduler:
         self._camera_order.clear()
         self._cursor = 0
         self._wake_event.clear()
+        self._active = False
 
     def _ensure_started(self) -> None:
         if self._task is None or self._task.done():
@@ -79,6 +129,7 @@ class FaceRecognitionScheduler:
 
             camera_id, handler, frame = scheduled
             try:
+                self._active = True
                 await handler(frame)
             except asyncio.CancelledError:
                 raise
@@ -87,6 +138,9 @@ class FaceRecognitionScheduler:
                     "Face recognition failed for camera %s; scheduler will continue",
                     camera_id,
                 )
+            finally:
+                self._active = False
+                self._last_completed_at = time.monotonic()
 
     def _take_next(self) -> tuple[str, FaceRecognitionHandler, Any] | None:
         camera_count = len(self._camera_order)
@@ -98,9 +152,13 @@ class FaceRecognitionScheduler:
             camera_id = self._camera_order[self._cursor]
             self._cursor = (self._cursor + 1) % camera_count
             handler = self._handlers.get(camera_id)
-            frame = self._pending_frames.pop(camera_id, None)
-            if handler is not None and frame is not None:
-                return camera_id, handler, frame
+            pending = self._pending_frames.get(camera_id)
+            if handler is None or not pending:
+                continue
+            _, item = pending.popitem(last=False)
+            if not pending:
+                self._pending_frames.pop(camera_id, None)
+            return camera_id, handler, item.payload
 
         return None
 

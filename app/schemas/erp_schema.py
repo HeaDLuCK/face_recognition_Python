@@ -133,6 +133,8 @@ class AttendanceRules(ErpBaseModel):
     saveUnknownFaces: bool = True
     saveUnknownFaceCrops: bool = True
     sendUnknownFaceAlert: bool = False
+    personTrackingEnabled: bool = True
+    historyRecoveryEnabled: bool = True
     imageRetentionDays: int = Field(
         default=0,
         ge=0,

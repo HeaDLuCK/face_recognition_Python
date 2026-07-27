@@ -21,6 +21,7 @@ class AttendanceService:
         confidence: float | None,
         snapshot_path: str | None,
         metadata: dict,
+        timestamp: datetime | None = None,
     ) -> dict:
         doc = {
             "detectionId": str(uuid4()),
@@ -31,7 +32,7 @@ class AttendanceService:
             "matched": matched,
             "confidence": confidence,
             "snapshotPath": snapshot_path,
-            "timestamp": datetime.utcnow(),
+            "timestamp": timestamp or datetime.utcnow(),
             "metadata": metadata,
         }
         await self.db.attendance_detections.insert_one(doc)
@@ -44,6 +45,7 @@ class AttendanceService:
         camera_direction: str,
         confidence: float | None,
         rules: AttendanceRules,
+        event_time: datetime | None = None,
     ) -> tuple[bool, str | None]:
         direction = self._attendance_direction(camera_direction)
         if direction is None:
@@ -51,14 +53,17 @@ class AttendanceService:
         if confidence is None or confidence < rules.recognitionThreshold:
             return False, direction
 
-        now = datetime.utcnow()
+        now = event_time or datetime.utcnow()
         cooldown = timedelta(seconds=rules.duplicateCooldownSeconds)
         last_log = await self.db.attendance_detections.find_one(
             {
                 "etsAuth": tenant_id,
                 "employeeId": employee_id,
                 "eventType": f"ATTENDANCE_{direction}",
-                "timestamp": {"$gte": now - cooldown},
+                "timestamp": {
+                    "$gte": now - cooldown,
+                    "$lte": now + cooldown,
+                },
             },
             {"_id": 1},
             sort=[("timestamp", -1)],

@@ -14,9 +14,12 @@ from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
 from app.fire.fire_detection_service import FireDetectionService
 from app.plates.plate_recognition_service import PlateRecognitionService
+from app.recovery.attendance_recovery_service import AttendanceRecoveryService
 from app.runtime_state import RuntimeState
 from app.services.log_service import LogService
 from app.storage.snapshot_service import SnapshotService
+from app.tracking.person_detection_scheduler import PersonDetectionScheduler
+from app.tracking.person_detection_service import PersonDetectionService
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +29,10 @@ class CameraManager:
         self,
         runtime_state: RuntimeState,
         recognition_service: RecognitionService,
+        face_recognition_scheduler: FaceRecognitionScheduler,
+        person_detection_service: PersonDetectionService,
+        person_detection_scheduler: PersonDetectionScheduler,
+        attendance_recovery_service: AttendanceRecoveryService,
         plate_recognition_service: PlateRecognitionService,
         fire_detection_service: FireDetectionService,
         snapshot_service: SnapshotService,
@@ -36,6 +43,9 @@ class CameraManager:
     ):
         self.runtime_state = runtime_state
         self.recognition_service = recognition_service
+        self.person_detection_service = person_detection_service
+        self.person_detection_scheduler = person_detection_scheduler
+        self.attendance_recovery_service = attendance_recovery_service
         self.plate_recognition_service = plate_recognition_service
         self.fire_detection_service = fire_detection_service
         self.snapshot_service = snapshot_service
@@ -43,7 +53,7 @@ class CameraManager:
         self.attendance_service = attendance_service
         self.log_service = log_service
         self.settings = settings
-        self.face_recognition_scheduler = FaceRecognitionScheduler()
+        self.face_recognition_scheduler = face_recognition_scheduler
         self.workers: dict[str, CameraWorker] = {}
 
     async def start_camera(self, camera_id: str) -> dict:
@@ -67,6 +77,9 @@ class CameraManager:
             },
             recognition_service=self.recognition_service,
             recognition_scheduler=self.face_recognition_scheduler,
+            person_detection_service=self.person_detection_service,
+            person_detection_scheduler=self.person_detection_scheduler,
+            attendance_recovery_service=self.attendance_recovery_service,
             plate_recognition_service=self.plate_recognition_service,
             fire_detection_service=self.fire_detection_service,
             snapshot_service=self.snapshot_service,
@@ -116,6 +129,7 @@ class CameraManager:
     async def shutdown(self) -> dict:
         stopped = await self.stop_all()
         await self.face_recognition_scheduler.close()
+        await self.person_detection_scheduler.close()
         return stopped
 
     async def restart_all(self) -> dict:
@@ -133,6 +147,11 @@ class CameraManager:
             "configuredCameras": len(configured),
             "runningCameras": len(running_ids),
             "lastSync": self.runtime_state.last_sync,
+            "faceScheduler": {
+                "pendingJobs": self.face_recognition_scheduler.pending_jobs,
+                "idle": self.face_recognition_scheduler.is_idle,
+            },
+            "personDetector": self.person_detection_scheduler.status(),
             "cameras": [
                 {
                     "etsAuth": camera.tenantId,
@@ -147,6 +166,11 @@ class CameraManager:
                         for assignment in camera.assignments
                     ],
                     "status": "running" if camera.cameraId in running_ids else "stopped",
+                    "runtime": (
+                        self.workers[camera.cameraId].status()
+                        if camera.cameraId in self.workers
+                        else None
+                    ),
                 }
                 for camera in configured
             ],

@@ -20,6 +20,24 @@ from .common import Face
 
 __all__ = ['FaceAnalysis']
 
+DEFAULT_DET_SIZES = [(128, 128), (640, 640)]
+
+
+def _is_auto_det_size(det_size):
+    if det_size is None:
+        return True
+    if isinstance(det_size, np.ndarray):
+        det_size = det_size.tolist()
+    if isinstance(det_size, (list, tuple)) and len(det_size) == 2:
+        first, second = det_size
+        if not isinstance(first, (list, tuple, np.ndarray)) and not isinstance(second, (list, tuple, np.ndarray)):
+            try:
+                return int(first) == 0 and int(second) == 0
+            except (TypeError, ValueError):
+                return False
+    return False
+
+
 class FaceAnalysis:
     def __init__(self, name=DEFAULT_MP_NAME, root='~/.insightface', allowed_modules=None, **kwargs):
         onnxruntime.set_default_logger_severity(3)
@@ -44,9 +62,10 @@ class FaceAnalysis:
         self.det_model = self.models['detection']
 
 
-    def prepare(self, ctx_id, det_thresh=0.5, det_size=(640, 640)):
+    def prepare(self, ctx_id, det_thresh=0.5, det_size=None):
         self.det_thresh = det_thresh
-        assert det_size is not None
+        if _is_auto_det_size(det_size):
+            det_size = list(DEFAULT_DET_SIZES)
         print('set det-size:', det_size)
         self.det_size = det_size
         for taskname, model in self.models.items():
@@ -55,10 +74,10 @@ class FaceAnalysis:
             else:
                 model.prepare(ctx_id)
 
-    def get(self, img, max_num=0):
+    def get(self, img, max_num=0, det_metric='default'):
         bboxes, kpss = self.det_model.detect(img,
                                              max_num=max_num,
-                                             metric='default')
+                                             metric=det_metric)
         if bboxes.shape[0] == 0:
             return []
         ret = []
@@ -81,11 +100,11 @@ class FaceAnalysis:
         dimg = img.copy()
         for i in range(len(faces)):
             face = faces[i]
-            box = face.bbox.astype(np.int)
+            box = face.bbox.astype(int)
             color = (0, 0, 255)
             cv2.rectangle(dimg, (box[0], box[1]), (box[2], box[3]), color, 2)
             if face.kps is not None:
-                kps = face.kps.astype(np.int)
+                kps = face.kps.astype(int)
                 #print(landmark.shape)
                 for l in range(kps.shape[0]):
                     color = (0, 0, 255)
@@ -100,10 +119,9 @@ class FaceAnalysis:
             #    if key.startswith('landmark_3d'):
             #        print(key, value.shape)
             #        print(value[0:10,:])
-            #        lmk = np.round(value).astype(np.int)
+            #        lmk = np.round(value).astype(int)
             #        for l in range(lmk.shape[0]):
             #            color = (255, 0, 0)
             #            cv2.circle(dimg, (lmk[l][0], lmk[l][1]), 1, color,
             #                       2)
         return dimg
-

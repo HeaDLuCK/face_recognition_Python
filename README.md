@@ -14,6 +14,8 @@ Implemented now:
 - Capability-gated `FACE_RECOGNITION`.
 - Capability-gated YOLO `PLATE_RECOGNITION` and `FIRE_DETECTION`.
 - Fair round-robin face inference across running cameras.
+- Optional motion-gated person tracking with separate recognition jobs per person.
+- Automatic Hikvision history recovery for unresolved attendance tracks.
 - Zone filtering for detections when ERP provides zones.
 - Attendance rules:
   - camera direction `IN` / `OUT`
@@ -42,6 +44,7 @@ The service writes runtime data only:
 - `alert_events`
 - `snapshot_metadata`
 - `service_logs`
+- `attendance_recovery_jobs`
 
 Every runtime document includes `tenantId`.
 
@@ -85,6 +88,8 @@ Expected attendance rules payload:
   "tenantId": "COMPANY_01",
   "recognitionThreshold": 0.55,
   "duplicateCooldownSeconds": 60,
+  "personTrackingEnabled": true,
+  "historyRecoveryEnabled": true,
   "saveUnknownFaces": true,
   "sendUnknownFaceAlert": false
 }
@@ -165,7 +170,53 @@ GET  /api/cameras/{cameraId}/stream
 GET  /api/cameras/{cameraId}/stream-flow
 GET  /api/cameras/stream-flows
 POST /api/cameras/discover-channels
+
+GET  /api/recovery-jobs?etsAuth=COMPANY_01
+POST /api/recovery-jobs/{recoveryJobId}/retry
 ```
+
+## Person Tracking And Attendance Recovery
+
+Person tracking is disabled by default so existing deployments keep their
+current face-recognition behavior. To enable it:
+
+1. Put a lightweight Ultralytics COCO person model at
+   `app/tracking/model/person_yolo.pt`. The model must contain the standard
+   `person` class (`class 0`).
+2. Set `PERSON_TRACKING_ENABLED=true`.
+3. Keep `personTrackingEnabled=true` and `historyRecoveryEnabled=true` in the
+   tenant attendance rules.
+4. Restart the service and cameras.
+
+For development, Ultralytics can download a nano COCO model once, after which
+you can rename/copy it to the configured path:
+
+```bash
+python -c "from ultralytics import YOLO; YOLO('yolo11n.pt')"
+```
+
+Validate the person model before enabling all cameras:
+
+```bash
+python check_yolo_person_image.py path/to/test.jpg --save-debug person_debug.jpg
+```
+
+When enabled, empty cameras are gated by cheap motion checks. Detected people
+receive temporary per-camera track IDs, and face jobs are kept separately per
+track. A track that ends without recognition creates `PERSON_UNIDENTIFIED` and
+an `attendance_recovery_jobs` document. The recovery worker waits for live face
+AI to become idle, exports the small Hikvision history window, and records
+matches with `metadata.source=HISTORY_RECOVERY`.
+
+Verify the runtime state:
+
+```text
+GET /api/status
+```
+
+Check `personDetector.modelAvailable`, each camera's
+`runtime.personTrackingEnabled`, `activePersonTracks`, and
+`personTracksUnresolved`.
 
 ## Run Modes
 

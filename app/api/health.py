@@ -14,5 +14,6 @@ async def status(request: Request) -> dict:
     return {
         "status": "ok",
         "service": "ai_camera_service",
+        "attendanceRecovery": request.app.state.attendance_recovery_service.status(),
         **request.app.state.camera_manager.status(),
     }

@@ -22,6 +22,7 @@ TENANT_INDEXED_COLLECTIONS = (
     "attendance_rules",
     "attendance_sync_state",
     "service_logs",
+    "attendance_recovery_jobs",
 )
 TENANT_FIELD_MIGRATION_ID = "tenant_id_to_ets_auth_v1"
 
@@ -101,6 +102,16 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
         unique=True,
     )
     await db.service_logs.create_index([("etsAuth", 1), ("createdAt", -1)])
+    await db.attendance_recovery_jobs.create_index(
+        [("status", 1), ("nextAttemptAt", 1), ("createdAt", 1)]
+    )
+    await db.attendance_recovery_jobs.create_index(
+        [("etsAuth", 1), ("cameraId", 1), ("windowStart", 1), ("windowEnd", 1)]
+    )
+    await db.attendance_recovery_jobs.create_index(
+        [("recoveryJobId", 1)],
+        unique=True,
+    )
 
 
 async def drop_index_by_name(collection, index_name: str) -> None:

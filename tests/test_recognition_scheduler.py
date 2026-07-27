@@ -48,6 +48,42 @@ class FaceRecognitionSchedulerTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await scheduler.close()
 
+    async def test_separate_person_tracks_are_not_overwritten(self) -> None:
+        scheduler = FaceRecognitionScheduler(max_pending_per_camera=4)
+        seen = []
+        done = asyncio.Event()
+
+        async def handle(payload: dict) -> None:
+            seen.append(payload["value"])
+            if len(seen) == 2:
+                done.set()
+
+        try:
+            scheduler.register("CAM1", handle)
+            scheduler.submit(
+                "CAM1",
+                {"value": "track-1-low"},
+                job_id=1,
+                quality=10.0,
+            )
+            scheduler.submit(
+                "CAM1",
+                {"value": "track-1-best"},
+                job_id=1,
+                quality=20.0,
+            )
+            scheduler.submit(
+                "CAM1",
+                {"value": "track-2"},
+                job_id=2,
+                quality=15.0,
+            )
+
+            await asyncio.wait_for(done.wait(), timeout=1.0)
+            self.assertEqual(seen, ["track-1-best", "track-2"])
+        finally:
+            await scheduler.close()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -125,6 +125,20 @@ class SyncService:
             await self._purge_images_for_rule(rule)
             for rule in self.runtime_state.rules.values()
         ]
+    
+    async def _purge_images_for_rule(self, rule: AttendanceRules) -> dict:
+        result = await self.snapshot_service.purge_expired_images(
+            tenant_id=rule.tenantId,
+            retention_days=rule.imageRetentionDays,
+        )
+        if result["enabled"]:
+            await self.log_service.write(
+                "INFO",
+                "Purged expired snapshot images",
+                tenant_id=rule.tenantId,
+                metadata=result,
+            )
+        return result
 
     async def _persist_cameras(self, cameras: list[CameraConfig]) -> None:
         synced_camera_ids = []
