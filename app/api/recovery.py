@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 class ManualRecoveryJobRequest(BaseModel):
-    etsAuth: str
+    etsAuth: str | None = None
     cameraId: str
     timestamp: str | None = None
     windowStart: str | None = None
@@ -75,6 +75,16 @@ async def retry_recovery_job(recoveryJobId: str, request: Request) -> dict:
     if not retried:
         raise HTTPException(status_code=404, detail="Recovery job not found")
     return {"recoveryJobId": recoveryJobId, "status": "PENDING"}
+
+
+@router.post("/delete-duplicates")
+async def delete_duplicate_recovery_jobs(request: Request) -> dict:
+    return await request.app.state.attendance_recovery_service.delete_duplicate_jobs()
+
+
+@router.post("/cancel-duplicates")
+async def cancel_duplicate_recovery_jobs(request: Request) -> dict:
+    return await request.app.state.attendance_recovery_service.delete_duplicate_jobs()
 
 
 def _parse_utc_datetime(raw_value: str) -> datetime:

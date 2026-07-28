@@ -18,7 +18,7 @@ from app.events.event_service import EventService
 from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
 from app.runtime_state import RuntimeState
-from app.schemas.erp_schema import CameraAssignment, CameraConfig
+from app.schemas.erp_schema import AiCapability, CameraAssignment, CameraConfig
 from app.schemas.runtime_schema import RuntimeEvent
 
 logger = logging.getLogger(__name__)
@@ -75,7 +75,6 @@ class AttendanceRecoveryService:
         now = datetime.utcnow()
         existing = await self.db.attendance_recovery_jobs.find_one(
             {
-                "etsAuth": assignment.tenantId,
                 "cameraId": camera.cameraId,
                 "status": "PENDING",
                 "windowStart": {"$lte": window_end},
@@ -89,7 +88,10 @@ class AttendanceRecoveryService:
                 {
                     "$min": {"windowStart": window_start},
                     "$max": {"windowEnd": window_end},
-                    "$addToSet": {"trackIds": track_id},
+                    "$addToSet": {
+                        "trackIds": track_id,
+                        "tenantIds": assignment.tenantId,
+                    },
                     "$set": {"updatedAt": now},
                 },
             )
@@ -100,6 +102,7 @@ class AttendanceRecoveryService:
             {
                 "recoveryJobId": recovery_job_id,
                 "etsAuth": assignment.tenantId,
+                "tenantIds": [assignment.tenantId],
                 "cameraId": camera.cameraId,
                 "trackIds": [track_id],
                 "direction": assignment.direction,
@@ -117,10 +120,10 @@ class AttendanceRecoveryService:
 
     async def enqueue_window(
         self,
-        tenant_id: str,
         camera_id: str,
         window_start: datetime,
         window_end: datetime,
+        tenant_id: str | None = None,
         track_id: int | None = None,
     ) -> str:
         if window_end <= window_start:
@@ -130,26 +133,49 @@ class AttendanceRecoveryService:
         if camera is None:
             raise ValueError("Camera is not present in synced configuration")
 
-        assignment = next(
-            (
-                item
-                for item in camera.activeAssignments
-                if item.tenantId == tenant_id
-            ),
-            None,
-        )
-        if assignment is None:
-            raise ValueError("Camera assignment is not active for this etsAuth")
+        assignments = self._target_assignments(camera, tenant_id)
+        if not assignments:
+            raise ValueError("Camera has no active FACE_RECOGNITION assignment for this recovery")
+        tenant_ids = [assignment.tenantId for assignment in assignments]
 
         now = datetime.utcnow()
+        existing = await self.db.attendance_recovery_jobs.find_one(
+            {
+                "cameraId": camera_id,
+                "status": "PENDING",
+                "windowStart": {"$lte": window_end},
+                "windowEnd": {"$gte": window_start},
+            },
+            {"recoveryJobId": 1},
+        )
+        if existing:
+            update = {
+                "$min": {"windowStart": window_start},
+                "$max": {"windowEnd": window_end},
+                "$addToSet": {"tenantIds": {"$each": tenant_ids}},
+                "$set": {
+                    "nextAttemptAt": now,
+                    "updatedAt": now,
+                    "lastError": None,
+                },
+            }
+            if track_id is not None:
+                update["$addToSet"]["trackIds"] = track_id
+            await self.db.attendance_recovery_jobs.update_one(
+                {"_id": existing["_id"]},
+                update,
+            )
+            return existing["recoveryJobId"]
+
         recovery_job_id = str(uuid4())
         await self.db.attendance_recovery_jobs.insert_one(
             {
                 "recoveryJobId": recovery_job_id,
-                "etsAuth": tenant_id,
+                "etsAuth": tenant_ids[0],
+                "tenantIds": tenant_ids,
                 "cameraId": camera_id,
                 "trackIds": [track_id] if track_id is not None else [],
-                "direction": assignment.direction,
+                "direction": assignments[0].direction,
                 "windowStart": window_start,
                 "windowEnd": window_end,
                 "status": "PENDING",
@@ -202,7 +228,10 @@ class AttendanceRecoveryService:
     ) -> list[dict]:
         query = {}
         if tenant_id:
-            query["etsAuth"] = tenant_id
+            query["$or"] = [
+                {"etsAuth": tenant_id},
+                {"tenantIds": tenant_id},
+            ]
         if camera_id:
             query["cameraId"] = camera_id
         if status:
@@ -227,6 +256,45 @@ class AttendanceRecoveryService:
             },
         )
         return result.matched_count > 0
+
+    async def delete_duplicate_jobs(self) -> dict:
+        duplicate_groups = await self.db.attendance_recovery_jobs.aggregate(
+            [
+                {"$match": {"status": "PENDING"}},
+                {
+                    "$group": {
+                        "_id": {
+                            "cameraId": "$cameraId",
+                            "windowStart": "$windowStart",
+                            "windowEnd": "$windowEnd",
+                        },
+                        "jobs": {
+                            "$push": {
+                                "_id": "$_id",
+                                "recoveryJobId": "$recoveryJobId",
+                                "createdAt": "$createdAt",
+                            }
+                        },
+                        "count": {"$sum": 1},
+                    }
+                },
+                {"$match": {"count": {"$gt": 1}}},
+            ]
+        ).to_list(length=None)
+
+        deleted = 0
+        for group in duplicate_groups:
+            jobs = sorted(group["jobs"], key=lambda item: item.get("createdAt") or datetime.min)
+            duplicate_ids = [item["_id"] for item in jobs[1:]]
+            if not duplicate_ids:
+                continue
+            result = await self.db.attendance_recovery_jobs.delete_many({"_id": {"$in": duplicate_ids}})
+            deleted += result.deleted_count
+
+        return {
+            "duplicateGroups": len(duplicate_groups),
+            "deleted": deleted,
+        }
 
     def status(self) -> dict:
         return {
@@ -260,30 +328,31 @@ class AttendanceRecoveryService:
             camera = self.runtime_state.get_camera(job["cameraId"])
             if camera is None:
                 raise RuntimeError("Camera is no longer present in the synced configuration")
-            assignment = next(
-                (
-                    item
-                    for item in camera.activeAssignments
-                    if item.tenantId == job["etsAuth"]
-                ),
-                None,
-            )
-            if assignment is None:
-                raise RuntimeError("Camera assignment is no longer active for this etsAuth")
+            assignments = self._job_assignments(camera, job)
+            if not assignments:
+                raise RuntimeError("No active camera assignments are available for this recovery job")
+
+            await self._delete_duplicate_window_jobs(job)
 
             recognized = await self._scan_history_stream(
                 self._job_playback_url(camera, job),
                 job,
-                assignment,
+                assignments,
             )
-            await self._record_recovered_people(job, assignment, recognized)
+            await self._record_recovered_people(job, assignments, recognized)
             await self.db.attendance_recovery_jobs.update_one(
                 {"_id": job["_id"]},
                 {
                     "$set": {
                         "status": "COMPLETED",
                         "result": "RECOGNIZED" if recognized else "NO_MATCH",
-                        "recognizedEmployees": list(recognized),
+                        "recognizedEmployees": [
+                            {
+                                "etsAuth": item["tenantId"],
+                                "employeeId": item["employeeId"],
+                            }
+                            for item in recognized.values()
+                        ],
                         "completedAt": datetime.utcnow(),
                         "updatedAt": datetime.utcnow(),
                         "lastError": None,
@@ -301,6 +370,17 @@ class AttendanceRecoveryService:
                 job.get("recoveryJobId"),
             )
             await self._reschedule(job, str(exc), count_as_failure=True)
+
+    async def _delete_duplicate_window_jobs(self, job: dict) -> None:
+        await self.db.attendance_recovery_jobs.delete_many(
+            {
+                "_id": {"$ne": job["_id"]},
+                "cameraId": job["cameraId"],
+                "windowStart": job["windowStart"],
+                "windowEnd": job["windowEnd"],
+                "status": "PENDING",
+            },
+        )
 
     def _job_playback_url(self, camera: CameraConfig, job: dict) -> str:
         window_start = job["windowStart"]
@@ -320,8 +400,8 @@ class AttendanceRecoveryService:
         self,
         playback_url: str,
         job: dict,
-        assignment: CameraAssignment,
-    ) -> dict[str, dict]:
+        assignments: list[CameraAssignment],
+    ) -> dict[tuple[str, str], dict]:
         capture = cv2.VideoCapture(
             playback_url,
             cv2.CAP_FFMPEG,
@@ -340,13 +420,24 @@ class AttendanceRecoveryService:
         source_fps = float(capture.get(cv2.CAP_PROP_FPS) or 0)
         sample_every_seconds = window_seconds / self.settings.history_recovery_max_frames
         max_runtime_seconds = window_seconds + 30
-        recognized: dict[str, dict] = {}
+        assignments_by_tenant = {assignment.tenantId: assignment for assignment in assignments}
+        recognized: dict[tuple[str, str], dict] = {}
         frame_index = 0
         sampled_frames = 0
         last_sample_offset = -sample_every_seconds
         started_at = time.monotonic()
-        rules = self.runtime_state.get_rules(assignment.tenantId)
+        tenant_thresholds = {
+            assignment.tenantId: self.runtime_state.get_rules(assignment.tenantId).recognitionThreshold
+            for assignment in assignments
+        }
         try:
+            live_idle = await self.recognition_scheduler.wait_until_idle(
+                idle_seconds=self.settings.history_recovery_live_idle_seconds,
+                timeout_seconds=self.settings.history_recovery_live_idle_timeout_seconds,
+            )
+            if not live_idle:
+                raise LiveAiBusyError("Live face recognition remained busy")
+
             while (
                 sampled_frames < self.settings.history_recovery_max_frames
                 and time.monotonic() - started_at < max_runtime_seconds
@@ -365,29 +456,26 @@ class AttendanceRecoveryService:
                     continue
                 last_sample_offset = offset_seconds
 
-                live_idle = await self.recognition_scheduler.wait_until_idle(
-                    idle_seconds=self.settings.history_recovery_live_idle_seconds,
-                    timeout_seconds=self.settings.history_recovery_live_idle_timeout_seconds,
-                )
-                if not live_idle:
-                    raise LiveAiBusyError("Live face recognition remained busy")
-
-                results = await self.recognition_service.recognize_frame(
-                    tenant_id=assignment.tenantId,
+                results = await self.recognition_service.recognize_frame_for_tenants(
+                    tenant_thresholds=tenant_thresholds,
                     frame=frame,
-                    threshold=rules.recognitionThreshold,
                 )
                 sampled_frames += 1
                 for result in results:
-                    if not result.get("matched") or not result.get("employeeId"):
+                    tenant_id = result.get("tenantId")
+                    employee_id = result.get("employeeId")
+                    if not result.get("matched") or not tenant_id or not employee_id:
+                        continue
+                    assignment = assignments_by_tenant.get(tenant_id)
+                    if assignment is None:
                         continue
                     if not self._result_in_assignment_zone(result, assignment):
                         continue
-                    employee_id = result["employeeId"]
-                    existing = recognized.get(employee_id)
+                    key = (tenant_id, employee_id)
+                    existing = recognized.get(key)
                     if existing is not None and existing["confidence"] >= result["confidence"]:
                         continue
-                    recognized[employee_id] = {
+                    recognized[key] = {
                         **result,
                         "timestamp": job["windowStart"]
                         + timedelta(seconds=offset_seconds),
@@ -419,14 +507,18 @@ class AttendanceRecoveryService:
     async def _record_recovered_people(
         self,
         job: dict,
-        assignment: CameraAssignment,
-        recognized: dict[str, dict],
+        assignments: list[CameraAssignment],
+        recognized: dict[tuple[str, str], dict],
     ) -> None:
-        rules = self.runtime_state.get_rules(assignment.tenantId)
-        for employee_id, result in recognized.items():
+        assignments_by_tenant = {assignment.tenantId: assignment for assignment in assignments}
+        for (tenant_id, employee_id), result in recognized.items():
+            assignment = assignments_by_tenant.get(tenant_id)
+            if assignment is None:
+                continue
+            rules = self.runtime_state.get_rules(tenant_id)
             event_time = result["timestamp"]
             create_attendance, direction = await self.attendance_service.should_create_attendance(
-                tenant_id=assignment.tenantId,
+                tenant_id=tenant_id,
                 employee_id=employee_id,
                 camera_direction=assignment.direction,
                 confidence=result["confidence"],
@@ -450,7 +542,7 @@ class AttendanceRecoveryService:
                 "bestCandidateScore": result.get("bestCandidateScore"),
             }
             await self.attendance_service.record_detection(
-                tenant_id=assignment.tenantId,
+                tenant_id=tenant_id,
                 camera_id=job["cameraId"],
                 event_type=event_type,
                 employee_id=employee_id,
@@ -462,7 +554,7 @@ class AttendanceRecoveryService:
             )
             await self.event_service.create_camera_event(
                 RuntimeEvent(
-                    tenantId=assignment.tenantId,
+                    tenantId=tenant_id,
                     cameraId=job["cameraId"],
                     eventType=event_type,
                     employeeId=employee_id,
@@ -471,6 +563,42 @@ class AttendanceRecoveryService:
                     metadata=metadata,
                 )
             )
+
+    def _target_assignments(
+        self,
+        camera: CameraConfig,
+        tenant_id: str | None = None,
+    ) -> list[CameraAssignment]:
+        assignments = camera.assignments_for(AiCapability.FACE_RECOGNITION)
+        if tenant_id:
+            assignments = [
+                assignment
+                for assignment in assignments
+                if assignment.tenantId == tenant_id
+            ]
+        return [
+            assignment
+            for assignment in assignments
+            if self.runtime_state.get_rules(assignment.tenantId).historyRecoveryEnabled
+        ]
+
+    def _job_assignments(
+        self,
+        camera: CameraConfig,
+        job: dict,
+    ) -> list[CameraAssignment]:
+        tenant_ids = job.get("tenantIds")
+        if not tenant_ids and job.get("etsAuth"):
+            tenant_ids = [job["etsAuth"]]
+        tenant_id_set = set(tenant_ids or [])
+        assignments = self._target_assignments(camera)
+        if tenant_id_set:
+            assignments = [
+                assignment
+                for assignment in assignments
+                if assignment.tenantId in tenant_id_set
+            ]
+        return assignments
 
     async def _reschedule(
         self,
