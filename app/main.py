@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import cv2
 from fastapi import FastAPI
 
-from app.api import attendance, cameras, events, health, recovery, sync, test, unknown_faces
+from app.api import attendance, cameras, events, health, person_counting, recovery, sync, test, unknown_faces
 from app.attendance.attendance_service import AttendanceService
 from app.cameras.camera_manager import CameraManager
 from app.config import get_settings
@@ -159,6 +159,7 @@ app.include_router(health.router)
 app.include_router(sync.router, prefix="/api/sync", tags=["sync"])
 app.include_router(cameras.router, prefix="/api/cameras", tags=["camera-control"])
 app.include_router(events.router, prefix="/api/events", tags=["events"])
+app.include_router(person_counting.router, prefix="/api/person-counting", tags=["person-counting"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["attendance"])
 app.include_router(recovery.router, prefix="/api/recovery-jobs", tags=["attendance-recovery"])
 app.include_router(test.router, prefix="/api/test", tags=["recognition-test"])

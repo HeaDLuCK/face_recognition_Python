@@ -67,7 +67,15 @@ Expected camera payload:
   "rtspUrl": "rtsp://user:pass@192.168.1.50:554/stream1",
   "enabled": true,
   "direction": "IN",
-  "capabilities": ["FACE_RECOGNITION"],
+  "capabilities": ["FACE_RECOGNITION", "PERSON_COUNTING"],
+  "countingLine": {
+    "x1": 0.1,
+    "y1": 0.5,
+    "x2": 0.9,
+    "y2": 0.5,
+    "inSide": "POSITIVE",
+    "hysteresis": 0.015
+  },
   "zones": [
     {
       "zoneId": "ZONE_01",
@@ -163,6 +171,7 @@ POST /api/cameras/stop-all
 
 GET  /api/events?tenantId=COMPANY_01
 GET  /api/attendance?tenantId=COMPANY_01
+GET  /api/person-counting?etsAuth=COMPANY_01&cameraId=CAM_01
 POST /api/test/recognize-image
 
 GET  /api/cameras/grid
@@ -208,6 +217,14 @@ an `attendance_recovery_jobs` document. The recovery worker waits for live face
 AI to become idle, exports the small Hikvision history window, and records
 matches with `metadata.source=HISTORY_RECOVERY`.
 
+History recovery samples by playback time instead of using one fixed number of
+frames for every clip. `HISTORY_RECOVERY_SAMPLE_INTERVAL_SECONDS` sets the
+target interval (0.5 seconds by default), while `HISTORY_RECOVERY_MAX_FRAMES`
+limits the total work per job (1,000 by default). Longer clips automatically
+use a wider interval to stay within that cap. Recovery reads stop at the
+requested playback duration, avoiding a final RTSP read after the recording has
+already ended.
+
 RTSP reads tolerate isolated decoder failures before reconnecting. When a
 reconnect succeeds, the missing stream interval is automatically queued for
 Hikvision history recovery. Nearby pending gaps for the same camera are merged.
@@ -221,6 +238,20 @@ GET /api/status
 Check `personDetector.modelAvailable`, each camera's
 `runtime.personTrackingEnabled`, `activePersonTracks`, and
 `personTracksUnresolved`.
+
+## Person Counting
+
+Person counting runs only for assignments containing the
+`PERSON_COUNTING` capability. It uses the bottom-center of each tracked person
+to detect a stable crossing of `countingLine`. Coordinates are normalized from
+0 to 1, so the line works at any stream resolution. With a left-to-right line,
+`inSide=POSITIVE` treats motion from above the line to below it as entry; use
+`NEGATIVE` to reverse entry and exit.
+
+Each crossing is persisted in MongoDB `camera_events` as `PERSON_ENTERED` or
+`PERSON_EXITED`. Query `/api/person-counting` for `entered`, `exited`, and
+`occupancy`. The debug stream draws the yellow counting line and current totals.
+`PERSON_TRACKING_ENABLED=true` and a valid person YOLO model are required.
 
 ## Run Modes
 

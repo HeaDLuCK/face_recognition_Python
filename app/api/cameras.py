@@ -1,5 +1,6 @@
 from html import escape
 import asyncio
+import logging
 from pathlib import Path
 import time
 from urllib.parse import quote, unquote, urlsplit
@@ -16,8 +17,10 @@ from app.cameras.hikvision_history import (
     delete_file_safely,
     export_hikvision_history_clip,
 )
+from app.services.url_utils import redact_url_credentials
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 class ChannelDiscoveryRequest(BaseModel):
@@ -503,6 +506,8 @@ async def calibrate_camera(cameraId: str, request: Request) -> HTMLResponse:
               <button id="clear">Clear</button>
               <p>Click points around the watched area. Use the generated value in <code>MOTION_ZONES</code>.</p>
               <code id="zone">MOTION_ZONES=watch:</code>
+              <p>For <code>PERSON_COUNTING</code>, the first two clicks are the counting-line endpoints.</p>
+              <code id="countingLine">"countingLine": null</code>
             </div>
             <script>
               const img = document.getElementById("stream");
@@ -510,6 +515,7 @@ async def calibrate_camera(cameraId: str, request: Request) -> HTMLResponse:
               const ctx = canvas.getContext("2d");
               const pos = document.getElementById("pos");
               const zone = document.getElementById("zone");
+              const countingLine = document.getElementById("countingLine");
               const points = [];
 
               function resize() {{
@@ -550,6 +556,19 @@ async def calibrate_camera(cameraId: str, request: Request) -> HTMLResponse:
 
               function updateZone() {{
                 zone.textContent = "MOTION_ZONES=watch:" + points.map(point => `${{point.x}},${{point.y}}`).join("|");
+                if (points.length >= 2 && img.naturalWidth && img.naturalHeight) {{
+                  const line = {{
+                    x1: Number((points[0].x / img.naturalWidth).toFixed(4)),
+                    y1: Number((points[0].y / img.naturalHeight).toFixed(4)),
+                    x2: Number((points[1].x / img.naturalWidth).toFixed(4)),
+                    y2: Number((points[1].y / img.naturalHeight).toFixed(4)),
+                    inSide: "POSITIVE",
+                    hysteresis: 0.015
+                  }};
+                  countingLine.textContent = '"countingLine": ' + JSON.stringify(line);
+                }} else {{
+                  countingLine.textContent = '"countingLine": null';
+                }}
               }}
 
               canvas.addEventListener("mousemove", event => {{
@@ -778,12 +797,36 @@ def _test_rtsp_channel(rtsp_url: str, timeout_seconds: int) -> tuple[bool, int, 
         ],
     )
     try:
+        if not capture.isOpened():
+            logger.warning(
+                "RTSP_SOURCE=channel_discovery phase=open_failed stream=%s elapsed=%.2fs timeout=%ss",
+                redact_url_credentials(rtsp_url),
+                time.time() - started_at,
+                timeout_seconds,
+            )
+            return False, 0, 0
+
         while time.time() - started_at < timeout_seconds:
+            read_started_at = time.time()
             ok, frame = capture.read()
             if ok and frame is not None:
                 height, width = frame.shape[:2]
                 return True, int(width), int(height)
+            read_elapsed = time.time() - read_started_at
+            if read_elapsed >= max(timeout_seconds * 0.8, 0.8):
+                logger.warning(
+                    "RTSP_SOURCE=channel_discovery phase=read_timeout stream=%s elapsed=%.2fs timeout=%ss",
+                    redact_url_credentials(rtsp_url),
+                    read_elapsed,
+                    timeout_seconds,
+                )
             time.sleep(0.1)
+        logger.warning(
+            "RTSP_SOURCE=channel_discovery phase=no_frame stream=%s elapsed=%.2fs timeout=%ss",
+            redact_url_credentials(rtsp_url),
+            time.time() - started_at,
+            timeout_seconds,
+        )
         return False, 0, 0
     finally:
         capture.release()

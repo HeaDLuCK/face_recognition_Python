@@ -79,6 +79,9 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
     await db.attendance_detections.create_index([("etsAuth", 1), ("employeeId", 1), ("timestamp", -1)])
     await db.attendance_detections.create_index([("etsAuth", 1), ("eventType", 1), ("timestamp", 1)])
     await db.camera_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
+    await db.camera_events.create_index(
+        [("etsAuth", 1), ("cameraId", 1), ("eventType", 1), ("timestamp", -1)]
+    )
     await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.snapshot_metadata.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.unknown_face_crops.create_index([("etsAuth", 1), ("cameraId", 1), ("createdAt", -1)])

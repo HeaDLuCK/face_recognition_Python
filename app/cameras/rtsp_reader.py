@@ -122,6 +122,7 @@ class RtspReader:
     def _read_with_failure_tolerance(self):
         failure_limit = self.settings.rtsp_failed_reads_before_reconnect
         for failed_read in range(1, failure_limit + 1):
+            read_started_at = time.monotonic()
             try:
                 for _ in range(self.settings.rtsp_drop_stale_frames):
                     self.capture.grab()
@@ -134,6 +135,14 @@ class RtspReader:
                     self._safe_source(),
                     type(exc).__name__,
                 )
+
+            logger.warning(
+                "RTSP_SOURCE=live_reader phase=read_failed stream=%s attempt=%s/%s elapsed=%.2fs",
+                self._safe_source(),
+                failed_read,
+                failure_limit,
+                time.monotonic() - read_started_at,
+            )
 
             self._record_read_failure()
             if failed_read < failure_limit:

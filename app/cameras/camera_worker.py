@@ -26,6 +26,7 @@ from app.storage.snapshot_service import SnapshotService
 from app.tracking.models import PersonDetectionBatch, PersonTrack, TrackedRecognitionJob
 from app.tracking.person_detection_scheduler import PersonDetectionScheduler
 from app.tracking.person_detection_service import PersonDetectionService
+from app.tracking.person_line_counter import CountingLine, PersonLineCounter
 from app.tracking.person_tracker import MotionActivityGate, PersonTracker
 
 logger = logging.getLogger(__name__)
@@ -104,6 +105,11 @@ class CameraWorker:
             hold_seconds=settings.person_motion_hold_seconds,
         )
         self._person_track_states: dict[int, dict] = {}
+        self._person_line_counters = self._build_person_line_counters()
+        self._person_count_totals = {
+            tenant_id: {"entered": 0, "exited": 0, "occupancy": 0}
+            for tenant_id in self._person_line_counters
+        }
         self._person_tracks_created = 0
         self._person_tracks_unresolved = 0
         self._face_inference_count = 0
@@ -153,6 +159,16 @@ class CameraWorker:
             for assignment in self.camera.assignments_for(AiCapability.FACE_RECOGNITION)
         )
 
+    def _person_counting_enabled(self) -> bool:
+        return (
+            self.settings.person_tracking_enabled
+            and self.person_detection_service.available
+            and bool(self._person_line_counters)
+        )
+
+    def _person_detection_enabled(self) -> bool:
+        return self._person_tracking_enabled() or self._person_counting_enabled()
+
     @property
     def is_running(self) -> bool:
         return self._task is not None and not self._task.done()
@@ -172,6 +188,8 @@ class CameraWorker:
                 else None
             ),
             "personTrackingEnabled": self._person_tracking_enabled(),
+            "personCountingEnabled": self._person_counting_enabled(),
+            "personCounts": self._person_count_totals,
             "activePersonTracks": len(self._person_tracker.active_tracks()),
             "personTracksCreated": self._person_tracks_created,
             "personTracksUnresolved": self._person_tracks_unresolved,
@@ -193,15 +211,16 @@ class CameraWorker:
         frame_count = 0
         try:
             await asyncio.to_thread(self.reader.open)
+            await self._load_person_count_totals()
             await self._emit_camera_event("CAMERA_STARTED", {"startedAt": datetime.utcnow().isoformat()})
             self._start_cloud_stream_push()
             if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
                 self.recognition_scheduler.register(self.camera_id, self._run_face_recognition)
-                if self._person_tracking_enabled():
-                    self.person_detection_scheduler.register(
-                        self.camera_id,
-                        self._handle_person_detections,
-                    )
+            if self._person_detection_enabled():
+                self.person_detection_scheduler.register(
+                    self.camera_id,
+                    self._handle_person_detections,
+                )
             if is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION):
                 self._start_plate_recognition_worker()
             if is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION):
@@ -221,15 +240,14 @@ class CameraWorker:
                     await asyncio.sleep(0)
                     continue
 
-                if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
-                    if self._person_tracking_enabled():
-                        await self._process_person_tracking_frame(frame)
-                    else:
-                        self._collect_face_candidate(frame)
-                        if self._face_candidate_window_ready() and self._should_queue_face_recognition():
-                            candidate = self._take_best_face_candidate()
-                            if candidate is not None:
-                                await self._queue_face_recognition(candidate)
+                if self._person_detection_enabled():
+                    await self._process_person_tracking_frame(frame)
+                elif is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
+                    self._collect_face_candidate(frame)
+                    if self._face_candidate_window_ready() and self._should_queue_face_recognition():
+                        candidate = self._take_best_face_candidate()
+                        if candidate is not None:
+                            await self._queue_face_recognition(candidate)
 
                 if (
                     not self._plate_recognition_disabled
@@ -295,6 +313,8 @@ class CameraWorker:
         self._recognized_face_cache.clear()
         self._person_tracker.clear()
         self._person_activity_gate.reset()
+        for counter in self._person_line_counters.values():
+            counter.clear()
         self._person_track_states.clear()
         self.latest_person_tracks = []
         self._plate_event_cache.clear()
@@ -349,7 +369,9 @@ class CameraWorker:
         now = time.monotonic()
         expired_tracks = self._person_tracker.expire(now)
         if expired_tracks:
-            await self._handle_ended_person_tracks(expired_tracks)
+            self._forget_counting_tracks(expired_tracks)
+            if self._person_tracking_enabled():
+                await self._handle_ended_person_tracks(expired_tracks)
 
         if (
             now - self._last_person_detection_queued_at
@@ -403,7 +425,9 @@ class CameraWorker:
             self._last_person_detected_at = batch.observed_at
 
         if ended_tracks:
-            await self._handle_ended_person_tracks(ended_tracks)
+            self._forget_counting_tracks(ended_tracks)
+            if self._person_tracking_enabled():
+                await self._handle_ended_person_tracks(ended_tracks)
 
         self.latest_person_tracks = [
             {
@@ -413,6 +437,16 @@ class CameraWorker:
             }
             for track in self._person_tracker.active_tracks()
         ]
+
+        await self._process_person_crossings(
+            active_tracks,
+            batch.frame.shape[1],
+            batch.frame.shape[0],
+            batch.observed_at,
+        )
+
+        if not self._person_tracking_enabled():
+            return
 
         for track in active_tracks:
             state = self._person_track_states.get(track.track_id)
@@ -568,6 +602,86 @@ class CameraWorker:
             "endedTrack": None,
             "eligibleTenantIds": set(),
         }
+
+    def _build_person_line_counters(self) -> dict[str, PersonLineCounter]:
+        counters: dict[str, PersonLineCounter] = {}
+        for assignment in self.camera.assignments_for(AiCapability.PERSON_COUNTING):
+            config = assignment.countingLine
+            line = CountingLine(
+                x1=config.x1 if config else 0.1,
+                y1=config.y1 if config else 0.5,
+                x2=config.x2 if config else 0.9,
+                y2=config.y2 if config else 0.5,
+                in_side=config.inSide if config else "POSITIVE",
+                hysteresis=config.hysteresis if config else 0.015,
+            )
+            counters[assignment.tenantId] = PersonLineCounter(line)
+        return counters
+
+    async def _process_person_crossings(
+        self,
+        tracks: list[PersonTrack],
+        frame_width: int,
+        frame_height: int,
+        observed_at: datetime,
+    ) -> None:
+        for track in tracks:
+            for tenant_id, counter in self._person_line_counters.items():
+                direction = counter.update(track, frame_width, frame_height)
+                if direction is None:
+                    continue
+                totals = self._person_count_totals[tenant_id]
+                if direction == "IN":
+                    totals["entered"] += 1
+                    event_type = "PERSON_ENTERED"
+                else:
+                    totals["exited"] += 1
+                    event_type = "PERSON_EXITED"
+                totals["occupancy"] = max(0, totals["entered"] - totals["exited"])
+
+                await self.event_service.create_camera_event(
+                    RuntimeEvent(
+                        tenantId=tenant_id,
+                        cameraId=self.camera.cameraId,
+                        eventType=event_type,
+                        timestamp=observed_at,
+                        metadata={
+                            "source": "LIVE_PERSON_COUNTING",
+                            "trackId": track.track_id,
+                            "direction": direction,
+                            "entered": totals["entered"],
+                            "exited": totals["exited"],
+                            "occupancy": totals["occupancy"],
+                        },
+                    )
+                )
+                logger.info(
+                    "PERSON_COUNT camera=%s etsAuth=%s track=%s direction=%s entered=%s exited=%s occupancy=%s",
+                    self.camera_id,
+                    tenant_id,
+                    track.track_id,
+                    direction,
+                    totals["entered"],
+                    totals["exited"],
+                    totals["occupancy"],
+                )
+
+    async def _load_person_count_totals(self) -> None:
+        for tenant_id in self._person_line_counters:
+            summary = await self.event_service.summarize_person_counts(
+                tenant_id=tenant_id,
+                camera_id=self.camera_id,
+            )
+            self._person_count_totals[tenant_id] = {
+                "entered": summary["entered"],
+                "exited": summary["exited"],
+                "occupancy": summary["occupancy"],
+            }
+
+    def _forget_counting_tracks(self, tracks: list[PersonTrack]) -> None:
+        for track in tracks:
+            for counter in self._person_line_counters.values():
+                counter.forget(track.track_id)
 
     def _track_tenants_in_zone(self, track: PersonTrack) -> set[str]:
         center_x = (track.bbox[0] + track.bbox[2]) / 2
@@ -1413,6 +1527,7 @@ class CameraWorker:
             )
 
     def _draw_detections(self, frame) -> None:
+        self._draw_person_counting(frame)
         if self.settings.show_person_tracks and int(time.monotonic() * 2) % 2 != 0:
             for track in self.latest_person_tracks:
                 x1, y1, x2, y2 = track["bbox"]
@@ -1444,6 +1559,31 @@ class CameraWorker:
             self._draw_plate_annotation(frame, detection, show_label=True)
         for detection in self.latest_fire_detections:
             self._draw_fire_annotation(frame, detection, show_label=True)
+
+    def _draw_person_counting(self, frame) -> None:
+        if not self._person_line_counters:
+            return
+        height, width = frame.shape[:2]
+        for index, (tenant_id, counter) in enumerate(self._person_line_counters.items()):
+            line = counter.line
+            start = (int(line.x1 * width), int(line.y1 * height))
+            end = (int(line.x2 * width), int(line.y2 * height))
+            cv2.line(frame, start, end, (0, 255, 255), 3, cv2.LINE_AA)
+            totals = self._person_count_totals[tenant_id]
+            label = (
+                f"IN {totals['entered']}  OUT {totals['exited']}  "
+                f"OCC {totals['occupancy']}"
+            )
+            cv2.putText(
+                frame,
+                label,
+                (20, 35 + index * 32),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (0, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
 
     async def _save_frame_snapshot(
         self,

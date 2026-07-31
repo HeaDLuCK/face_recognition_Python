@@ -109,7 +109,8 @@ class Settings(BaseSettings):
     history_recovery_poll_seconds: float = Field(default=10.0, ge=1.0, le=300.0)
     history_recovery_initial_delay_seconds: float = Field(default=20.0, ge=0.0, le=3600.0)
     history_recovery_max_attempts: int = Field(default=3, ge=1, le=20)
-    history_recovery_max_frames: int = Field(default=60, ge=1, le=1000)
+    history_recovery_sample_interval_seconds: float = Field(default=0.5, ge=0.1, le=60.0)
+    history_recovery_max_frames: int = Field(default=1000, ge=1, le=10000)
     history_recovery_live_idle_seconds: float = Field(default=0.5, ge=0.0, le=30.0)
     history_recovery_live_idle_timeout_seconds: float = Field(default=30.0, ge=1.0, le=600.0)
     cloud_stream_ws_url: str = ""
