@@ -73,12 +73,18 @@ class AttendanceRecoveryService:
             seconds=self.settings.history_recovery_after_seconds
         )
         now = datetime.utcnow()
+        next_attempt_at = now + timedelta(
+            seconds=self.settings.history_recovery_initial_delay_seconds
+        )
+        merge_margin = timedelta(
+            seconds=self.settings.history_recovery_gap_merge_seconds
+        )
         existing = await self.db.attendance_recovery_jobs.find_one(
             {
                 "cameraId": camera.cameraId,
                 "status": "PENDING",
-                "windowStart": {"$lte": window_end},
-                "windowEnd": {"$gte": window_start},
+                "windowStart": {"$lte": window_end + merge_margin},
+                "windowEnd": {"$gte": window_start - merge_margin},
             },
             {"recoveryJobId": 1},
         )
@@ -87,10 +93,14 @@ class AttendanceRecoveryService:
                 {"_id": existing["_id"]},
                 {
                     "$min": {"windowStart": window_start},
-                    "$max": {"windowEnd": window_end},
+                    "$max": {
+                        "windowEnd": window_end,
+                        "nextAttemptAt": next_attempt_at,
+                    },
                     "$addToSet": {
                         "trackIds": track_id,
                         "tenantIds": assignment.tenantId,
+                        "triggerTypes": "PERSON_TRACK",
                     },
                     "$set": {"updatedAt": now},
                 },
@@ -108,13 +118,118 @@ class AttendanceRecoveryService:
                 "direction": assignment.direction,
                 "windowStart": window_start,
                 "windowEnd": window_end,
+                "triggerTypes": ["PERSON_TRACK"],
                 "status": "PENDING",
                 "attempts": 0,
-                "nextAttemptAt": now
-                + timedelta(seconds=self.settings.history_recovery_initial_delay_seconds),
+                "nextAttemptAt": next_attempt_at,
                 "createdAt": now,
                 "updatedAt": now,
             }
+        )
+        return recovery_job_id
+
+    async def enqueue_stream_gap(
+        self,
+        camera: CameraConfig,
+        gap_start: datetime,
+        gap_end: datetime,
+    ) -> str | None:
+        if not self.settings.history_recovery_enabled:
+            return None
+        if gap_end <= gap_start:
+            return None
+
+        assignments = self._target_assignments(camera)
+        if not assignments:
+            return None
+
+        tenant_ids = sorted({assignment.tenantId for assignment in assignments})
+        window_start = gap_start - timedelta(
+            seconds=self.settings.history_recovery_before_seconds
+        )
+        window_end = gap_end + timedelta(
+            seconds=self.settings.history_recovery_after_seconds
+        )
+        merge_margin = timedelta(
+            seconds=self.settings.history_recovery_gap_merge_seconds
+        )
+        now = datetime.utcnow()
+        next_attempt_at = now + timedelta(
+            seconds=self.settings.history_recovery_initial_delay_seconds
+        )
+        gap_metadata = {
+            "startedAt": gap_start,
+            "recoveredAt": gap_end,
+        }
+
+        existing = await self.db.attendance_recovery_jobs.find_one(
+            {
+                "cameraId": camera.cameraId,
+                "status": "PENDING",
+                "windowStart": {"$lte": window_end + merge_margin},
+                "windowEnd": {"$gte": window_start - merge_margin},
+            },
+            {"recoveryJobId": 1},
+        )
+        if existing:
+            await self.db.attendance_recovery_jobs.update_one(
+                {"_id": existing["_id"]},
+                {
+                    "$min": {"windowStart": window_start},
+                    "$max": {
+                        "windowEnd": window_end,
+                        "nextAttemptAt": next_attempt_at,
+                    },
+                    "$addToSet": {
+                        "tenantIds": {"$each": tenant_ids},
+                        "triggerTypes": "RTSP_GAP",
+                    },
+                    "$push": {
+                        "streamGaps": {
+                            "$each": [gap_metadata],
+                            "$slice": -100,
+                        }
+                    },
+                    "$set": {
+                        "updatedAt": now,
+                        "lastError": None,
+                    },
+                },
+            )
+            logger.info(
+                "Merged RTSP gap into recovery job %s for camera %s",
+                existing["recoveryJobId"],
+                camera.cameraId,
+            )
+            return existing["recoveryJobId"]
+
+        recovery_job_id = str(uuid4())
+        await self.db.attendance_recovery_jobs.insert_one(
+            {
+                "recoveryJobId": recovery_job_id,
+                "etsAuth": tenant_ids[0],
+                "tenantIds": tenant_ids,
+                "cameraId": camera.cameraId,
+                "trackIds": [],
+                "direction": assignments[0].direction,
+                "windowStart": window_start,
+                "windowEnd": window_end,
+                "triggerTypes": ["RTSP_GAP"],
+                "streamGaps": [gap_metadata],
+                "status": "PENDING",
+                "attempts": 0,
+                "nextAttemptAt": next_attempt_at,
+                "createdAt": now,
+                "updatedAt": now,
+                "createdBy": "automatic_rtsp_gap",
+            }
+        )
+        logger.info(
+            "Queued RTSP gap recovery job %s for camera %s (%s to %s)",
+            recovery_job_id,
+            camera.cameraId,
+            window_start.isoformat(),
+            window_end.isoformat(),
         )
         return recovery_job_id
 

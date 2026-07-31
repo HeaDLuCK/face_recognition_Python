@@ -132,7 +132,10 @@ class Settings(BaseSettings):
     rtsp_drop_stale_frames: int = Field(default=1, ge=0, le=10)
     rtsp_low_latency: bool = False
     rtsp_read_retries: int = Field(default=3, ge=0, le=20)
+    rtsp_failed_reads_before_reconnect: int = Field(default=3, ge=1, le=20)
+    rtsp_failed_read_retry_delay_seconds: float = Field(default=0.05, ge=0.0, le=2.0)
     rtsp_reconnect_delay_seconds: float = Field(default=0.5, ge=0.0, le=10.0)
+    history_recovery_gap_merge_seconds: int = Field(default=30, ge=0, le=600)
     snapshot_purge_batch_size: int = Field(default=200, ge=10, le=2000)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")

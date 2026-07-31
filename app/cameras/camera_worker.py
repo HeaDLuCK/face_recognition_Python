@@ -175,6 +175,7 @@ class CameraWorker:
             "activePersonTracks": len(self._person_tracker.active_tracks()),
             "personTracksCreated": self._person_tracks_created,
             "personTracksUnresolved": self._person_tracks_unresolved,
+            "rtsp": self.reader.status(),
         }
 
     def start(self) -> None:
@@ -208,6 +209,7 @@ class CameraWorker:
 
             while not self._stop_event.is_set():
                 frame = await asyncio.to_thread(self.reader.read)
+                await self._enqueue_recovered_rtsp_gaps()
                 self._update_fps()
                 if self.stream_requested:
                     self._schedule_latest_jpeg(frame)
@@ -373,6 +375,20 @@ class CameraWorker:
             self._last_person_detection_queued_at = now
             if idle_probe_due:
                 self._last_person_idle_probe_at = now
+
+    async def _enqueue_recovered_rtsp_gaps(self) -> None:
+        for gap_start, gap_end in self.reader.pop_recovered_gaps():
+            try:
+                await self.attendance_recovery_service.enqueue_stream_gap(
+                    camera=self.camera,
+                    gap_start=gap_start,
+                    gap_end=gap_end,
+                )
+            except Exception:
+                logger.exception(
+                    "Unable to enqueue RTSP gap recovery for camera %s",
+                    self.camera_id,
+                )
 
     async def _handle_person_detections(
         self,

@@ -11,3 +11,4 @@ event_clips/
 history_clips/
 ffmpeg/
 *.tar
+.env_broken/

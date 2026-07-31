@@ -208,6 +208,10 @@ an `attendance_recovery_jobs` document. The recovery worker waits for live face
 AI to become idle, exports the small Hikvision history window, and records
 matches with `metadata.source=HISTORY_RECOVERY`.
 
+RTSP reads tolerate isolated decoder failures before reconnecting. When a
+reconnect succeeds, the missing stream interval is automatically queued for
+Hikvision history recovery. Nearby pending gaps for the same camera are merged.
+
 Verify the runtime state:
 
 ```text
