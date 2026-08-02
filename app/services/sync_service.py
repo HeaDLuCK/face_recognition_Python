@@ -1,6 +1,9 @@
 import asyncio
+<<<<<<< HEAD
 import base64
 import binascii
+=======
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 import hashlib
 import logging
 from datetime import datetime
@@ -127,7 +130,11 @@ class SyncService:
             await self._purge_images_for_rule(rule)
             for rule in self.runtime_state.rules.values()
         ]
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     async def _purge_images_for_rule(self, rule: AttendanceRules) -> dict:
         result = await self.snapshot_service.purge_expired_images(
             tenant_id=rule.tenantId,
@@ -268,6 +275,7 @@ class SyncService:
             upsert=True,
         )
 
+<<<<<<< HEAD
     async def _decode_face_image(self, ref) -> bytes | None:
         inline = ref.base64 or ref.content
         if not inline:
@@ -296,6 +304,33 @@ class SyncService:
         if not image_bytes:
             raise ValueError("Employee face image decoded to empty data")
         return image_bytes
+=======
+    async def _sync_employee_embeddings(self, rule: AttendanceRules) -> dict:
+        result = await self.snapshot_service.purge_expired_images(
+            tenant_id=rule.tenantId,
+            retention_days=rule.imageRetentionDays,
+        )
+        if result["enabled"]:
+            await self.log_service.write(
+                "INFO",
+                "Purged expired snapshot images",
+                tenant_id=rule.tenantId,
+                metadata=result,
+            )
+        return result
+    async def _decode_or_download_face_image(self, ref) -> bytes | None:
+        inline = ref.base64 or ref.content
+        if inline:
+            if "," in inline and inline.lower().startswith("data:"):
+                inline = inline.split(",", 1)[1]
+            return base64.b64decode(inline)
+
+        image_url = ref.imageUrl or ref.url
+        image_url = base64.b64decode(image_url).decode("utf-8")
+        if image_url:
+            return await self.download_face_image(image_url)
+        return None
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
     async def _sync_employee_embeddings(self, tenant_id: str, employees: list[EmployeeConfig]) -> int:
         async with self._employee_sync_lock:
@@ -305,7 +340,11 @@ class SyncService:
                     continue
                 for index, ref in enumerate(employee.faceImages):
                     try:
+<<<<<<< HEAD
                         image_bytes = await self._decode_face_image(ref)
+=======
+                        image_bytes = await self._decode_or_download_face_image(ref)
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
                         if not image_bytes:
                             continue
                         faces = await asyncio.to_thread(
@@ -352,4 +391,8 @@ class SyncService:
             if isinstance(payload.get("rules"), list):
                 return payload["rules"]
             return [payload]
+<<<<<<< HEAD
         raise ValueError("Payload must be an object, an array, or an object with items/cameras/employees/rules.")
+=======
+        raise ValueError("Payload must be an object, an array, or an object with items/cameras/employees/rules.")
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054

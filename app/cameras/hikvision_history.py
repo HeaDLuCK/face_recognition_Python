@@ -1,4 +1,8 @@
 from datetime import datetime, timedelta, timezone
+<<<<<<< HEAD
+=======
+import logging
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 from pathlib import Path
 import shutil
 import subprocess
@@ -6,6 +10,13 @@ import time
 from urllib.parse import quote, unquote, urlsplit
 import uuid
 
+<<<<<<< HEAD
+=======
+from app.services.url_utils import redact_url_credentials
+
+logger = logging.getLogger(__name__)
+
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 def export_hikvision_history_clip(
     camera_rtsp_url: str,
     timestamp: str,
@@ -68,10 +79,24 @@ def extract_hikvision_channel(path: str) -> str:
 
 
 def hikvision_main_stream_channel(channel: str) -> str:
+<<<<<<< HEAD
     """Convert a Hikvision stream/track ID to its main-stream recording ID."""
     normalized = channel.strip()
     if normalized.isdigit() and len(normalized) >= 3:
         return f"{normalized[:-2]}01"
+=======
+    """Return the recorded main-stream track for a Hikvision channel ID.
+
+    Hikvision channel IDs use the final two digits as the stream selector:
+    ``01`` is the main stream, while ``02`` and ``03`` are secondary streams.
+    NVRs commonly record only ``01``, even when live recognition uses ``02``.
+    """
+    normalized = str(channel).strip()
+    if normalized.isdigit() and len(normalized) >= 3:
+        stream_id = normalized[-2:]
+        if stream_id in {"02", "03"}:
+            return f"{normalized[:-2]}01"
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     return normalized
 
 
@@ -196,6 +221,10 @@ def _write_rtsp_clip_opencv(
 ) -> None:
     import cv2
 
+<<<<<<< HEAD
+=======
+    open_started_at = time.monotonic()
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     capture = cv2.VideoCapture(
         playback_url,
         cv2.CAP_FFMPEG,
@@ -206,12 +235,32 @@ def _write_rtsp_clip_opencv(
             10000,
         ],
     )
+<<<<<<< HEAD
     if not capture.isOpened():
         capture.release()
+=======
+    open_elapsed = time.monotonic() - open_started_at
+    if not capture.isOpened():
+        capture.release()
+        logger.warning(
+            "RTSP_SOURCE=history_clip_opencv phase=open_failed stream=%s elapsed=%.2fs",
+            redact_url_credentials(playback_url),
+            open_elapsed,
+        )
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         raise RuntimeError(
             "No Hikvision recording/playback stream is available for that time window"
         )
 
+<<<<<<< HEAD
+=======
+    logger.info(
+        "RTSP_SOURCE=history_clip_opencv phase=opened stream=%s elapsed=%.2fs",
+        redact_url_credentials(playback_url),
+        open_elapsed,
+    )
+
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     writer = None
     frames_written = 0
     started_at = time.monotonic()
@@ -222,8 +271,22 @@ def _write_rtsp_clip_opencv(
         max_frames = int(output_fps * expected_seconds * 1.5) or 1
 
         while time.monotonic() - started_at < max_runtime and frames_written < max_frames:
+<<<<<<< HEAD
             ok, frame = capture.read()
             if not ok or frame is None:
+=======
+            read_started_at = time.monotonic()
+            ok, frame = capture.read()
+            read_elapsed = time.monotonic() - read_started_at
+            if not ok or frame is None:
+                if read_elapsed >= 8.0:
+                    logger.warning(
+                        "RTSP_SOURCE=history_clip_opencv phase=read_failed stream=%s elapsed=%.2fs frames=%s",
+                        redact_url_credentials(playback_url),
+                        read_elapsed,
+                        frames_written,
+                    )
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
                 if frames_written:
                     break
                 time.sleep(0.02)

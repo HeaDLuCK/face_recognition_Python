@@ -1,21 +1,80 @@
 from html import escape
 import asyncio
+<<<<<<< HEAD
 from pathlib import Path
 from urllib.parse import quote
+=======
+import logging
+from pathlib import Path
+import time
+from urllib.parse import quote, unquote, urlsplit
+from xml.etree import ElementTree
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+<<<<<<< HEAD
 from pydantic import BaseModel, Field
+=======
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 from starlette.background import BackgroundTask
 
 from app.cameras.hikvision_history import (
     delete_file_safely,
     export_hikvision_history_clip,
 )
+<<<<<<< HEAD
+=======
+from app.services.url_utils import redact_url_credentials
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
+=======
+class ChannelDiscoveryRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    tenantId: str | None = Field(default=None, validation_alias=AliasChoices("tenantId", "etsAuth"))
+    cameraDeviceId: str | int | None = None
+    defaultDirection: str = "BIDIRECTIONAL"
+    defaultCapabilities: str = "FACE_RECOGNITION"
+    defaultEnabled: bool = True
+    libellePrefix: str = "Camera"
+    rtspUrl: str | None = None
+    ip: str | None = None
+    username: str | None = None
+    password: str | None = None
+    rtspPort: int = 554
+    rtspPath: str | None = None
+    channels: list[str] | None = None
+    maxCamera: int = Field(default=16, ge=1, le=64)
+    timeoutSeconds: int = Field(default=2, ge=1, le=20)
+    discoveryConcurrency: int = Field(default=8, ge=1, le=32)
+    validateRtsp: bool = True
+    includeOffline: bool = False
+
+
+class ChannelDiscoveryResult(BaseModel):
+    cameraId: str
+    libelle: str
+    opc_camera_device: str | int | None = None
+    channel: str
+    streamType: str
+    direction: str
+    capabilities: str
+    enabled: bool
+    status: str
+    reachable: bool | None = None
+    rtspUrl: str
+    width: int
+    height: int
+
+
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 class HistoryClipRequest(BaseModel):
     timestamp: str
     beforeSeconds: int = Field(default=10, ge=0, le=300)
@@ -155,6 +214,152 @@ async def camera_grid(request: Request) -> HTMLResponse:
     return HTMLResponse(html)
 
 
+<<<<<<< HEAD
+=======
+@router.post("/discover-channels")
+async def discover_channels(payload: ChannelDiscoveryRequest) -> dict:
+    base_url = _channel_base_url(payload)
+    candidate_channels = payload.channels
+    discovery_source = "request"
+
+
+    if candidate_channels is None:
+        candidate_channels = await asyncio.to_thread(_discover_channels_from_isapi, payload)
+        discovery_source = "isapi"
+
+    if not candidate_channels:
+        candidate_channels = _default_hikvision_channels(payload.maxCamera)
+        discovery_source = "rtsp_probe"
+
+    if payload.validateRtsp or discovery_source == "rtsp_probe":
+        semaphore = asyncio.Semaphore(payload.discoveryConcurrency)
+        results = [
+            result
+            for result in await asyncio.gather(
+                *[_discover_channel(payload, base_url, channel, semaphore) for channel in candidate_channels]
+            )
+            if result is not None
+        ]
+    else:
+        results = [
+            _channel_result(payload, base_url, channel, 0, 0, "UNKNOWN", None)
+            for channel in candidate_channels
+        ]
+
+    working_results = [item for item in results if item.get("reachable") is True or item.get("status") == "ONLINE"]
+    offline_results = [item for item in results if item not in working_results]
+    camera_results = results if payload.includeOffline else working_results
+    cameras = _group_discovered_cameras(camera_results, payload)
+
+    return {
+        "etsAuth": payload.tenantId,
+        "cameraDeviceId": payload.cameraDeviceId,
+        "discoverySource": discovery_source,
+        "rtspValidated": payload.validateRtsp or discovery_source == "rtsp_probe",
+        "count": len(cameras),
+        "cameras": cameras,
+        "workingChannels": working_results,
+        "offlineChannels": offline_results,
+        "checkedChannels": results,
+        "rtspChannels": [item["channel"] for item in working_results],
+        "envValue": ",".join(item["channel"] for item in working_results),
+    }
+
+
+async def _discover_channel(
+    payload: ChannelDiscoveryRequest,
+    base_url: str,
+    channel: str,
+    semaphore: asyncio.Semaphore,
+) -> dict | None:
+    rtsp_url = _channel_rtsp_url(base_url, channel)
+    async with semaphore:
+        opened, width, height = await asyncio.to_thread(
+            _test_rtsp_channel,
+            rtsp_url,
+            payload.timeoutSeconds,
+        )
+
+    if not opened:
+        return _channel_result(payload, base_url, channel, 0, 0, "OFFLINE", False)
+
+    return _channel_result(payload, base_url, channel, width, height, "ONLINE", True)
+
+
+def _channel_result(
+    payload: ChannelDiscoveryRequest,
+    base_url: str,
+    channel: str,
+    width: int,
+    height: int,
+    status: str,
+    reachable: bool | None,
+) -> dict:
+    rtsp_url = _channel_rtsp_url(base_url, channel)
+    return ChannelDiscoveryResult(
+        cameraId=channel,
+        libelle=_camera_libelle(payload.libellePrefix, channel),
+        opc_camera_device=payload.cameraDeviceId,
+        channel=channel,
+        streamType=_stream_type(channel),
+        direction=payload.defaultDirection,
+        capabilities=payload.defaultCapabilities,
+        enabled=payload.defaultEnabled,
+        status=status,
+        reachable=reachable,
+        rtspUrl=rtsp_url,
+        width=width,
+        height=height,
+    ).model_dump()
+
+
+def _group_discovered_cameras(results: list[dict], payload: ChannelDiscoveryRequest) -> list[dict]:
+    grouped: dict[str, dict] = {}
+    for item in results:
+        channel = item["channel"]
+        camera_number = _camera_number_from_channel(channel)
+        camera = grouped.setdefault(
+            camera_number,
+            {
+                "cameraId": item["cameraId"],
+                "libelle": _camera_libelle_without_stream(payload.libellePrefix, camera_number),
+                # "opc_camera_device": item["opc_camera_device"],
+                "main_channel": None,
+                "sub_channel": None,
+                "direction": item["direction"],
+                "capabilities": item["capabilities"],
+                "enabled": item["enabled"],
+                "status": item["status"],
+                "reachable": item["reachable"],
+            },
+        )
+
+        if item["streamType"] == "MAIN":
+            camera["main_channel"] = channel
+            camera["cameraId"] = channel
+        elif item["streamType"] == "SUB":
+            camera["sub_channel"] = channel
+
+        camera["status"] = _combine_channel_status(camera["status"], item["status"])
+        camera["reachable"] = _combine_channel_reachable(camera["reachable"], item["reachable"])
+
+    return list(grouped.values())
+
+
+def _combine_channel_status(current_status: str, next_status: str) -> str:
+    priority = {"ONLINE": 3, "UNKNOWN": 2, "OFFLINE": 1}
+    return current_status if priority.get(current_status, 0) >= priority.get(next_status, 0) else next_status
+
+
+def _combine_channel_reachable(current_reachable: bool | None, next_reachable: bool | None) -> bool | None:
+    if current_reachable is True or next_reachable is True:
+        return True
+    if current_reachable is False or next_reachable is False:
+        return False
+    return None
+
+
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 @router.get("/stream-flows")
 async def list_stream_flows(request: Request, streamType: str | None = None) -> dict:
     stream_type_filter = _normalize_stream_type_filter(streamType)
@@ -317,6 +522,8 @@ async def calibrate_camera(cameraId: str, request: Request) -> HTMLResponse:
               <button id="clear">Clear</button>
               <p>Click points around the watched area. Use the generated value in <code>MOTION_ZONES</code>.</p>
               <code id="zone">MOTION_ZONES=watch:</code>
+              <p>For <code>PERSON_COUNTING</code>, the first two clicks are the counting-line endpoints.</p>
+              <code id="countingLine">"countingLine": null</code>
             </div>
             <script>
               const img = document.getElementById("stream");
@@ -324,6 +531,7 @@ async def calibrate_camera(cameraId: str, request: Request) -> HTMLResponse:
               const ctx = canvas.getContext("2d");
               const pos = document.getElementById("pos");
               const zone = document.getElementById("zone");
+              const countingLine = document.getElementById("countingLine");
               const points = [];
 
               function resize() {{
@@ -364,6 +572,19 @@ async def calibrate_camera(cameraId: str, request: Request) -> HTMLResponse:
 
               function updateZone() {{
                 zone.textContent = "MOTION_ZONES=watch:" + points.map(point => `${{point.x}},${{point.y}}`).join("|");
+                if (points.length >= 2 && img.naturalWidth && img.naturalHeight) {{
+                  const line = {{
+                    x1: Number((points[0].x / img.naturalWidth).toFixed(4)),
+                    y1: Number((points[0].y / img.naturalHeight).toFixed(4)),
+                    x2: Number((points[1].x / img.naturalWidth).toFixed(4)),
+                    y2: Number((points[1].y / img.naturalHeight).toFixed(4)),
+                    inSide: "POSITIVE",
+                    hysteresis: 0.015
+                  }};
+                  countingLine.textContent = '"countingLine": ' + JSON.stringify(line);
+                }} else {{
+                  countingLine.textContent = '"countingLine": null';
+                }}
               }}
 
               canvas.addEventListener("mousemove", event => {{
@@ -477,6 +698,73 @@ def _channel_from_camera(camera) -> str:
     return channel.split("?", 1)[0].strip()
 
 
+<<<<<<< HEAD
+=======
+def _camera_number_from_channel(channel: str) -> str:
+    if channel.endswith(("01", "02")) and len(channel) > 2:
+        return channel[:-2]
+    return channel
+
+
+def _camera_libelle_without_stream(prefix: str, camera_number: str) -> str:
+    return f"{prefix} {camera_number}"
+
+
+def _camera_libelle(prefix: str, channel: str) -> str:
+    camera_number = channel[:-2] or channel
+    return f"{prefix} {camera_number} {_stream_type(channel)}"
+
+
+def _test_rtsp_channel(rtsp_url: str, timeout_seconds: int) -> tuple[bool, int, int]:
+    started_at = time.time()
+    timeout_ms = max(timeout_seconds * 1000, 1000)
+    capture = cv2.VideoCapture(
+        rtsp_url,
+        cv2.CAP_FFMPEG,
+        [
+            cv2.CAP_PROP_OPEN_TIMEOUT_MSEC,
+            timeout_ms,
+            cv2.CAP_PROP_READ_TIMEOUT_MSEC,
+            timeout_ms,
+        ],
+    )
+    try:
+        if not capture.isOpened():
+            logger.warning(
+                "RTSP_SOURCE=channel_discovery phase=open_failed stream=%s elapsed=%.2fs timeout=%ss",
+                redact_url_credentials(rtsp_url),
+                time.time() - started_at,
+                timeout_seconds,
+            )
+            return False, 0, 0
+
+        while time.time() - started_at < timeout_seconds:
+            read_started_at = time.time()
+            ok, frame = capture.read()
+            if ok and frame is not None:
+                height, width = frame.shape[:2]
+                return True, int(width), int(height)
+            read_elapsed = time.time() - read_started_at
+            if read_elapsed >= max(timeout_seconds * 0.8, 0.8):
+                logger.warning(
+                    "RTSP_SOURCE=channel_discovery phase=read_timeout stream=%s elapsed=%.2fs timeout=%ss",
+                    redact_url_credentials(rtsp_url),
+                    read_elapsed,
+                    timeout_seconds,
+                )
+            time.sleep(0.1)
+        logger.warning(
+            "RTSP_SOURCE=channel_discovery phase=no_frame stream=%s elapsed=%.2fs timeout=%ss",
+            redact_url_credentials(rtsp_url),
+            time.time() - started_at,
+            timeout_seconds,
+        )
+        return False, 0, 0
+    finally:
+        capture.release()
+
+
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 def _stream_flow(request: Request, camera_id: str, camera=None) -> dict:
     if camera is None:
         camera = request.app.state.runtime_state.get_camera(camera_id)

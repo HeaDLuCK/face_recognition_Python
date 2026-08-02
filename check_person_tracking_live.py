@@ -2,6 +2,10 @@ import argparse
 import sys
 import time
 from datetime import datetime
+<<<<<<< HEAD
+=======
+from pathlib import Path
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 import cv2
 import numpy as np
@@ -21,6 +25,14 @@ def parse_args() -> argparse.Namespace:
         help="Camera index, video path, or RTSP URL. Default: 0",
     )
     parser.add_argument(
+<<<<<<< HEAD
+=======
+        "--model",
+        default=None,
+        help="Override PERSON_YOLO_MODEL_PATH. Default comes from .env.",
+    )
+    parser.add_argument(
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         "--conf",
         type=float,
         default=None,
@@ -96,6 +108,11 @@ def draw_status(frame, active_tracks: int, detections_run: int, fps: float) -> N
 def main() -> int:
     args = parse_args()
     settings = get_settings()
+<<<<<<< HEAD
+=======
+    if args.model:
+        settings.person_yolo_model_path = Path(args.model)
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     if args.conf is not None:
         settings.person_yolo_confidence = args.conf
     if args.device:
@@ -120,7 +137,11 @@ def main() -> int:
         raise RuntimeError(f"Could not open source: {args.source}")
 
     print("Press q or ESC to quit.")
+<<<<<<< HEAD
     print(f"Model: {detector.model_path}")
+=======
+    print(f"Model: {settings.person_yolo_model_path}")
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     print(f"Source: {args.source}")
 
     last_detection_at = 0.0

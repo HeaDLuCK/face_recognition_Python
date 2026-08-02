@@ -11,3 +11,7 @@ event_clips/
 history_clips/
 ffmpeg/
 *.tar
+<<<<<<< HEAD
+=======
+.env_broken/
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054

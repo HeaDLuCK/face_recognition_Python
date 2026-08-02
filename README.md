@@ -17,10 +17,17 @@ Implemented now:
 - RTSP frame reading with OpenCV.
 - Capability-gated `FACE_RECOGNITION`.
 - Capability-gated YOLO `PLATE_RECOGNITION` and `FIRE_DETECTION`.
+<<<<<<< HEAD
 - Dedicated face and person inference pipelines per running camera.
 - Optional motion-gated person tracking with separate recognition jobs per person.
 - Automatic Hikvision history recovery for unresolved attendance tracks.
 - Zone filtering for detections when synced camera data provides zones.
+=======
+- Fair round-robin face inference across running cameras.
+- Optional motion-gated person tracking with separate recognition jobs per person.
+- Automatic Hikvision history recovery for unresolved attendance tracks.
+- Zone filtering for detections when ERP provides zones.
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 - Attendance rules:
   - camera direction `IN` / `OUT`
   - duplicate cooldown
@@ -73,7 +80,15 @@ Expected camera payload:
   "rtspUrl": "rtsp://user:pass@192.168.1.50:554/stream1",
   "enabled": true,
   "direction": "IN",
-  "capabilities": ["FACE_RECOGNITION"],
+  "capabilities": ["FACE_RECOGNITION", "PERSON_COUNTING"],
+  "countingLine": {
+    "x1": 0.1,
+    "y1": 0.5,
+    "x2": 0.9,
+    "y2": 0.5,
+    "inSide": "POSITIVE",
+    "hysteresis": 0.015
+  },
   "zones": [
     {
       "zoneId": "ZONE_01",
@@ -167,12 +182,17 @@ POST /api/cameras/stop-all
 
 GET  /api/events?tenantId=COMPANY_01
 GET  /api/attendance?tenantId=COMPANY_01
+GET  /api/person-counting?etsAuth=COMPANY_01&cameraId=CAM_01
 POST /api/test/recognize-image
 
 GET  /api/cameras/grid
 GET  /api/cameras/{cameraId}/stream
 GET  /api/cameras/{cameraId}/stream-flow
 GET  /api/cameras/stream-flows
+<<<<<<< HEAD
+=======
+POST /api/cameras/discover-channels
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 GET  /api/recovery-jobs?etsAuth=COMPANY_01
 POST /api/recovery-jobs/{recoveryJobId}/retry
@@ -206,11 +226,26 @@ python check_yolo_person_image.py path/to/test.jpg --save-debug person_debug.jpg
 
 When enabled, empty cameras are gated by cheap motion checks. Detected people
 receive temporary per-camera track IDs, and face jobs are kept separately per
+<<<<<<< HEAD
 track. A track that ends without InsightFace detecting any face creates
 `PERSON_UNIDENTIFIED` and an `attendance_recovery_jobs` document. A detected
 but unmatched face remains `UNKNOWN_FACE` and does not trigger recovery. The
 recovery worker uses its own face engine, exports the small Hikvision history
 window, and records matches with `metadata.source=HISTORY_RECOVERY`.
+=======
+track. A track that ends without recognition creates `PERSON_UNIDENTIFIED` and
+an `attendance_recovery_jobs` document. The recovery worker waits for live face
+AI to become idle, exports the small Hikvision history window, and records
+matches with `metadata.source=HISTORY_RECOVERY`.
+
+History recovery samples by playback time instead of using one fixed number of
+frames for every clip. `HISTORY_RECOVERY_SAMPLE_INTERVAL_SECONDS` sets the
+target interval (0.5 seconds by default), while `HISTORY_RECOVERY_MAX_FRAMES`
+limits the total work per job (1,000 by default). Longer clips automatically
+use a wider interval to stay within that cap. Recovery reads stop at the
+requested playback duration, avoiding a final RTSP read after the recording has
+already ended.
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 RTSP reads tolerate isolated decoder failures before reconnecting. When a
 reconnect succeeds, the missing stream interval is automatically queued for
@@ -226,6 +261,23 @@ Check `personDetector.modelAvailable`, each camera's
 `runtime.personTrackingEnabled`, `activePersonTracks`, and
 `personTracksUnresolved`.
 
+<<<<<<< HEAD
+=======
+## Person Counting
+
+Person counting runs only for assignments containing the
+`PERSON_COUNTING` capability. It uses the bottom-center of each tracked person
+to detect a stable crossing of `countingLine`. Coordinates are normalized from
+0 to 1, so the line works at any stream resolution. With a left-to-right line,
+`inSide=POSITIVE` treats motion from above the line to below it as entry; use
+`NEGATIVE` to reverse entry and exit.
+
+Each crossing is persisted in MongoDB `camera_events` as `PERSON_ENTERED` or
+`PERSON_EXITED`. Query `/api/person-counting` for `entered`, `exited`, and
+`occupancy`. The debug stream draws the yellow counting line and current totals.
+`PERSON_TRACKING_ENABLED=true` and a valid person YOLO model are required.
+
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 ## Run Modes
 
 ### Development With A USB Camera
@@ -402,8 +454,11 @@ curl -X POST http://localhost:8000/api/test/recognize-image ^
 ## Event Markers, History, And Motion Zones
 
 The service does not keep a full-frame rolling video buffer in Python. Face, plate, fire, and motion events store a timestamp plus playback start/end metadata. The ERP can request that time window from Hikvision through `POST /api/cameras/{cameraId}/history-clip`; the generated temporary MP4 is deleted after the response is delivered.
+<<<<<<< HEAD
 
 Hikvision history always uses the main recording track. For example, a live substream ID of `802` is normalized to playback track `801`; an existing main ID such as `801` remains unchanged.
+=======
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 Configure in `.env`:
 
@@ -418,11 +473,16 @@ SHOW_MOTION_ZONES=true
 
 ## Performance Controls
 
+<<<<<<< HEAD
 The high-recall two-camera profile removes configured frame and time skipping:
+=======
+Defaults are conservative for computers that run several cameras on CPU:
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 ```text
 OPENCV_NUM_THREADS=1
 INSIGHTFACE_DET_SIZE=640
+<<<<<<< HEAD
 CAMERA_FRAME_SKIP=1
 ATTENDANCE_STRICT_FRAME_PROCESSING=true
 MOTION_CHECK_FRAME_SKIP=1
@@ -434,12 +494,20 @@ PERSON_DETECTION_INTERVAL_SECONDS=0
 PERSON_FACE_CANDIDATE_WINDOW_SECONDS=0
 PERSON_FACE_ATTEMPT_INTERVAL_SECONDS=0
 PERSON_FACE_MAX_ATTEMPTS=0
+=======
+FACE_CANDIDATE_BUFFER_SIZE=4
+FACE_CANDIDATE_WINDOW_SECONDS=0.5
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 UNKNOWN_FACE_CACHE_MAX_ENTRIES=1000
 UNKNOWN_FACE_CROP_CACHE_MAX_ENTRIES=500
 UNKNOWN_FACE_DB_MATCH_LIMIT=500
 ```
 
+<<<<<<< HEAD
 Each running camera owns separate InsightFace and person-YOLO model instances, so two cameras can process movement and faces concurrently. With `ATTENDANCE_STRICT_FRAME_PROCESSING=true`, each camera waits for YOLO and any required face recognition to finish before reading the next frame; the live attendance schedulers cannot replace pending frames. This uses more CPU, adds stream delay when inference is slower than the camera FPS, and limits each camera's decoded rate to its AI throughput. Increase `INSIGHTFACE_DET_SIZE` only when hardware capacity and face distance require it.
+=======
+Face inference is serialized by one shared round-robin scheduler. Every camera keeps one latest pending candidate, so slow hardware does not build a stale frame queue. Increase `INSIGHTFACE_DET_SIZE` only when hardware capacity and face distance require it.
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 `MOTION_ZONES` supports polygons. Use `;` between zones and `|` between points:
 

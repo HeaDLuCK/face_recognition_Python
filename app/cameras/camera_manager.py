@@ -10,8 +10,11 @@ from app.cameras.camera_worker import CameraWorker
 from app.cameras.rtsp_reader import RtspReader
 from app.config import Settings
 from app.events.event_service import EventService
+<<<<<<< HEAD
 from app.face.embedding_service import EmbeddingService
 from app.face.insightface_engine import InsightFaceEngine
+=======
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
 from app.fire.fire_detection_service import FireDetectionService
@@ -30,7 +33,14 @@ class CameraManager:
     def __init__(
         self,
         runtime_state: RuntimeState,
+<<<<<<< HEAD
         embedding_service: EmbeddingService,
+=======
+        recognition_service: RecognitionService,
+        face_recognition_scheduler: FaceRecognitionScheduler,
+        person_detection_service: PersonDetectionService,
+        person_detection_scheduler: PersonDetectionScheduler,
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         attendance_recovery_service: AttendanceRecoveryService,
         plate_recognition_service: PlateRecognitionService,
         fire_detection_service: FireDetectionService,
@@ -41,7 +51,13 @@ class CameraManager:
         settings: Settings,
     ):
         self.runtime_state = runtime_state
+<<<<<<< HEAD
         self.embedding_service = embedding_service
+=======
+        self.recognition_service = recognition_service
+        self.person_detection_service = person_detection_service
+        self.person_detection_scheduler = person_detection_scheduler
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         self.attendance_recovery_service = attendance_recovery_service
         self.plate_recognition_service = plate_recognition_service
         self.fire_detection_service = fire_detection_service
@@ -50,6 +66,7 @@ class CameraManager:
         self.attendance_service = attendance_service
         self.log_service = log_service
         self.settings = settings
+        self.face_recognition_scheduler = face_recognition_scheduler
         self.workers: dict[str, CameraWorker] = {}
 
     async def start_camera(self, camera_id: str) -> dict:
@@ -86,10 +103,17 @@ class CameraManager:
                 assignment.tenantId: self.runtime_state.get_rules(assignment.tenantId)
                 for assignment in camera.activeAssignments
             },
+<<<<<<< HEAD
             recognition_service=recognition_service,
             recognition_scheduler=recognition_scheduler,
             person_detection_service=person_detection_service,
             person_detection_scheduler=person_detection_scheduler,
+=======
+            recognition_service=self.recognition_service,
+            recognition_scheduler=self.face_recognition_scheduler,
+            person_detection_service=self.person_detection_service,
+            person_detection_scheduler=self.person_detection_scheduler,
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             attendance_recovery_service=self.attendance_recovery_service,
             plate_recognition_service=self.plate_recognition_service,
             fire_detection_service=self.fire_detection_service,
@@ -138,7 +162,14 @@ class CameraManager:
         return {"stopped": results}
 
     async def shutdown(self) -> dict:
+<<<<<<< HEAD
         return await self.stop_all()
+=======
+        stopped = await self.stop_all()
+        await self.face_recognition_scheduler.close()
+        await self.person_detection_scheduler.close()
+        return stopped
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
     async def restart_all(self) -> dict:
         stopped = await self.stop_all()
@@ -157,6 +188,7 @@ class CameraManager:
             "runningCameras": len(running_ids),
             "lastSync": self.runtime_state.last_sync,
             "faceScheduler": {
+<<<<<<< HEAD
                 "mode": "parallel-per-camera",
                 "pendingJobs": sum(
                     worker.recognition_scheduler.pending_jobs
@@ -194,6 +226,12 @@ class CameraManager:
                     None,
                 ),
             },
+=======
+                "pendingJobs": self.face_recognition_scheduler.pending_jobs,
+                "idle": self.face_recognition_scheduler.is_idle,
+            },
+            "personDetector": self.person_detection_scheduler.status(),
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             "cameras": [
                 {
                     "etsAuth": camera.tenantId,

@@ -13,6 +13,10 @@ def parse_args() -> argparse.Namespace:
         description="Test the attendance person detector on one image."
     )
     parser.add_argument("image", help="Path to image")
+<<<<<<< HEAD
+=======
+    parser.add_argument("--model", default=None, help="Override PERSON_YOLO_MODEL_PATH")
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     parser.add_argument(
         "--conf",
         type=float,
@@ -42,6 +46,11 @@ def main() -> int:
         raise ValueError(f"Unable to read image: {image_path}")
 
     settings = get_settings()
+<<<<<<< HEAD
+=======
+    if args.model:
+        settings.person_yolo_model_path = Path(args.model)
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     if args.conf is not None:
         settings.person_yolo_confidence = args.conf
     if args.device:
@@ -49,7 +58,11 @@ def main() -> int:
 
     service = PersonDetectionService(settings)
     detections = service.detect_frame(frame)
+<<<<<<< HEAD
     print(f"Model: {service.model_path}")
+=======
+    print(f"Model: {settings.person_yolo_model_path}")
+>>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     print(f"Detections: {len(detections)}")
     for index, detection in enumerate(detections, start=1):
         print(
