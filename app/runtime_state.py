@@ -18,6 +18,15 @@ class RuntimeState:
     def list_cameras(self) -> list[CameraConfig]:
         return list(self.cameras.values())
 
+    def list_tenant_ids(self) -> list[str]:
+        return sorted(
+            {
+                assignment.tenantId
+                for camera in self.cameras.values()
+                for assignment in camera.assignments
+            }
+        )
+
     def set_rule(self, rule: AttendanceRules) -> None:
         self.rules[rule.tenantId] = rule
 

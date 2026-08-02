@@ -39,16 +39,25 @@ async def recognition_debug(request: Request, tenantId: str, cameraId: str | Non
         cameras = [camera for camera in cameras if camera["cameraId"] == cameraId]
 
     latest_detections = {}
+    latest_person_tracks = {}
+    latest_plate_detections = {}
+    latest_fire_detections = {}
     for current_camera_id, worker in request.app.state.camera_manager.workers.items():
         if cameraId and current_camera_id != cameraId:
             continue
         latest_detections[current_camera_id] = worker.latest_detections
+        latest_person_tracks[current_camera_id] = worker.latest_person_tracks
+        latest_plate_detections[current_camera_id] = worker.latest_plate_detections
+        latest_fire_detections[current_camera_id] = worker.latest_fire_detections
 
     return {
         "tenantId": tenantId,
         "embeddingsCount": embeddings_count,
         "cameras": cameras,
         "latestDetections": latest_detections,
+        "latestPersonTracks": latest_person_tracks,
+        "latestPlateDetections": latest_plate_detections,
+        "latestFireDetections": latest_fire_detections,
         "lastSync": request.app.state.runtime_state.last_sync,
     }
 

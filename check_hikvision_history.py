@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, unquote, urlsplit
@@ -8,6 +9,8 @@ from xml.etree import ElementTree
 
 import cv2
 import httpx
+
+from app.services.url_utils import redact_url_credentials
 
 
 def load_env(path=".env"):
@@ -55,6 +58,13 @@ def extract_channel(path):
     if match:
         return match.group(1)
     return "101"
+
+
+def main_stream_channel(channel):
+    normalized = channel.strip()
+    if normalized.isdigit() and len(normalized) >= 3:
+        return f"{normalized[:-2]}01"
+    return normalized
 
 
 def utc_text(value):
@@ -140,6 +150,7 @@ def test_playback_rtsp(url, timeout_seconds=10):
             if ok and frame is not None:
                 height, width = frame.shape[:2]
                 return True, width, height
+            time.sleep(0.02)
         return False, 0, 0
     finally:
         capture.release()
@@ -162,7 +173,7 @@ def main():
         raise SystemExit("Missing RTSP URL. Put RTSP_URL in .env or pass --rtsp-url.")
 
     info = parse_rtsp_url(args.rtsp_url)
-    channel = args.channel or info["channel"]
+    channel = main_stream_channel(args.channel or info["channel"])
 
     if args.start and args.end:
         start = local_datetime(args.start)
@@ -203,7 +214,7 @@ def main():
         start=start,
         end=end,
     )
-    print(url)
+    print(redact_url_credentials(url))
     ok, width, height = test_playback_rtsp(url)
     if ok:
         print(f"Playback RTSP OK. First frame: {width}x{height}")

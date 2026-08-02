@@ -11,16 +11,18 @@ async def sync_all(
     payload: Any = Body(default=None),
     restart: bool = Query(default=True),
 ) -> dict:
-    if payload is not None:
-        result = {}
-        if isinstance(payload, dict) and "cameras" in payload:
+    if payload is  None:
+        raise HTTPException(status_code=400, detail="Payload is Empty")
+    result = {}
+    if isinstance(payload, dict) and "cameras" in payload:
+        try:
             result["cameras"] = await request.app.state.sync_service.sync_cameras_from_payload(payload["cameras"])
-        if isinstance(payload, dict) and "employees" in payload:
-            result["employees"] = await request.app.state.sync_service.sync_employees_from_payload(payload["employees"])
-        if isinstance(payload, dict) and "rules" in payload:
-            result["rules"] = await request.app.state.sync_service.sync_rules_from_payload(payload["rules"])
-        return await _restart_if_requested(request, result, restart)
-    result = await request.app.state.sync_service.sync_all()
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if isinstance(payload, dict) and "employees" in payload:
+        result["employees"] = await request.app.state.sync_service.sync_employees_from_payload(payload["employees"])
+    if isinstance(payload, dict) and "rules" in payload:
+        result["rules"] = await request.app.state.sync_service.sync_rules_from_payload(payload["rules"])
     return await _restart_if_requested(request, result, restart)
 
 
@@ -30,10 +32,13 @@ async def sync_cameras(
     payload: Any = Body(default=None),
     restart: bool = Query(default=True),
 ) -> dict:
-    if payload is not None:
-        result = await request.app.state.sync_service.sync_cameras_from_payload(payload)
-    else:
-        result = await request.app.state.sync_service.sync_cameras()
+    try:
+        if payload is not None:
+            result = await request.app.state.sync_service.sync_cameras_from_payload(payload)
+        else:
+            raise HTTPException(status_code=400, detail="Payload is Empty")
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     return await _restart_if_requested(request, result, restart)
 
 
@@ -48,7 +53,7 @@ async def sync_employees(
     if payload is not None:
         result = await request.app.state.sync_service.sync_employees_from_payload(payload)
     else:
-        result = await request.app.state.sync_service.sync_employees(_tenant_id(tenantId, etsAuth))
+        raise HTTPException(status_code=400, detail="Payload is Empty")
     return await _restart_if_requested(request, result, restart)
 
 
@@ -63,7 +68,7 @@ async def sync_rules(
     if payload is not None:
         result = await request.app.state.sync_service.sync_rules_from_payload(payload)
     else:
-        result = await request.app.state.sync_service.sync_rules(_tenant_id(tenantId, etsAuth))
+        raise HTTPException(status_code=400, detail="Payload is Empty")
     return await _restart_if_requested(request, result, restart)
 
 

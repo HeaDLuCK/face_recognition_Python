@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from threading import RLock
 from typing import Any
 
 import cv2
@@ -21,30 +22,40 @@ class InsightFaceEngine:
     def __init__(self, settings: Settings):
         self.settings = settings
         self._model: Any | None = None
+        self._model_lock = RLock()
 
     def _load_model(self) -> Any:
-        if self._model is not None:
-            return self._model
+        with self._model_lock:
+            if self._model is not None:
+                return self._model
 
-        try:
-            from insightface.app import FaceAnalysis
-        except ImportError as exc:
-            raise RuntimeError(
-                "InsightFace is not installed. Install requirements.txt before using recognition."
-            ) from exc
+            try:
+                from insightface.app import FaceAnalysis
+            except ImportError as exc:
+                raise RuntimeError(
+                    "InsightFace is not installed. Install requirements.txt before using recognition."
+                ) from exc
 
-        model = FaceAnalysis(
-            name=self.settings.insightface_model_name,
-            providers=self.settings.insightface_provider_list,
-        )
-        model.prepare(ctx_id=self.settings.insightface_ctx_id, det_size=(640, 640))
-        self._model = model
-        logger.info("Loaded InsightFace model '%s'", self.settings.insightface_model_name)
-        return model
+            model = FaceAnalysis(
+                name=self.settings.insightface_model_name,
+                providers=self.settings.insightface_provider_list,
+                allowed_modules=["detection", "recognition"],
+            )
+            det_size = self.settings.insightface_det_size
+            model.prepare(ctx_id=self.settings.insightface_ctx_id, det_size=(det_size, det_size))
+            self._model = model
+            logger.info(
+                "Loaded InsightFace model '%s' with detection size %dx%d",
+                self.settings.insightface_model_name,
+                det_size,
+                det_size,
+            )
+            return model
 
     def detect_faces(self, frame: np.ndarray) -> list[DetectedFace]:
-        model = self._load_model()
-        faces = model.get(frame)
+        with self._model_lock:
+            model = self._load_model()
+            faces = model.get(frame)
         detections: list[DetectedFace] = []
 
         for face in faces:

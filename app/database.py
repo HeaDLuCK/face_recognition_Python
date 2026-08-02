@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import Any
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
@@ -19,19 +20,32 @@ TENANT_INDEXED_COLLECTIONS = (
     "unknown_face_crops",
     "camera_configs",
     "attendance_rules",
+    "attendance_sync_state",
     "service_logs",
+    "attendance_recovery_jobs",
 )
+TENANT_FIELD_MIGRATION_ID = "tenant_id_to_ets_auth_v1"
 
 
 async def connect_to_mongo() -> AsyncIOMotorDatabase:
     global client, database
 
+    if client is not None and database is not None:
+        return database
+
     settings = get_settings()
-    client = AsyncIOMotorClient(settings.mongo_url)
-    database = client[settings.mongo_db_name]
-    await client.admin.command("ping")
-    await migrate_tenant_field(database)
-    await ensure_indexes(database)
+    new_client = AsyncIOMotorClient(settings.mongo_url)
+    new_database = new_client[settings.mongo_db_name]
+    try:
+        await new_client.admin.command("ping")
+        await migrate_tenant_field(new_database)
+        await ensure_indexes(new_database)
+    except Exception:
+        new_client.close()
+        raise
+
+    client = new_client
+    database = new_database
     logger.info("Connected to MongoDB database '%s'", settings.mongo_db_name)
     return database
 
@@ -63,19 +77,41 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
         unique=True,
     )
     await db.attendance_detections.create_index([("etsAuth", 1), ("employeeId", 1), ("timestamp", -1)])
+    await db.attendance_detections.create_index([("etsAuth", 1), ("eventType", 1), ("timestamp", 1)])
     await db.camera_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.snapshot_metadata.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.unknown_face_crops.create_index([("etsAuth", 1), ("cameraId", 1), ("createdAt", -1)])
+    await db.unknown_face_crops.create_index([("etsAuth", 1), ("status", 1), ("createdAt", -1)])
+    await db.unknown_face_crops.create_index(
+        [("unknownFaceCropId", 1)],
+        unique=True,
+        partialFilterExpression={"unknownFaceCropId": {"$exists": True}},
+    )
     await db.camera_configs.create_index([("cameraId", 1)], unique=True)
     await db.camera_configs.create_index([("etsAuth", 1), ("enabled", 1)])
+    await db.camera_configs.create_index([("assignments.etsAuth", 1), ("enabled", 1)])
     await drop_index_by_name(db.attendance_rules, "etsAuth_1")
     await db.attendance_rules.create_index(
         [("etsAuth", 1)],
         unique=True,
         name="attendance_rules_etsAuth_unique",
     )
+    await db.attendance_sync_state.create_index(
+        [("etsAuth", 1), ("syncKey", 1)],
+        unique=True,
+    )
     await db.service_logs.create_index([("etsAuth", 1), ("createdAt", -1)])
+    await db.attendance_recovery_jobs.create_index(
+        [("status", 1), ("nextAttemptAt", 1), ("createdAt", 1)]
+    )
+    await db.attendance_recovery_jobs.create_index(
+        [("etsAuth", 1), ("cameraId", 1), ("windowStart", 1), ("windowEnd", 1)]
+    )
+    await db.attendance_recovery_jobs.create_index(
+        [("recoveryJobId", 1)],
+        unique=True,
+    )
 
 
 async def drop_index_by_name(collection, index_name: str) -> None:
@@ -86,6 +122,10 @@ async def drop_index_by_name(collection, index_name: str) -> None:
 
 
 async def migrate_tenant_field(db: AsyncIOMotorDatabase) -> None:
+    migrations = db.service_migrations
+    if await migrations.find_one({"_id": TENANT_FIELD_MIGRATION_ID}, {"_id": 1}):
+        return
+
     for collection_name in TENANT_INDEXED_COLLECTIONS:
         collection = db[collection_name]
         async for index in collection.list_indexes():
@@ -101,6 +141,12 @@ async def migrate_tenant_field(db: AsyncIOMotorDatabase) -> None:
             {"tenantId": {"$exists": True}, "etsAuth": {"$exists": True}},
             {"$unset": {"tenantId": ""}},
         )
+
+    await migrations.update_one(
+        {"_id": TENANT_FIELD_MIGRATION_ID},
+        {"$set": {"completedAt": datetime.utcnow()}},
+        upsert=True,
+    )
 
 
 def serialize_mongo_doc(doc: dict[str, Any] | None) -> dict[str, Any] | None:

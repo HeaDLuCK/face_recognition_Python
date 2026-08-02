@@ -10,10 +10,18 @@ from app.cameras.camera_worker import CameraWorker
 from app.cameras.rtsp_reader import RtspReader
 from app.config import Settings
 from app.events.event_service import EventService
+from app.face.embedding_service import EmbeddingService
+from app.face.insightface_engine import InsightFaceEngine
+from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
+from app.fire.fire_detection_service import FireDetectionService
+from app.plates.plate_recognition_service import PlateRecognitionService
+from app.recovery.attendance_recovery_service import AttendanceRecoveryService
 from app.runtime_state import RuntimeState
 from app.services.log_service import LogService
 from app.storage.snapshot_service import SnapshotService
+from app.tracking.person_detection_scheduler import PersonDetectionScheduler
+from app.tracking.person_detection_service import PersonDetectionService
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +30,10 @@ class CameraManager:
     def __init__(
         self,
         runtime_state: RuntimeState,
-        recognition_service: RecognitionService,
+        embedding_service: EmbeddingService,
+        attendance_recovery_service: AttendanceRecoveryService,
+        plate_recognition_service: PlateRecognitionService,
+        fire_detection_service: FireDetectionService,
         snapshot_service: SnapshotService,
         event_service: EventService,
         attendance_service: AttendanceService,
@@ -30,7 +41,10 @@ class CameraManager:
         settings: Settings,
     ):
         self.runtime_state = runtime_state
-        self.recognition_service = recognition_service
+        self.embedding_service = embedding_service
+        self.attendance_recovery_service = attendance_recovery_service
+        self.plate_recognition_service = plate_recognition_service
+        self.fire_detection_service = fire_detection_service
         self.snapshot_service = snapshot_service
         self.event_service = event_service
         self.attendance_service = attendance_service
@@ -51,10 +65,34 @@ class CameraManager:
         if existing and not existing.is_running:
             self.workers.pop(camera_id, None)
 
+        # Every camera owns separate YOLO and InsightFace model instances.
+        # This lets two camera pipelines run at the same time instead of taking
+        # turns behind shared model locks.
+        recognition_service = RecognitionService(
+            embedding_service=self.embedding_service,
+            face_engine=InsightFaceEngine(self.settings),
+        )
+        recognition_scheduler = FaceRecognitionScheduler(
+            max_pending_per_camera=self.settings.face_scheduler_max_pending_per_camera
+        )
+        person_detection_service = PersonDetectionService(self.settings)
+        person_detection_scheduler = PersonDetectionScheduler(
+            person_detection_service
+        )
+
         worker = CameraWorker(
             camera=camera,
-            rules=self.runtime_state.get_rules(camera.tenantId),
-            recognition_service=self.recognition_service,
+            rules_by_tenant={
+                assignment.tenantId: self.runtime_state.get_rules(assignment.tenantId)
+                for assignment in camera.activeAssignments
+            },
+            recognition_service=recognition_service,
+            recognition_scheduler=recognition_scheduler,
+            person_detection_service=person_detection_service,
+            person_detection_scheduler=person_detection_scheduler,
+            attendance_recovery_service=self.attendance_recovery_service,
+            plate_recognition_service=self.plate_recognition_service,
+            fire_detection_service=self.fire_detection_service,
             snapshot_service=self.snapshot_service,
             event_service=self.event_service,
             attendance_service=self.attendance_service,
@@ -86,10 +124,21 @@ class CameraManager:
         return {"started": results}
 
     async def stop_all(self) -> dict:
-        results = []
-        for camera_id in list(self.workers.keys()):
-            results.append(await self.stop_camera(camera_id))
+        camera_ids = list(self.workers.keys())
+        stopped = await asyncio.gather(
+            *(self.stop_camera(camera_id) for camera_id in camera_ids),
+            return_exceptions=True,
+        )
+        results = [
+            result
+            if not isinstance(result, Exception)
+            else {"cameraId": camera_id, "status": "error", "message": str(result)}
+            for camera_id, result in zip(camera_ids, stopped)
+        ]
         return {"stopped": results}
+
+    async def shutdown(self) -> dict:
+        return await self.stop_all()
 
     async def restart_all(self) -> dict:
         stopped = await self.stop_all()
@@ -102,19 +151,68 @@ class CameraManager:
     def status(self) -> dict:
         configured = self.runtime_state.list_cameras()
         running_ids = {camera_id for camera_id, worker in self.workers.items() if worker.is_running}
+        workers = list(self.workers.values())
         return {
             "configuredCameras": len(configured),
             "runningCameras": len(running_ids),
             "lastSync": self.runtime_state.last_sync,
+            "faceScheduler": {
+                "mode": "parallel-per-camera",
+                "pendingJobs": sum(
+                    worker.recognition_scheduler.pending_jobs
+                    for worker in workers
+                ),
+                "idle": all(
+                    worker.recognition_scheduler.is_idle
+                    for worker in workers
+                ),
+            },
+            "personDetector": {
+                "mode": "parallel-per-camera",
+                "registeredCameras": sum(
+                    worker.person_detection_scheduler.status()["registeredCameras"]
+                    for worker in workers
+                ),
+                "pendingCameras": sum(
+                    worker.person_detection_scheduler.status()["pendingCameras"]
+                    for worker in workers
+                ),
+                "completedBatches": sum(
+                    worker.person_detection_scheduler.status()["completedBatches"]
+                    for worker in workers
+                ),
+                "modelAvailable": all(
+                    worker.person_detection_service.available
+                    for worker in workers
+                ) if workers else PersonDetectionService.MODEL_PATH.is_file(),
+                "unavailableReason": next(
+                    (
+                        worker.person_detection_service.unavailable_reason
+                        for worker in workers
+                        if not worker.person_detection_service.available
+                    ),
+                    None,
+                ),
+            },
             "cameras": [
                 {
                     "etsAuth": camera.tenantId,
+                    "etsAuths": camera.tenantIds,
                     "cameraId": camera.cameraId,
                     "name": camera.name,
                     "enabled": camera.enabled,
                     "direction": camera.direction,
                     "capabilities": [capability.value for capability in camera.capabilities],
+                    "assignments": [
+                        assignment.model_dump(mode="json", by_alias=True)
+                        for assignment in camera.assignments
+                    ],
                     "status": "running" if camera.cameraId in running_ids else "stopped",
+                    "runtime": (
+                        self.workers[camera.cameraId].status()
+                        if camera.cameraId in self.workers
+                        else None
+                    ),
                 }
                 for camera in configured
             ],
@@ -136,16 +234,19 @@ class CameraManager:
 
     async def _worker_stream(self, worker: CameraWorker, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         delay = 1 / self.settings.stream_fps
-        if overlay:
-            worker.overlay_requested = True
-        while worker.is_running:
-            jpeg = worker.latest_overlay_jpeg if overlay and worker.latest_overlay_jpeg else worker.latest_jpeg
-            if jpeg:
-                yield self._mjpeg_chunk(jpeg)
-            await asyncio.sleep(delay)
+        worker.add_stream_viewer(overlay=overlay)
+        try:
+            while worker.is_running:
+                jpeg = worker.latest_overlay_jpeg if overlay and worker.latest_overlay_jpeg else worker.latest_jpeg
+                if jpeg:
+                    yield self._mjpeg_chunk(jpeg)
+                await asyncio.sleep(delay)
+        finally:
+            worker.remove_stream_viewer(overlay=overlay)
 
     async def _direct_stream(self, camera_source: str, overlay: bool = False) -> AsyncGenerator[bytes, None]:
         reader = RtspReader(camera_source, self.settings)
+        delay = 1 / self.settings.stream_fps
         fps_started_at = time.perf_counter()
         fps_frames = 0
         display_fps = 0.0
@@ -164,7 +265,7 @@ class CameraManager:
                 jpeg = await asyncio.to_thread(self._encode_jpeg, frame)
                 if jpeg:
                     yield self._mjpeg_chunk(jpeg)
-                await asyncio.sleep(0)
+                await asyncio.sleep(delay)
         finally:
             await asyncio.to_thread(reader.close)
 

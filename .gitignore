@@ -1,0 +1,13 @@
+.venv/
+.vscode/
+__pycache__/
+*.py[cod]
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+snapshots/
+event_clips/
+history_clips/
+ffmpeg/
+*.tar

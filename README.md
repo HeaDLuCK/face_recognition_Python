@@ -1,32 +1,38 @@
 # AI Camera Service
 
-FastAPI microservice that runs AI processing for ERP-managed camera systems.
+FastAPI microservice that runs AI processing for managed camera systems.
 
-ERP is the source of truth. This service does not create or manage cameras, employees, face images, zones, camera capabilities, or attendance rules as master data. It fetches them from ERP, generates local face embeddings, processes RTSP streams, stores runtime artifacts in MongoDB, saves snapshots locally, and sends events back to ERP.
+An external management system can push cameras, employees, face images, zones,
+camera capabilities, and attendance rules through the `/api/sync/*` endpoints.
+The service generates local face embeddings, processes RTSP streams, stores
+runtime artifacts in MongoDB, and exposes attendance and events through its API.
+It does not require or call an external base URL.
 
 ## Current Scope
 
 Implemented now:
 
-- ERP sync for cameras, employees, employee face images, and attendance rules.
+- Push-based sync for cameras, employees, employee face images, and attendance rules.
 - Local cached employee face embeddings with InsightFace.
 - RTSP frame reading with OpenCV.
 - Capability-gated `FACE_RECOGNITION`.
-- Zone filtering for detections when ERP provides zones.
+- Capability-gated YOLO `PLATE_RECOGNITION` and `FIRE_DETECTION`.
+- Dedicated face and person inference pipelines per running camera.
+- Optional motion-gated person tracking with separate recognition jobs per person.
+- Automatic Hikvision history recovery for unresolved attendance tracks.
+- Zone filtering for detections when synced camera data provides zones.
 - Attendance rules:
   - camera direction `IN` / `OUT`
   - duplicate cooldown
   - recognition confidence threshold
 - MongoDB runtime storage.
-- ERP event delivery through `POST {ERP_BASE_URL}/api/ai/events`.
+- Attendance and event retrieval through local API endpoints.
 
 Architecture placeholders exist for future modules:
 
-- `PLATE_RECOGNITION`
 - `OBJECT_COUNTING`
 - `PERSON_COUNTING`
 - `SMOKE_DETECTION`
-- `FIRE_DETECTION`
 - `SUSPICIOUS_BEHAVIOR`
 - `POSTURE_DETECTION`
 
@@ -42,16 +48,19 @@ The service writes runtime data only:
 - `alert_events`
 - `snapshot_metadata`
 - `service_logs`
+- `attendance_recovery_jobs`
 
 Every runtime document includes `tenantId`.
 
-## ERP Endpoints Used
+## Sync Endpoints
 
 ```text
-GET  {ERP_BASE_URL}/api/ai/cameras
-GET  {ERP_BASE_URL}/api/ai/employees?tenantId=COMPANY_01
-GET  {ERP_BASE_URL}/api/ai/attendance-rules?tenantId=COMPANY_01
-POST {ERP_BASE_URL}/api/ai/events
+POST /api/sync/all
+POST /api/sync/cameras
+POST /api/sync/employees
+POST /api/sync/rules
+GET  /api/attendance/sync?tenantId=COMPANY_01
+GET  /api/events?tenantId=COMPANY_01
 ```
 
 Expected camera payload:
@@ -85,12 +94,14 @@ Expected attendance rules payload:
   "tenantId": "COMPANY_01",
   "recognitionThreshold": 0.55,
   "duplicateCooldownSeconds": 60,
+  "personTrackingEnabled": true,
+  "historyRecoveryEnabled": true,
   "saveUnknownFaces": true,
   "sendUnknownFaceAlert": false
 }
 ```
 
-Events sent back to ERP follow this shape:
+Events returned by the API follow this shape:
 
 ```json
 {
@@ -117,8 +128,6 @@ copy .env.example .env
 Edit `.env`:
 
 ```text
-ERP_BASE_URL=https://your-erp.example.com
-ERP_API_TOKEN=your-token
 MONGO_URL=mongodb://localhost:27017
 MONGO_DB_NAME=ai_camera_service
 SNAPSHOT_DIR=snapshots
@@ -164,18 +173,67 @@ GET  /api/cameras/grid
 GET  /api/cameras/{cameraId}/stream
 GET  /api/cameras/{cameraId}/stream-flow
 GET  /api/cameras/stream-flows
-POST /api/cameras/discover-channels
+
+GET  /api/recovery-jobs?etsAuth=COMPANY_01
+POST /api/recovery-jobs/{recoveryJobId}/retry
 ```
+
+## Person Tracking And Attendance Recovery
+
+Person tracking is disabled by default so existing deployments keep their
+current face-recognition behavior. To enable it:
+
+1. Put a lightweight Ultralytics COCO person model at
+   `app/tracking/model/person_yolo.pt`. The model must contain the standard
+   `person` class (`class 0`).
+2. Set `PERSON_TRACKING_ENABLED=true`.
+3. Keep `personTrackingEnabled=true` and `historyRecoveryEnabled=true` in the
+   tenant attendance rules.
+4. Restart the service and cameras.
+
+For development, Ultralytics can download a nano COCO model once, after which
+you can rename/copy it to the configured path:
+
+```bash
+python -c "from ultralytics import YOLO; YOLO('yolo11n.pt')"
+```
+
+Validate the person model before enabling all cameras:
+
+```bash
+python check_yolo_person_image.py path/to/test.jpg --save-debug person_debug.jpg
+```
+
+When enabled, empty cameras are gated by cheap motion checks. Detected people
+receive temporary per-camera track IDs, and face jobs are kept separately per
+track. A track that ends without InsightFace detecting any face creates
+`PERSON_UNIDENTIFIED` and an `attendance_recovery_jobs` document. A detected
+but unmatched face remains `UNKNOWN_FACE` and does not trigger recovery. The
+recovery worker uses its own face engine, exports the small Hikvision history
+window, and records matches with `metadata.source=HISTORY_RECOVERY`.
+
+RTSP reads tolerate isolated decoder failures before reconnecting. When a
+reconnect succeeds, the missing stream interval is automatically queued for
+Hikvision history recovery. Nearby pending gaps for the same camera are merged.
+
+Verify the runtime state:
+
+```text
+GET /api/status
+```
+
+Check `personDetector.modelAvailable`, each camera's
+`runtime.personTrackingEnabled`, `activePersonTracks`, and
+`personTracksUnresolved`.
 
 ## Run Modes
 
 ### Development With A USB Camera
 
-For local testing, leave `ERP_BASE_URL` empty in `.env` and use:
+For local USB testing, use:
 
 ```text
 ENVIRONMENT=development
-ERP_BASE_URL=
 CAMERA_SOURCE_MODE=usb
 USB_CAMERA_INDEX=0
 DEV_TENANT_ID=DEV_COMPANY
@@ -239,22 +297,22 @@ curl -X POST http://localhost:8000/api/cameras/USB_CAM_01/stop
 
 If your webcam is not camera `0`, try `USB_CAMERA_INDEX=1`.
 
-If the browser preview still feels slow, increase `CAMERA_FRAME_SKIP` so AI recognition runs less often, for example:
+The high-recall attendance profile keeps `CAMERA_FRAME_SKIP=1`, so every decoded
+frame reaches the AI decision path. Increasing this value trades recognition
+coverage for lower CPU use.
 
 ```text
-CAMERA_FRAME_SKIP=15
+CAMERA_FRAME_SKIP=1
 ```
 
 The video preview can stay fast because streaming is now decoupled from recognition work. `SHOW_DEV_FPS=true` draws the current development FPS on the stream. `SHOW_DEV_DETECTIONS=true` draws a triangle and box when face detection finds a face.
 
 ### Production With IP/RTSP Cameras
 
-In production, set ERP and RTSP mode:
+In production, set RTSP mode:
 
 ```text
 ENVIRONMENT=production
-ERP_BASE_URL=https://your-erp.example.com
-ERP_API_TOKEN=your-token
 CAMERA_SOURCE_MODE=rtsp
 ```
 
@@ -264,7 +322,7 @@ ERP camera configs should contain RTSP URLs, for example:
 rtsp://username:password@192.168.1.50:554/Streaming/Channels/101
 ```
 
-Then start the service and sync from ERP:
+Then start the service and push the configuration:
 
 ```bash
 curl -X POST http://localhost:8000/api/sync/all
@@ -290,40 +348,6 @@ or:
 ```
 
 With `CAMERA_SOURCE_MODE=auto`, the service treats those as local USB camera index `0`. Normal `rtsp://...` values are treated as IP camera streams.
-
-### Discover Hikvision Channels For ERP
-
-ERP can ask this service to test Hikvision/NVR channels and return only the working RTSP channels.
-
-```powershell
-Invoke-RestMethod -Method POST http://localhost:8000/api/cameras/discover-channels `
-  -ContentType "application/json" `
-  -Body '{
-    "tenantId": "COMPANY_01",
-    "rtspUrl": "rtsp://admin:password@192.168.100.5:554/Streaming/Channels/101",
-    "maxCamera": 16,
-    "timeoutSeconds": 4
-  }'
-```
-
-Response:
-
-```json
-{
-  "tenantId": "COMPANY_01",
-  "count": 3,
-  "workingChannels": [
-    {
-      "channel": "101",
-      "rtspUrl": "rtsp://admin:password@192.168.100.5:554/Streaming/Channels/101",
-      "width": 1920,
-      "height": 1080
-    }
-  ],
-  "rtspChannels": ["101", "201", "301"],
-  "envValue": "101,201,301"
-}
-```
 
 If ERP wants stream information for browser/cloud display, call:
 
@@ -375,23 +399,47 @@ curl -X POST http://localhost:8000/api/test/recognize-image ^
 - If zones are present on a camera, face detections outside all zones are ignored.
 - `BIDIRECTIONAL` cameras can produce recognition events, but attendance logs are only generated for `IN` or `OUT` cameras.
 
-## Event Clips And Motion Zones
+## Event Markers, History, And Motion Zones
 
-The service keeps a rolling video buffer per running camera. When an unknown face appears, or when movement is detected inside a configured motion zone, it saves a clip from the buffered past seconds.
+The service does not keep a full-frame rolling video buffer in Python. Face, plate, fire, and motion events store a timestamp plus playback start/end metadata. The ERP can request that time window from Hikvision through `POST /api/cameras/{cameraId}/history-clip`; the generated temporary MP4 is deleted after the response is delivered.
+
+Hikvision history always uses the main recording track. For example, a live substream ID of `802` is normalized to playback track `801`; an existing main ID such as `801` remains unchanged.
 
 Configure in `.env`:
 
 ```text
-EVENT_CLIP_DIR=event_clips
-EVENT_BUFFER_SECONDS=30
-EVENT_CLIP_FPS=15
 EVENT_CLIP_COOLDOWN_SECONDS=30
 MOTION_ZONES=door:100,120|420,120|420,360|100,360
-MOTION_CHECK_FRAME_SKIP=5
+MOTION_CHECK_FRAME_SKIP=1
 MOTION_PIXEL_THRESHOLD=35
 MOTION_AREA_RATIO=0.02
 SHOW_MOTION_ZONES=true
 ```
+
+## Performance Controls
+
+The high-recall two-camera profile removes configured frame and time skipping:
+
+```text
+OPENCV_NUM_THREADS=1
+INSIGHTFACE_DET_SIZE=640
+CAMERA_FRAME_SKIP=1
+ATTENDANCE_STRICT_FRAME_PROCESSING=true
+MOTION_CHECK_FRAME_SKIP=1
+RTSP_DROP_STALE_FRAMES=0
+RECOGNITION_INTERVAL_SECONDS=0
+FACE_CANDIDATE_BUFFER_SIZE=1
+FACE_CANDIDATE_WINDOW_SECONDS=0
+PERSON_DETECTION_INTERVAL_SECONDS=0
+PERSON_FACE_CANDIDATE_WINDOW_SECONDS=0
+PERSON_FACE_ATTEMPT_INTERVAL_SECONDS=0
+PERSON_FACE_MAX_ATTEMPTS=0
+UNKNOWN_FACE_CACHE_MAX_ENTRIES=1000
+UNKNOWN_FACE_CROP_CACHE_MAX_ENTRIES=500
+UNKNOWN_FACE_DB_MATCH_LIMIT=500
+```
+
+Each running camera owns separate InsightFace and person-YOLO model instances, so two cameras can process movement and faces concurrently. With `ATTENDANCE_STRICT_FRAME_PROCESSING=true`, each camera waits for YOLO and any required face recognition to finish before reading the next frame; the live attendance schedulers cannot replace pending frames. This uses more CPU, adds stream delay when inference is slower than the camera FPS, and limits each camera's decoded rate to its AI throughput. Increase `INSIGHTFACE_DET_SIZE` only when hardware capacity and face distance require it.
 
 `MOTION_ZONES` supports polygons. Use `;` between zones and `|` between points:
 
