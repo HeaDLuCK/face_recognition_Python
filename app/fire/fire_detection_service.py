@@ -10,23 +10,17 @@ logger = logging.getLogger(__name__)
 
 
 class FireDetectionService:
-<<<<<<< HEAD
     MODEL_PATH = Path("app/fire/model/fire_model.pt")
 
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     def __init__(self, settings: Settings):
         self.settings = settings
         self._model = None
         self._model_lock = RLock()
 
-<<<<<<< HEAD
     @property
     def model_path(self) -> Path:
         return self.MODEL_PATH
 
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     def detect_frame(self, frame: np.ndarray) -> list[dict]:
         with self._model_lock:
             model = self._load_model()
@@ -46,11 +40,7 @@ class FireDetectionService:
             if self._model is not None:
                 return self._model
 
-<<<<<<< HEAD
             model_path = self.model_path
-=======
-            model_path = Path(self.settings.fire_yolo_model_path)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             if not model_path.exists():
                 raise RuntimeError(f"Fire YOLO model does not exist: {model_path}")
 

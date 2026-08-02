@@ -16,41 +16,20 @@ from app.cameras.hikvision_history import (
 )
 from app.config import Settings
 from app.events.event_service import EventService
-<<<<<<< HEAD
 from app.face.recognition_service import RecognitionService
 from app.runtime_state import RuntimeState
 from app.schemas.erp_schema import AiCapability, CameraAssignment, CameraConfig
 from app.schemas.runtime_schema import RuntimeEvent
-=======
-from app.face.recognition_scheduler import FaceRecognitionScheduler
-from app.face.recognition_service import RecognitionService
-from app.recovery.sampling import history_sample_interval_seconds
-from app.runtime_state import RuntimeState
-from app.schemas.erp_schema import AiCapability, CameraAssignment, CameraConfig
-from app.schemas.runtime_schema import RuntimeEvent
-from app.services.url_utils import redact_url_credentials
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 logger = logging.getLogger(__name__)
 
 
-<<<<<<< HEAD
-=======
-class LiveAiBusyError(RuntimeError):
-    pass
-
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 class AttendanceRecoveryService:
     def __init__(
         self,
         db: AsyncIOMotorDatabase,
         runtime_state: RuntimeState,
         recognition_service: RecognitionService,
-<<<<<<< HEAD
-=======
-        recognition_scheduler: FaceRecognitionScheduler,
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         attendance_service: AttendanceService,
         event_service: EventService,
         settings: Settings,
@@ -58,10 +37,6 @@ class AttendanceRecoveryService:
         self.db = db
         self.runtime_state = runtime_state
         self.recognition_service = recognition_service
-<<<<<<< HEAD
-=======
-        self.recognition_scheduler = recognition_scheduler
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         self.attendance_service = attendance_service
         self.event_service = event_service
         self.settings = settings
@@ -495,11 +470,6 @@ class AttendanceRecoveryService:
             )
             self._processed_jobs += 1
             self._recovered_people += len(recognized)
-<<<<<<< HEAD
-=======
-        except LiveAiBusyError as exc:
-            await self._reschedule(job, str(exc), count_as_failure=False)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         except Exception as exc:
             self._last_error = str(exc)
             logger.exception(
@@ -523,7 +493,6 @@ class AttendanceRecoveryService:
         window_start = job["windowStart"]
         window_end = job["windowEnd"]
         info = parse_hikvision_rtsp(camera.rtspUrl)
-<<<<<<< HEAD
         playback_channel = hikvision_main_stream_channel(info["channel"])
         if playback_channel != info["channel"]:
             logger.info(
@@ -532,18 +501,12 @@ class AttendanceRecoveryService:
                 info["channel"],
                 camera.cameraId,
             )
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         return hikvision_playback_url(
             host=info["host"],
             rtsp_port=info["rtsp_port"],
             username=info["username"],
             password=info["password"],
-<<<<<<< HEAD
             channel=playback_channel,
-=======
-            channel=hikvision_main_stream_channel(info["channel"]),
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             start=window_start.replace(tzinfo=timezone.utc),
             end=window_end.replace(tzinfo=timezone.utc),
         )
@@ -554,19 +517,6 @@ class AttendanceRecoveryService:
         job: dict,
         assignments: list[CameraAssignment],
     ) -> dict[tuple[str, str], dict]:
-<<<<<<< HEAD
-=======
-        live_idle = await self.recognition_scheduler.wait_until_idle(
-            idle_seconds=self.settings.history_recovery_live_idle_seconds,
-            timeout_seconds=self.settings.history_recovery_live_idle_timeout_seconds,
-        )
-        if not live_idle:
-            raise LiveAiBusyError("Live face recognition remained busy")
-
-        source_info = parse_hikvision_rtsp(playback_url)
-        safe_playback_url = redact_url_credentials(playback_url)
-        open_started_at = time.monotonic()
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         capture = cv2.VideoCapture(
             playback_url,
             cv2.CAP_FFMPEG,
@@ -577,86 +527,23 @@ class AttendanceRecoveryService:
                 10000,
             ],
         )
-<<<<<<< HEAD
         if not capture.isOpened():
             capture.release()
             raise RuntimeError("Unable to open Hikvision history playback stream")
 
-        window_seconds = max((job["windowEnd"] - job["windowStart"]).total_seconds(), 1)
         source_fps = float(capture.get(cv2.CAP_PROP_FPS) or 0)
-        sample_every_seconds = window_seconds / self.settings.history_recovery_max_frames
-=======
-        open_elapsed = time.monotonic() - open_started_at
-        if not capture.isOpened():
-            capture.release()
-            logger.warning(
-                "RTSP_SOURCE=history_recovery phase=open_failed camera=%s channel=%s job=%s elapsed=%.2fs playback=%s",
-                job.get("cameraId"),
-                source_info["channel"],
-                job.get("recoveryJobId"),
-                open_elapsed,
-                safe_playback_url,
-            )
-            raise RuntimeError(
-                f"Unable to open Hikvision history playback stream: {safe_playback_url}"
-            )
-
-        logger.info(
-            "RTSP_SOURCE=history_recovery phase=opened camera=%s channel=%s job=%s elapsed=%.2fs window=%s..%s",
-            job.get("cameraId"),
-            source_info["channel"],
-            job.get("recoveryJobId"),
-            open_elapsed,
-            job.get("windowStart"),
-            job.get("windowEnd"),
-        )
-
-        window_seconds = max((job["windowEnd"] - job["windowStart"]).total_seconds(), 1)
-        source_fps = float(capture.get(cv2.CAP_PROP_FPS) or 0)
-        sample_every_seconds = history_sample_interval_seconds(
-            window_seconds,
-            self.settings.history_recovery_sample_interval_seconds,
-            self.settings.history_recovery_max_frames,
-        )
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
-        max_runtime_seconds = window_seconds + 30
         assignments_by_tenant = {assignment.tenantId: assignment for assignment in assignments}
         recognized: dict[tuple[str, str], dict] = {}
         frame_index = 0
-        sampled_frames = 0
-        last_sample_offset = -sample_every_seconds
         started_at = time.monotonic()
         tenant_thresholds = {
             assignment.tenantId: self.runtime_state.get_rules(assignment.tenantId).recognitionThreshold
             for assignment in assignments
         }
         try:
-            while (
-                sampled_frames < self.settings.history_recovery_max_frames
-                and time.monotonic() - started_at < max_runtime_seconds
-            ):
-<<<<<<< HEAD
+            while True:
                 ok, frame = await asyncio.to_thread(capture.read)
                 if not ok or frame is None:
-=======
-                read_started_at = time.monotonic()
-                ok, frame = await asyncio.to_thread(capture.read)
-                read_elapsed = time.monotonic() - read_started_at
-                if not ok or frame is None:
-                    log = logger.warning if frame_index == 0 else logger.info
-                    phase = "read_failed" if frame_index == 0 else "end_of_stream"
-                    log(
-                        "RTSP_SOURCE=history_recovery phase=%s camera=%s channel=%s job=%s elapsed=%.2fs frames=%s sampled=%s playback=%s",
-                        phase,
-                        job.get("cameraId"),
-                        source_info["channel"],
-                        job.get("recoveryJobId"),
-                        read_elapsed,
-                        frame_index,
-                        sampled_frames,
-                        safe_playback_url,
-                    )
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
                     break
                 current_index = frame_index
                 frame_index += 1
@@ -665,34 +552,11 @@ class AttendanceRecoveryService:
                     if source_fps > 0
                     else time.monotonic() - started_at
                 )
-<<<<<<< HEAD
-                if offset_seconds - last_sample_offset < sample_every_seconds:
-                    continue
-=======
-                end_guard_seconds = 1.0 / source_fps if source_fps > 0 else 0.0
-                if offset_seconds >= max(window_seconds - end_guard_seconds, 0.0):
-                    logger.info(
-                        "RTSP_SOURCE=history_recovery phase=duration_reached camera=%s channel=%s job=%s offset=%.2fs window=%.2fs frames=%s sampled=%s",
-                        job.get("cameraId"),
-                        source_info["channel"],
-                        job.get("recoveryJobId"),
-                        offset_seconds,
-                        window_seconds,
-                        frame_index,
-                        sampled_frames,
-                    )
-                    break
-                if offset_seconds - last_sample_offset < sample_every_seconds:
-                    continue
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
-                last_sample_offset = offset_seconds
 
                 results = await self.recognition_service.recognize_frame_for_tenants(
                     tenant_thresholds=tenant_thresholds,
                     frame=frame,
                 )
-                sampled_frames += 1
                 for result in results:
                     tenant_id = result.get("tenantId")
                     employee_id = result.get("employeeId")
@@ -712,35 +576,16 @@ class AttendanceRecoveryService:
                         "timestamp": job["windowStart"]
                         + timedelta(seconds=offset_seconds),
                     }
-<<<<<<< HEAD
         finally:
             capture.release()
         if frame_index == 0:
             raise RuntimeError("No frames were returned by Hikvision history playback stream")
-=======
-                await asyncio.sleep(0)
-        finally:
-            capture.release()
-        if frame_index == 0:
-            raise RuntimeError(
-                "No frames were returned by Hikvision history playback stream: "
-                f"{safe_playback_url}"
-            )
-        if sampled_frames == 0:
-            raise LiveAiBusyError(
-                "Live face recognition remained busy throughout history playback"
-            )
         logger.info(
-            "RTSP_SOURCE=history_recovery phase=completed camera=%s channel=%s job=%s frames=%s sampled=%s recognized=%s interval=%.2fs",
-            job.get("cameraId"),
-            source_info["channel"],
+            "Scanned every decoded history frame for recovery job %s: frames=%s recognized=%s",
             job.get("recoveryJobId"),
             frame_index,
-            sampled_frames,
             len(recognized),
-            sample_every_seconds,
         )
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         return recognized
 
     @staticmethod

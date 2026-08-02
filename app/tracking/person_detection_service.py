@@ -1,10 +1,7 @@
 import asyncio
 import logging
 import threading
-<<<<<<< HEAD
 from pathlib import Path
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 import numpy as np
 
@@ -15,11 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class PersonDetectionService:
-<<<<<<< HEAD
     MODEL_PATH = Path("app/tracking/model/person_yolo.pt")
 
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     def __init__(self, settings: Settings):
         self.settings = settings
         self._model = None
@@ -27,13 +21,8 @@ class PersonDetectionService:
         self._load_error: str | None = None
 
     @property
-<<<<<<< HEAD
     def model_path(self) -> Path:
         return self.MODEL_PATH
-=======
-    def model_path(self):
-        return self.settings.person_yolo_model_path
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
     @property
     def available(self) -> bool:

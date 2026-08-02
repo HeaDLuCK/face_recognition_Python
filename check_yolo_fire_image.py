@@ -11,10 +11,6 @@ from app.fire.fire_detection_service import FireDetectionService
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Test the YOLO fire model on one image.")
     parser.add_argument("image", help="Path to image")
-<<<<<<< HEAD
-=======
-    parser.add_argument("--model", default=None, help="Override FIRE_YOLO_MODEL_PATH")
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     parser.add_argument("--conf", type=float, default=None, help="Override FIRE_YOLO_CONFIDENCE")
     parser.add_argument("--device", default=None, help="Override FIRE_YOLO_DEVICE, for example cpu or 0")
     parser.add_argument("--save-debug", default=None, help="Optional path to save an annotated debug image")
@@ -59,11 +55,6 @@ def draw_detection(frame, detection: dict) -> None:
 def main() -> int:
     args = parse_args()
     settings = get_settings()
-<<<<<<< HEAD
-=======
-    if args.model:
-        settings.fire_yolo_model_path = Path(args.model)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     if args.conf is not None:
         settings.fire_yolo_confidence = args.conf
     if args.device:
@@ -73,11 +64,7 @@ def main() -> int:
     service = FireDetectionService(settings)
     detections = service.detect_frame(frame)
 
-<<<<<<< HEAD
     print(f"Model: {service.model_path}")
-=======
-    print(f"Model: {settings.fire_yolo_model_path}")
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     print(f"Confidence: {settings.fire_yolo_confidence}")
     print(f"Device: {settings.fire_yolo_device}")
     print(f"Detections: {len(detections)}")

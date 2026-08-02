@@ -5,11 +5,7 @@ from contextlib import asynccontextmanager
 import cv2
 from fastapi import FastAPI
 
-<<<<<<< HEAD
 from app.api import attendance, cameras, events, health, recovery, sync, test, unknown_faces
-=======
-from app.api import attendance, cameras, events, health, person_counting, recovery, sync, test, unknown_faces
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 from app.attendance.attendance_service import AttendanceService
 from app.cameras.camera_manager import CameraManager
 from app.config import get_settings
@@ -17,7 +13,6 @@ from app.database import close_mongo_connection, connect_to_mongo
 from app.events.event_service import EventService
 from app.face.embedding_service import EmbeddingService
 from app.face.insightface_engine import InsightFaceEngine
-from app.face.recognition_scheduler import FaceRecognitionScheduler
 from app.face.recognition_service import RecognitionService
 from app.fire.fire_detection_service import FireDetectionService
 from app.plates.plate_recognition_service import PlateRecognitionService
@@ -26,10 +21,6 @@ from app.runtime_state import RuntimeState
 from app.services.log_service import LogService
 from app.services.sync_service import SyncService
 from app.storage.snapshot_service import SnapshotService
-<<<<<<< HEAD
-=======
-from app.tracking.person_detection_scheduler import PersonDetectionScheduler
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 from app.tracking.person_detection_service import PersonDetectionService
 
 logger = logging.getLogger(__name__)
@@ -58,23 +49,11 @@ async def lifespan(app: FastAPI):
         embedding_service=embedding_service,
         face_engine=face_engine,
     )
-<<<<<<< HEAD
     person_detection_probe = PersonDetectionService(settings)
     if settings.person_tracking_enabled and not person_detection_probe.available:
         logger.warning(
             "Person tracking requested but unavailable; legacy face scheduling will be used: %s",
             person_detection_probe.unavailable_reason,
-=======
-    face_recognition_scheduler = FaceRecognitionScheduler(
-        max_pending_per_camera=settings.face_scheduler_max_pending_per_camera
-    )
-    person_detection_service = PersonDetectionService(settings)
-    person_detection_scheduler = PersonDetectionScheduler(person_detection_service)
-    if settings.person_tracking_enabled and not person_detection_service.available:
-        logger.warning(
-            "Person tracking requested but unavailable; legacy face scheduling will be used: %s",
-            person_detection_service.unavailable_reason,
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         )
     plate_recognition_service = PlateRecognitionService(settings)
     fire_detection_service = FireDetectionService(settings)
@@ -91,10 +70,6 @@ async def lifespan(app: FastAPI):
         db=db,
         runtime_state=runtime_state,
         recognition_service=recognition_service,
-<<<<<<< HEAD
-=======
-        recognition_scheduler=face_recognition_scheduler,
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         attendance_service=attendance_service,
         event_service=event_service,
         settings=settings,
@@ -109,14 +84,7 @@ async def lifespan(app: FastAPI):
     )
     camera_manager = CameraManager(
         runtime_state=runtime_state,
-<<<<<<< HEAD
         embedding_service=embedding_service,
-=======
-        recognition_service=recognition_service,
-        face_recognition_scheduler=face_recognition_scheduler,
-        person_detection_service=person_detection_service,
-        person_detection_scheduler=person_detection_scheduler,
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         attendance_recovery_service=attendance_recovery_service,
         plate_recognition_service=plate_recognition_service,
         fire_detection_service=fire_detection_service,
@@ -132,12 +100,6 @@ async def lifespan(app: FastAPI):
     app.state.face_engine = face_engine
     app.state.embedding_service = embedding_service
     app.state.recognition_service = recognition_service
-<<<<<<< HEAD
-=======
-    app.state.face_recognition_scheduler = face_recognition_scheduler
-    app.state.person_detection_service = person_detection_service
-    app.state.person_detection_scheduler = person_detection_scheduler
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     app.state.plate_recognition_service = plate_recognition_service
     app.state.fire_detection_service = fire_detection_service
     app.state.snapshot_service = snapshot_service
@@ -184,7 +146,6 @@ app.include_router(health.router)
 app.include_router(sync.router, prefix="/api/sync", tags=["sync"])
 app.include_router(cameras.router, prefix="/api/cameras", tags=["camera-control"])
 app.include_router(events.router, prefix="/api/events", tags=["events"])
-app.include_router(person_counting.router, prefix="/api/person-counting", tags=["person-counting"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["attendance"])
 app.include_router(recovery.router, prefix="/api/recovery-jobs", tags=["attendance-recovery"])
 app.include_router(test.router, prefix="/api/test", tags=["recognition-test"])

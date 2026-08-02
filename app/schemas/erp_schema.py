@@ -20,7 +20,6 @@ class AiCapability(str, Enum):
 
 
 CameraDirection = Literal["IN", "OUT", "BIDIRECTIONAL"]
-CountingLineSide = Literal["POSITIVE", "NEGATIVE"]
 
 
 class ZoneConfig(ErpBaseModel):
@@ -32,36 +31,12 @@ class ZoneConfig(ErpBaseModel):
     height: int = Field(..., gt=0)
 
 
-<<<<<<< HEAD
-=======
-class CountingLineConfig(ErpBaseModel):
-    """Normalized image coordinates for a directional person-counting line."""
-
-    x1: float = Field(default=0.1, ge=0.0, le=1.0)
-    y1: float = Field(default=0.5, ge=0.0, le=1.0)
-    x2: float = Field(default=0.9, ge=0.0, le=1.0)
-    y2: float = Field(default=0.5, ge=0.0, le=1.0)
-    inSide: CountingLineSide = "POSITIVE"
-    hysteresis: float = Field(default=0.015, ge=0.0, le=0.25)
-
-    @model_validator(mode="after")
-    def validate_distinct_points(self):
-        if self.x1 == self.x2 and self.y1 == self.y2:
-            raise ValueError("Counting line endpoints must be different")
-        return self
-
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 class CameraAssignment(ErpBaseModel):
     tenantId: str = Field(validation_alias=AliasChoices("tenantId", "etsAuth"), serialization_alias="etsAuth")
     enabled: bool = True
     direction: CameraDirection = "BIDIRECTIONAL"
     capabilities: list[AiCapability] = Field(default_factory=list)
     zones: list[ZoneConfig] = Field(default_factory=list)
-<<<<<<< HEAD
-=======
-    countingLine: CountingLineConfig | None = None
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
 
 class CameraConfig(ErpBaseModel):
@@ -77,10 +52,6 @@ class CameraConfig(ErpBaseModel):
     direction: CameraDirection = "BIDIRECTIONAL"
     capabilities: list[AiCapability] = Field(default_factory=list)
     zones: list[ZoneConfig] = Field(default_factory=list)
-<<<<<<< HEAD
-=======
-    countingLine: CountingLineConfig | None = None
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     assignments: list[CameraAssignment] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -95,10 +66,6 @@ class CameraConfig(ErpBaseModel):
                     direction=self.direction,
                     capabilities=self.capabilities,
                     zones=self.zones,
-<<<<<<< HEAD
-=======
-                    countingLine=self.countingLine,
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
                 )
             ]
 
@@ -124,10 +91,6 @@ class CameraConfig(ErpBaseModel):
         self.capabilities = effective_capabilities
         self.direction = primary_assignment.direction
         self.zones = primary_assignment.zones
-<<<<<<< HEAD
-=======
-        self.countingLine = primary_assignment.countingLine
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         return self
 
     @property

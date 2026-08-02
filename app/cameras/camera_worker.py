@@ -26,10 +26,6 @@ from app.storage.snapshot_service import SnapshotService
 from app.tracking.models import PersonDetectionBatch, PersonTrack, TrackedRecognitionJob
 from app.tracking.person_detection_scheduler import PersonDetectionScheduler
 from app.tracking.person_detection_service import PersonDetectionService
-<<<<<<< HEAD
-=======
-from app.tracking.person_line_counter import CountingLine, PersonLineCounter
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 from app.tracking.person_tracker import MotionActivityGate, PersonTracker
 
 logger = logging.getLogger(__name__)
@@ -108,19 +104,9 @@ class CameraWorker:
             hold_seconds=settings.person_motion_hold_seconds,
         )
         self._person_track_states: dict[int, dict] = {}
-<<<<<<< HEAD
         self._person_tracks_created = 0
         self._person_tracks_unresolved = 0
         self._person_inference_count = 0
-=======
-        self._person_line_counters = self._build_person_line_counters()
-        self._person_count_totals = {
-            tenant_id: {"entered": 0, "exited": 0, "occupancy": 0}
-            for tenant_id in self._person_line_counters
-        }
-        self._person_tracks_created = 0
-        self._person_tracks_unresolved = 0
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         self._face_inference_count = 0
         self._last_face_inference_at: datetime | None = None
         self._last_person_detected_at: datetime | None = None
@@ -168,19 +154,6 @@ class CameraWorker:
             for assignment in self.camera.assignments_for(AiCapability.FACE_RECOGNITION)
         )
 
-<<<<<<< HEAD
-=======
-    def _person_counting_enabled(self) -> bool:
-        return (
-            self.settings.person_tracking_enabled
-            and self.person_detection_service.available
-            and bool(self._person_line_counters)
-        )
-
-    def _person_detection_enabled(self) -> bool:
-        return self._person_tracking_enabled() or self._person_counting_enabled()
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     @property
     def is_running(self) -> bool:
         return self._task is not None and not self._task.done()
@@ -200,7 +173,6 @@ class CameraWorker:
                 else None
             ),
             "personTrackingEnabled": self._person_tracking_enabled(),
-<<<<<<< HEAD
             "activePersonTracks": len(self._person_tracker.active_tracks()),
             "personTracksCreated": self._person_tracks_created,
             "personTracksUnresolved": self._person_tracks_unresolved,
@@ -223,13 +195,6 @@ class CameraWorker:
                 ),
                 **self.person_detection_scheduler.status(),
             },
-=======
-            "personCountingEnabled": self._person_counting_enabled(),
-            "personCounts": self._person_count_totals,
-            "activePersonTracks": len(self._person_tracker.active_tracks()),
-            "personTracksCreated": self._person_tracks_created,
-            "personTracksUnresolved": self._person_tracks_unresolved,
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             "rtsp": self.reader.status(),
         }
 
@@ -248,11 +213,9 @@ class CameraWorker:
         frame_count = 0
         try:
             await asyncio.to_thread(self.reader.open)
-            await self._load_person_count_totals()
             await self._emit_camera_event("CAMERA_STARTED", {"startedAt": datetime.utcnow().isoformat()})
             self._start_cloud_stream_push()
             if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
-<<<<<<< HEAD
                 if not self.settings.attendance_strict_frame_processing:
                     self.recognition_scheduler.register(self.camera_id, self._run_face_recognition)
                 if (
@@ -263,14 +226,6 @@ class CameraWorker:
                         self.camera_id,
                         self._handle_person_detections,
                     )
-=======
-                self.recognition_scheduler.register(self.camera_id, self._run_face_recognition)
-            if self._person_detection_enabled():
-                self.person_detection_scheduler.register(
-                    self.camera_id,
-                    self._handle_person_detections,
-                )
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             if is_enabled(self.camera.capabilities, AiCapability.PLATE_RECOGNITION):
                 self._start_plate_recognition_worker()
             if is_enabled(self.camera.capabilities, AiCapability.FIRE_DETECTION):
@@ -296,7 +251,6 @@ class CameraWorker:
                     await asyncio.sleep(0)
                     continue
 
-<<<<<<< HEAD
                 if is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
                     if self._person_tracking_enabled():
                         await self._process_person_tracking_frame(frame)
@@ -308,16 +262,6 @@ class CameraWorker:
                             candidate = self._take_best_face_candidate()
                             if candidate is not None:
                                 await self._queue_face_recognition(candidate)
-=======
-                if self._person_detection_enabled():
-                    await self._process_person_tracking_frame(frame)
-                elif is_enabled(self.camera.capabilities, AiCapability.FACE_RECOGNITION):
-                    self._collect_face_candidate(frame)
-                    if self._face_candidate_window_ready() and self._should_queue_face_recognition():
-                        candidate = self._take_best_face_candidate()
-                        if candidate is not None:
-                            await self._queue_face_recognition(candidate)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
                 if (
                     not self._plate_recognition_disabled
@@ -348,11 +292,8 @@ class CameraWorker:
         finally:
             self.recognition_scheduler.unregister(self.camera_id)
             self.person_detection_scheduler.unregister(self.camera_id)
-<<<<<<< HEAD
             await self.recognition_scheduler.close()
             await self.person_detection_scheduler.close()
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             await self._cancel_background_tasks()
             self._clear_runtime_buffers()
             await asyncio.to_thread(self.reader.close)
@@ -388,11 +329,6 @@ class CameraWorker:
         self._recognized_face_cache.clear()
         self._person_tracker.clear()
         self._person_activity_gate.reset()
-<<<<<<< HEAD
-=======
-        for counter in self._person_line_counters.values():
-            counter.clear()
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         self._person_track_states.clear()
         self.latest_person_tracks = []
         self._plate_event_cache.clear()
@@ -447,7 +383,6 @@ class CameraWorker:
         now = time.monotonic()
         expired_tracks = self._person_tracker.expire(now)
         if expired_tracks:
-<<<<<<< HEAD
             await self._handle_ended_person_tracks(expired_tracks)
 
         if self.settings.attendance_strict_frame_processing:
@@ -470,18 +405,6 @@ class CameraWorker:
         ):
             return
 
-=======
-            self._forget_counting_tracks(expired_tracks)
-            if self._person_tracking_enabled():
-                await self._handle_ended_person_tracks(expired_tracks)
-
-        if (
-            now - self._last_person_detection_queued_at
-            < self.settings.person_detection_interval_seconds
-        ):
-            return
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         motion_active = self._person_activity_gate.update(frame, now)
         idle_probe_due = (
             now - self._last_person_idle_probe_at
@@ -528,13 +451,7 @@ class CameraWorker:
             self._last_person_detected_at = batch.observed_at
 
         if ended_tracks:
-<<<<<<< HEAD
             await self._handle_ended_person_tracks(ended_tracks)
-=======
-            self._forget_counting_tracks(ended_tracks)
-            if self._person_tracking_enabled():
-                await self._handle_ended_person_tracks(ended_tracks)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
         self.latest_person_tracks = [
             {
@@ -545,26 +462,12 @@ class CameraWorker:
             for track in self._person_tracker.active_tracks()
         ]
 
-<<<<<<< HEAD
-=======
-        await self._process_person_crossings(
-            active_tracks,
-            batch.frame.shape[1],
-            batch.frame.shape[0],
-            batch.observed_at,
-        )
-
-        if not self._person_tracking_enabled():
-            return
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         for track in active_tracks:
             state = self._person_track_states.get(track.track_id)
             if state is None:
                 state = self._new_person_track_state()
                 self._person_track_states[track.track_id] = state
                 self._person_tracks_created += 1
-<<<<<<< HEAD
             eligible_tenant_ids = self._track_tenants_in_zone(track)
             state["eligibleTenantIds"].update(eligible_tenant_ids)
 
@@ -574,21 +477,11 @@ class CameraWorker:
                 not self.settings.attendance_strict_frame_processing
                 and self._person_face_attempt_limit_reached(state["attempts"])
             ):
-=======
-            state["eligibleTenantIds"].update(
-                self._track_tenants_in_zone(track)
-            )
-
-            if state["recognized"] or state["pending"]:
-                continue
-            if state["attempts"] >= self.settings.person_face_max_attempts:
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
                 continue
 
             quality = self._person_candidate_quality(batch.frame, track.bbox)
             if quality is None:
                 continue
-<<<<<<< HEAD
             if self.settings.attendance_strict_frame_processing:
                 job = TrackedRecognitionJob(
                     frame=batch.frame,
@@ -601,8 +494,6 @@ class CameraWorker:
                 state["lastAttemptAt"] = batch.observed_monotonic
                 await self._run_face_recognition(job)
                 continue
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             if quality > state["bestQuality"] or state["candidateJob"] is None:
                 state["bestQuality"] = quality
                 state["candidateJob"] = TrackedRecognitionJob(
@@ -654,11 +545,7 @@ class CameraWorker:
             if (
                 not state["pending"]
                 and state["candidateJob"] is not None
-<<<<<<< HEAD
                 and not self._person_face_attempt_limit_reached(state["attempts"])
-=======
-                and state["attempts"] < self.settings.person_face_max_attempts
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             ):
                 job = state["candidateJob"]
                 submitted = self.recognition_scheduler.submit(
@@ -680,14 +567,10 @@ class CameraWorker:
         track = state.get("endedTrack")
         if track is None:
             return
-<<<<<<< HEAD
         # Recovery is only useful when live person tracking saw a body but
         # InsightFace never found a face for that track. A detected, unmatched
         # face is already a valid UNKNOWN_FACE result and must stay unknown.
         if state["recognized"] or state["faceDetected"]:
-=======
-        if state["recognized"]:
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             self._person_track_states.pop(track_id, None)
             return
 
@@ -751,91 +634,9 @@ class CameraWorker:
             "eligibleTenantIds": set(),
         }
 
-<<<<<<< HEAD
     def _person_face_attempt_limit_reached(self, attempts: int) -> bool:
         limit = self.settings.person_face_max_attempts
         return limit > 0 and attempts >= limit
-=======
-    def _build_person_line_counters(self) -> dict[str, PersonLineCounter]:
-        counters: dict[str, PersonLineCounter] = {}
-        for assignment in self.camera.assignments_for(AiCapability.PERSON_COUNTING):
-            config = assignment.countingLine
-            line = CountingLine(
-                x1=config.x1 if config else 0.1,
-                y1=config.y1 if config else 0.5,
-                x2=config.x2 if config else 0.9,
-                y2=config.y2 if config else 0.5,
-                in_side=config.inSide if config else "POSITIVE",
-                hysteresis=config.hysteresis if config else 0.015,
-            )
-            counters[assignment.tenantId] = PersonLineCounter(line)
-        return counters
-
-    async def _process_person_crossings(
-        self,
-        tracks: list[PersonTrack],
-        frame_width: int,
-        frame_height: int,
-        observed_at: datetime,
-    ) -> None:
-        for track in tracks:
-            for tenant_id, counter in self._person_line_counters.items():
-                direction = counter.update(track, frame_width, frame_height)
-                if direction is None:
-                    continue
-                totals = self._person_count_totals[tenant_id]
-                if direction == "IN":
-                    totals["entered"] += 1
-                    event_type = "PERSON_ENTERED"
-                else:
-                    totals["exited"] += 1
-                    event_type = "PERSON_EXITED"
-                totals["occupancy"] = max(0, totals["entered"] - totals["exited"])
-
-                await self.event_service.create_camera_event(
-                    RuntimeEvent(
-                        tenantId=tenant_id,
-                        cameraId=self.camera.cameraId,
-                        eventType=event_type,
-                        timestamp=observed_at,
-                        metadata={
-                            "source": "LIVE_PERSON_COUNTING",
-                            "trackId": track.track_id,
-                            "direction": direction,
-                            "entered": totals["entered"],
-                            "exited": totals["exited"],
-                            "occupancy": totals["occupancy"],
-                        },
-                    )
-                )
-                logger.info(
-                    "PERSON_COUNT camera=%s etsAuth=%s track=%s direction=%s entered=%s exited=%s occupancy=%s",
-                    self.camera_id,
-                    tenant_id,
-                    track.track_id,
-                    direction,
-                    totals["entered"],
-                    totals["exited"],
-                    totals["occupancy"],
-                )
-
-    async def _load_person_count_totals(self) -> None:
-        for tenant_id in self._person_line_counters:
-            summary = await self.event_service.summarize_person_counts(
-                tenant_id=tenant_id,
-                camera_id=self.camera_id,
-            )
-            self._person_count_totals[tenant_id] = {
-                "entered": summary["entered"],
-                "exited": summary["exited"],
-                "occupancy": summary["occupancy"],
-            }
-
-    def _forget_counting_tracks(self, tracks: list[PersonTrack]) -> None:
-        for track in tracks:
-            for counter in self._person_line_counters.values():
-                counter.forget(track.track_id)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
     def _track_tenants_in_zone(self, track: PersonTrack) -> set[str]:
         center_x = (track.bbox[0] + track.bbox[2]) / 2
@@ -951,25 +752,7 @@ class CameraWorker:
         return True
 
     async def _queue_plate_recognition(self, frame) -> None:
-<<<<<<< HEAD
         await self._plate_recognition_queue.put(frame.copy())
-=======
-        frame_copy = frame.copy()
-        if not self.settings.recognition_drop_old_frames:
-            await self._plate_recognition_queue.put(frame_copy)
-            return
-
-        while True:
-            try:
-                self._plate_recognition_queue.get_nowait()
-                self._plate_recognition_queue.task_done()
-            except asyncio.QueueEmpty:
-                break
-        try:
-            self._plate_recognition_queue.put_nowait(frame_copy)
-        except asyncio.QueueFull:
-            pass
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
     def _should_queue_fire_detection(self) -> bool:
         now = time.monotonic()
@@ -979,25 +762,7 @@ class CameraWorker:
         return True
 
     async def _queue_fire_detection(self, frame) -> None:
-<<<<<<< HEAD
         await self._fire_detection_queue.put(frame.copy())
-=======
-        frame_copy = frame.copy()
-        if not self.settings.recognition_drop_old_frames:
-            await self._fire_detection_queue.put(frame_copy)
-            return
-
-        while True:
-            try:
-                self._fire_detection_queue.get_nowait()
-                self._fire_detection_queue.task_done()
-            except asyncio.QueueEmpty:
-                break
-        try:
-            self._fire_detection_queue.put_nowait(frame_copy)
-        except asyncio.QueueFull:
-            pass
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
 
     def _schedule_latest_jpeg(self, frame) -> None:
         now = time.monotonic()
@@ -1144,20 +909,12 @@ class CameraWorker:
                 )
                 handled_results.append(("recognized", result, assignment, zone))
             else:
-<<<<<<< HEAD
                 for assignment in assignments:
                     tenant_result = self._result_for_tenant(result, assignment.tenantId)
                     if (
                         tracked_job is None
                         and self._track_weak_known_candidate(frame, tenant_result)
                     ):
-=======
-                if tracked_job is not None:
-                    continue
-                for assignment in assignments:
-                    tenant_result = self._result_for_tenant(result, assignment.tenantId)
-                    if self._track_weak_known_candidate(frame, tenant_result):
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
                         continue
                     rules = self._rules_for(assignment.tenantId)
                     if not rules.saveUnknownFaces:
@@ -1698,10 +1455,6 @@ class CameraWorker:
             )
 
     def _draw_detections(self, frame) -> None:
-<<<<<<< HEAD
-=======
-        self._draw_person_counting(frame)
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
         if self.settings.show_person_tracks and int(time.monotonic() * 2) % 2 != 0:
             for track in self.latest_person_tracks:
                 x1, y1, x2, y2 = track["bbox"]
@@ -1734,34 +1487,6 @@ class CameraWorker:
         for detection in self.latest_fire_detections:
             self._draw_fire_annotation(frame, detection, show_label=True)
 
-<<<<<<< HEAD
-=======
-    def _draw_person_counting(self, frame) -> None:
-        if not self._person_line_counters:
-            return
-        height, width = frame.shape[:2]
-        for index, (tenant_id, counter) in enumerate(self._person_line_counters.items()):
-            line = counter.line
-            start = (int(line.x1 * width), int(line.y1 * height))
-            end = (int(line.x2 * width), int(line.y2 * height))
-            cv2.line(frame, start, end, (0, 255, 255), 3, cv2.LINE_AA)
-            totals = self._person_count_totals[tenant_id]
-            label = (
-                f"IN {totals['entered']}  OUT {totals['exited']}  "
-                f"OCC {totals['occupancy']}"
-            )
-            cv2.putText(
-                frame,
-                label,
-                (20, 35 + index * 32),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (0, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     async def _save_frame_snapshot(
         self,
         frame,

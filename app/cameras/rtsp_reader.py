@@ -122,10 +122,6 @@ class RtspReader:
     def _read_with_failure_tolerance(self):
         failure_limit = self.settings.rtsp_failed_reads_before_reconnect
         for failed_read in range(1, failure_limit + 1):
-<<<<<<< HEAD
-=======
-            read_started_at = time.monotonic()
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
             try:
                 for _ in range(self.settings.rtsp_drop_stale_frames):
                     self.capture.grab()
@@ -139,7 +135,6 @@ class RtspReader:
                     type(exc).__name__,
                 )
 
-<<<<<<< HEAD
             self._record_read_failure()
             if failed_read < failure_limit:
                 logger.debug(
@@ -176,52 +171,6 @@ class RtspReader:
         self._gap_started_at = None
         self._gap_requires_recovery = False
 
-=======
-            logger.warning(
-                "RTSP_SOURCE=live_reader phase=read_failed stream=%s attempt=%s/%s elapsed=%.2fs",
-                self._safe_source(),
-                failed_read,
-                failure_limit,
-                time.monotonic() - read_started_at,
-            )
-
-            self._record_read_failure()
-            if failed_read < failure_limit:
-                logger.debug(
-                    "Transient RTSP read failure for %s (%s/%s)",
-                    self._safe_source(),
-                    failed_read,
-                    failure_limit,
-                )
-                if self.settings.rtsp_failed_read_retry_delay_seconds:
-                    time.sleep(
-                        self.settings.rtsp_failed_read_retry_delay_seconds
-                    )
-        return None
-
-    def _record_read_failure(self) -> None:
-        now = datetime.utcnow()
-        self.read_failure_count += 1
-        self.last_read_failure_at = now
-        if self._gap_started_at is None:
-            self._gap_started_at = now
-
-    def _finish_recovered_gap(self) -> None:
-        if self._gap_started_at is None:
-            return
-        recovered_at = datetime.utcnow()
-        if self._gap_requires_recovery:
-            self._recovered_gaps.append((self._gap_started_at, recovered_at))
-            self.last_reconnected_at = recovered_at
-            logger.info(
-                "RTSP stream recovered for %s after %.2f seconds",
-                self._safe_source(),
-                max((recovered_at - self._gap_started_at).total_seconds(), 0.0),
-            )
-        self._gap_started_at = None
-        self._gap_requires_recovery = False
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     def _wait_before_reconnect(self) -> None:
         if self.settings.rtsp_reconnect_delay_seconds:
             time.sleep(self.settings.rtsp_reconnect_delay_seconds)

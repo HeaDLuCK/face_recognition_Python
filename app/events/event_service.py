@@ -55,64 +55,6 @@ class EventService:
         cursor = self.db.camera_events.find(query).sort("timestamp", -1).limit(limit)
         return serialize_mongo_docs(await cursor.to_list(length=limit))
 
-<<<<<<< HEAD
-=======
-    async def summarize_person_counts(
-        self,
-        tenant_id: str,
-        camera_id: str | None = None,
-    ) -> dict:
-        match: dict = {
-            "etsAuth": tenant_id,
-            "eventType": {"$in": ["PERSON_ENTERED", "PERSON_EXITED"]},
-        }
-        if camera_id:
-            match["cameraId"] = camera_id
-
-        rows = await self.db.camera_events.aggregate(
-            [
-                {"$match": match},
-                {
-                    "$group": {
-                        "_id": "$cameraId",
-                        "entered": {
-                            "$sum": {"$cond": [{"$eq": ["$eventType", "PERSON_ENTERED"]}, 1, 0]}
-                        },
-                        "exited": {
-                            "$sum": {"$cond": [{"$eq": ["$eventType", "PERSON_EXITED"]}, 1, 0]}
-                        },
-                    }
-                },
-                {"$sort": {"_id": 1}},
-            ]
-        ).to_list(length=None)
-
-        cameras = [
-            {
-                "cameraId": row["_id"],
-                "entered": row["entered"],
-                "exited": row["exited"],
-                "occupancy": max(0, row["entered"] - row["exited"]),
-            }
-            for row in rows
-        ]
-        if camera_id and not cameras:
-            cameras.append(
-                {"cameraId": camera_id, "entered": 0, "exited": 0, "occupancy": 0}
-            )
-
-        entered = sum(item["entered"] for item in cameras)
-        exited = sum(item["exited"] for item in cameras)
-        return {
-            "etsAuth": tenant_id,
-            "cameraId": camera_id,
-            "entered": entered,
-            "exited": exited,
-            "occupancy": max(0, entered - exited),
-            "cameras": cameras,
-        }
-
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
     @staticmethod
     def _event_type_filter(direction: str | None, event_type: str | None) -> str | None:
         if event_type:
@@ -126,7 +68,3 @@ class EventService:
         if normalized in {"BIDIRECTIONAL", "BOTH"}:
             return "FACE_RECOGNIZED"
         return normalized
-<<<<<<< HEAD
-
-=======
->>>>>>> f1937361af33f961bcbefd1ebc6425add24b3054
