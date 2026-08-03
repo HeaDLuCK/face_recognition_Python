@@ -6,6 +6,9 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
 class Settings(BaseSettings):
     app_name: str = "AI Camera Service"
     environment: str = "development"
@@ -18,7 +21,7 @@ class Settings(BaseSettings):
 
     snapshot_dir: Path = Path("snapshots")
 
-    insightface_model_name: str = "buffalo_l"
+    insightface_model_name: str = "buffalo_s"
     insightface_providers: str = "CPUExecutionProvider"
     insightface_ctx_id: int = -1
     insightface_det_size: int = Field(default=640, ge=160, le=1280)
@@ -128,7 +131,11 @@ class Settings(BaseSettings):
     history_recovery_gap_merge_seconds: int = Field(default=30, ge=0, le=600)
     snapshot_purge_batch_size: int = Field(default=200, ge=10, le=2000)
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=PROJECT_ROOT / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     @property
     def insightface_provider_list(self) -> list[str]:
