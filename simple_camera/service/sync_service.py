@@ -51,17 +51,15 @@ class SyncService:
         payload: Any,
     ) -> dict:
         async with self._camera_sync_lock:
+           
             incoming = [
                 CameraConfig.model_validate(item)
                 for item in self._items(payload)
             ]
-
             # Combine duplicate physical cameras from the payload.
             incoming = self._group_physical_cameras(incoming)
-
             # MongoDB replaces RuntimeState as the source of truth.
             existing = await self.get_all_cameras()
-
             cameras = self._merge_etablissement_camera_sync(
                 existing=existing,
                 incoming=incoming,
@@ -279,58 +277,130 @@ class SyncService:
         return list(merged_by_id.values())
 
     def _group_physical_cameras(
-        self,
-        cameras: list[CameraConfig],
-    ) -> list[CameraConfig]:
-        """
-        Combine payload entries that represent the same physical
-        camera but have different establishment assignments.
-        """
-
+    self,
+    cameras: list[CameraConfig],
+) -> list[CameraConfig]:
         grouped: dict[str, CameraConfig] = {}
 
+        print(
+            "1. INPUT CAMERAS:",
+            [camera.cameraId for camera in cameras],
+            flush=True,
+        )
+
         for camera in cameras:
-            current = grouped.get(camera.cameraId)
-
-            if (
-                current is not None
-                and not self._same_camera_source(
-                    current.rtspUrl,
-                    camera.rtspUrl,
-                )
-            ):
-                raise ValueError(
-                    f"Camera {camera.cameraId} was received "
-                    "with multiple RTSP sources"
+            try:
+                print(
+                    "2. LOOP START:",
+                    camera.cameraId,
+                    flush=True,
                 )
 
-            assignments_by_etablissement = {
-                assignment.etsAuth: assignment
-                for assignment in (
-                    current.assignments
-                    if current is not None
-                    else []
-                )
-            }
+                current = grouped.get(camera.cameraId)
 
-            assignments_by_etablissement.update(
-                {
+                print(
+                    "3. CURRENT:",
+                    current,
+                    flush=True,
+                )
+
+                if current is not None:
+                    print(
+                        "4. CHECKING RTSP:",
+                        current.rtspUrl,
+                        camera.rtspUrl,
+                        flush=True,
+                    )
+
+                    if not self._same_camera_source(
+                        current.rtspUrl,
+                        camera.rtspUrl,
+                    ):
+                        raise ValueError(
+                            f"Camera {camera.cameraId} was received "
+                            "with multiple RTSP sources"
+                        )
+
+                print(
+                    "5. CAMERA ASSIGNMENTS:",
+                    camera.assignments,
+                    flush=True,
+                )
+
+                assignments_by_ets_auth = {
                     assignment.etsAuth: assignment
-                    for assignment in camera.assignments
+                    for assignment in (
+                        current.assignments
+                        if current is not None
+                        else []
+                    )
                 }
-            )
 
-            grouped[camera.cameraId] = (
-                self._camera_with_assignments(
+                print(
+                    "6. EXISTING ASSIGNMENTS:",
+                    assignments_by_ets_auth,
+                    flush=True,
+                )
+
+                assignments_by_ets_auth.update(
+                    {
+                        assignment.etsAuth: assignment
+                        for assignment in camera.assignments
+                    }
+                )
+
+                print(
+                    "7. MERGED ASSIGNMENTS:",
+                    assignments_by_ets_auth,
+                    flush=True,
+                )
+
+                print(
+                    "8. CALLING _camera_with_assignments",
+                    flush=True,
+                )
+
+                result_camera = self._camera_with_assignments(
                     base=current or camera,
                     assignments=list(
-                        assignments_by_etablissement.values()
+                        assignments_by_ets_auth.values()
                     ),
                     latest=camera,
                 )
-            )
 
-        return list(grouped.values())
+                print(
+                    "9. RESULT CAMERA:",
+                    result_camera,
+                    flush=True,
+                )
+
+                grouped[camera.cameraId] = result_camera
+
+                print(
+                    "10. GROUPED IDS:",
+                    list(grouped.keys()),
+                    flush=True,
+                )
+
+            except Exception as exc:
+                print(
+                    "GROUPING FAILED:",
+                    camera.cameraId,
+                    type(exc).__name__,
+                    repr(exc),
+                    flush=True,
+                )
+                raise
+
+        result = list(grouped.values())
+
+        print(
+            "11. FINAL RESULT:",
+            [camera.cameraId for camera in result],
+            flush=True,
+        )
+
+        return result
 
     @staticmethod
     def _camera_with_assignments(
@@ -625,6 +695,18 @@ class SyncService:
             AttendanceRules.model_validate(document)
             for document in documents
         ]
+
+    async def get_rule_by_etsAuth(self,ets_auth: str,) -> AttendanceRules | None:
+        document = await self.db.attendance_rules.find_one(
+            {"etsAuth": ets_auth,},
+            {"_id": 0,},
+            sort=[("updatedAt", -1),],
+        )
+
+        if document is None:
+            return None
+
+        return AttendanceRules.model_validate(document)
 
     async def _persist_rule(
         self,

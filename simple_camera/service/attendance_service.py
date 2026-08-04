@@ -26,7 +26,6 @@ class AttendanceService:
         matched: bool,
         confidence: float | None,
         snapshot_path: str | None = None,
-        metadata: dict[str, Any] | None = None,
         timestamp: datetime | None = None,
     ) -> dict:
         event_time = timestamp or utc_now()
@@ -41,7 +40,6 @@ class AttendanceService:
             "confidence": confidence,
             "snapshotPath": snapshot_path,
             "timestamp": event_time,
-            "metadata": metadata or {},
             "createdAt": utc_now(),
         }
 
@@ -53,44 +51,37 @@ class AttendanceService:
         self,
         ets_auth: str,
         employee_id: str,
+        camera_id: str,
         camera_direction: str,
         confidence: float | None,
-        rules: AttendanceRules,
+        rule: AttendanceRules,
         event_time: datetime | None = None,
     ) -> tuple[bool, str | None]:
         direction = self._attendance_direction(
             camera_direction
         )
-
         if direction is None:
             return False, None
 
-        # if (
-        #             confidence is None
-        #             or confidence < rules.recognitionThreshold
-        # ):
         if (
             confidence is None
-            or confidence < 0.50
-        ):
+            or confidence < rule.recognitionThreshold
+        ):  
             return False, direction
 
         now = event_time or utc_now()
 
-        # cooldown = timedelta(
-        #     seconds=rules.duplicateCooldownSeconds
-        # )
-
         cooldown = timedelta(
-            seconds=120
+            seconds=rule.duplicateCooldownSeconds
         )
 
-        event_type = f"ATTENDANCE_{direction}"
+        event_type = self._event_type_filter(direction,None)
 
         last_log = await self.db.attendance_detections.find_one(
             {
                 "etsAuth": ets_auth,
                 "employeeId": employee_id,
+                "cameraId":camera_id,
                 "eventType": event_type,
                 "timestamp": {
                     "$gte": now - cooldown,
@@ -100,10 +91,12 @@ class AttendanceService:
             projection={"_id": 1},
             sort=[("timestamp", DESCENDING)],
         )
-
+        
         if last_log is not None:
             return False, direction
-
+        print(last_log)
+        print(True)
+        print(ets_auth)
         return True, direction
 
 
@@ -113,11 +106,9 @@ class AttendanceService:
         camera_id: str,
         camera_direction: str,
         employee_id: str,
-        employee_name: str | None,
         confidence: float,
-        rules: AttendanceRules| None = None,
+        rule: AttendanceRules,
         snapshot_path: str | None = None,
-        metadata: dict[str, Any] | None = None,
         event_time: datetime | None = None,
     ) -> dict:
         now = event_time or utc_now()
@@ -126,13 +117,13 @@ class AttendanceService:
             await self.should_create_attendance(
                 ets_auth=ets_auth,
                 employee_id=employee_id,
+                camera_id=camera_id,
                 camera_direction=camera_direction,
                 confidence=confidence,
-                rules=rules,
+                rule=rule,
                 event_time=now,
             )
         )
-
         if not allowed or direction is None:
             return {
                 "created": False,
@@ -140,21 +131,15 @@ class AttendanceService:
                 "reason": "threshold_or_cooldown",
             }
 
-        detection_metadata = {
-            **(metadata or {}),
-            "employeeName": employee_name,
-            "direction": direction,
-        }
-
+        event_type = self._event_type_filter(direction,None)
         detection = await self.record_detection(
             ets_auth=ets_auth,
             camera_id=camera_id,
-            event_type=f"ATTENDANCE_{direction}",
+            event_type=event_type,
             employee_id=employee_id,
             matched=True,
             confidence=confidence,
             snapshot_path=snapshot_path,
-            metadata=detection_metadata,
             timestamp=now,
         )
 
@@ -231,7 +216,7 @@ class AttendanceService:
     @staticmethod
     def _attendance_direction(camera_direction: str) -> str | None:
         normalized = camera_direction.upper()
-        if normalized in {"IN", "OUT"}:
+        if normalized in {"IN", "OUT","BIDIRECTIONAL", "BOTH"}:
             return normalized
         return None
 

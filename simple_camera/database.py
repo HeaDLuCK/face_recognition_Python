@@ -2,7 +2,6 @@ import logging
 from typing import Any
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from pydot import Any
 
 from config import get_settings
 

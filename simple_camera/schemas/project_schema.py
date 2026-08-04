@@ -40,7 +40,7 @@ class CameraAssignment(GenBaseModel):
 
 
 class CameraConfig(GenBaseModel):
-    etsAuth: str
+    etsAuth:str | None = None
     cameraId: str
     name: str
     rtspUrl: str
@@ -104,6 +104,22 @@ class CameraConfig(GenBaseModel):
             if capability in assignment.capabilities
         ]
 
+    def has_capability(self, capability: AiCapability,) -> bool:
+        return any(
+            capability in assignment.capabilities
+            for assignment in self.activeAssignments
+        )
+    
+    def assigned_for( self,ets_auth: str,capability: AiCapability,) -> CameraAssignment | None:
+        return next(
+            (
+                assignment
+                for assignment in self.assignments
+                if assignment.etsAuth == ets_auth
+                and capability in assignment.capabilities
+            ),
+            None,
+        )
 
 class FaceImageRef(GenBaseModel):
     sourceId: str | None = None

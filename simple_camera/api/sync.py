@@ -32,7 +32,7 @@ async def sync_cameras(
     payload: Any = Body(default=None),
     restart: bool = Query(default=True),
 ) -> dict:
-    try:
+    try:   
         if payload is not None:
             result = await request.app.state.sync_service.sync_cameras_from_payload(payload)
         else:
@@ -70,7 +70,7 @@ async def sync_rules(
 
 async def _restart_if_requested(request: Request, result: dict, restart: bool) -> dict:
     if restart:
-        result["restart"] = await request.app.state.camera_manager.restart_all()
+        result["restart"] = await request.app.state.camera_process_manager.restart_all()
     return result
 
 

@@ -20,7 +20,7 @@ class CameraProcessManager:
         self,
         sync_service: SyncService,
         embedding_service: EmbeddingService,
-         attendance_service: AttendanceService,
+        attendance_service: AttendanceService,
     ) -> None:
         self.sync_service = sync_service
         self.embedding_service = embedding_service
@@ -288,7 +288,8 @@ class CameraProcessManager:
                 break
 
             try:
-
+                rule = await self.sync_service.get_rule_by_etsAuth(event["etsAuth"])
+                print("result ---->" + event["etsAuth"]+ "  " +event["cameraId"])
                 result = await (
                     self.attendance_service
                     .record_attendance_if_allowed(
@@ -298,23 +299,23 @@ class CameraProcessManager:
                             "cameraDirection"
                         ],
                         employee_id=event["employeeId"],
-                        employee_name=event.get(
-                            "employeeName"
-                        ),
                         confidence=event["confidence"],
-                        rules=None,
-                        snapshot_path=None,
-                        metadata={
-                            "source": "face_recognition",
-                        },
+                        rule=rule,
+                        snapshot_path=event["snapshotPath"],
                     )
                 )
 
                 if result.get("created"):
                     logger.info(
                         "Attendance created for %s",
-                        event["employeeId"],
+                        event["employeeId"]+ " "+ event["etsAuth"],
                     )
+                else:
+                    logger.info(
+                            event["employeeId"]+ " "+ event["etsAuth"] +"Attendance Skipped due to %s",
+                            result["reason"],
+                        )
+                
 
             except Exception:
                 logger.exception(
