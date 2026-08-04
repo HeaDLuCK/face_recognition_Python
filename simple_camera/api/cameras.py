@@ -190,7 +190,7 @@ async def stream_camera(cameraId: str, request: Request, overlay: bool = False) 
             status_code=404,
             detail="Camera not found in synced ERP config. Run /api/sync/cameras first.",
         )
-    generator = request.app.state.camera_manager.mjpeg_stream(cameraId, overlay=overlay)
+    generator = request.app.state.camera_process_manager.mjpeg_stream(cameraId, overlay=overlay)
     return StreamingResponse(
         generator,
         media_type="multipart/x-mixed-replace; boundary=frame",

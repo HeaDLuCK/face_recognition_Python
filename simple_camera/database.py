@@ -1,6 +1,8 @@
 import logging
+from typing import Any
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from pydot import Any
 
 from config import get_settings
 
@@ -108,3 +110,13 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
         unique=True,
     )
 
+def serialize_mongo_doc(doc: dict[str, Any] | None) -> dict[str, Any] | None:
+    if doc is None:
+        return None
+    serialized = dict(doc)
+    if "_id" in serialized:
+        serialized["_id"] = str(serialized["_id"])
+    return serialized
+
+def serialize_mongo_docs(docs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [serialize_mongo_doc(doc) for doc in docs if doc is not None]

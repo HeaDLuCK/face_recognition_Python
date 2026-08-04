@@ -1,87 +1,187 @@
-import cv2
+import logging
+from typing import Any
 
+import cv2
+import numpy as np
+
+from service.attendance_service import AttendanceService
 from camera.camera_manager import CameraManager
-from schemas.project_schema import (
-    AiCapability,
-    CameraConfig,
+from face_recognition import InsightFaceEngine
+from schemas.project_schema import CameraConfig
+from service.embedding_index import (
+    EmbeddingIndex,
+    best_embedding_candidate,
 )
+from queue import Empty, Full
+
+
+
+logger = logging.getLogger(__name__)
 
 
 def read_camera(
     camera_data: dict,
+    embedding_index: EmbeddingIndex,
+    frame_queue: Any | None = None,
+    attendance_queue: Any | None = None,
+    stop_event: Any | None = None,
 ) -> None:
-    # Recreate the Pydantic model inside the child process.
-    config = CameraConfig.model_validate(
-        camera_data
-    )
+    cv2.setNumThreads(1)
 
-    camera = CameraManager(config)
+    camera_config = CameraConfig.model_validate(camera_data)
+    camera = CameraManager(camera_config)
 
-    face_assignments = config.assignments_for(
-        AiCapability.FACE_RECOGNITION
-    )
-
-    print(
-        f"{camera.camera_id}: face recognition tenants: "
-        f"{[item.tenantId for item in face_assignments]}",
-        flush=True,
+    engine = InsightFaceEngine(
+        model_name="buffalo_s",
+        providers=["CPUExecutionProvider"],
+        ctx_id=-1,
+        det_size=640,
+        min_score=0.6,
     )
 
     capture = camera.start_camera()
-
-    window_name = (
-        f"{camera.camera_id} - {camera.name}"
-    )
+    frame_number = 0
+    detected_faces = []
 
     try:
-        while True:
+        while stop_event is None or not stop_event.is_set():
             ret, frame = capture.read()
 
             if not ret or frame is None:
-                print(
-                    f"{camera.camera_id}: "
-                    "failed to read frame",
-                    flush=True,
+                logger.error(
+                    "Camera %s failed to read frame",
+                    camera.camera_id,
                 )
                 break
 
-            height, width = frame.shape[:2]
+            frame_number += 1
 
-            display_width = 1280
-            display_height = int(
-                height * display_width / width
-            )
+            if frame_number % 4 == 0:
+                detected_faces = engine.detect_faces(frame)
 
-            display_frame = cv2.resize(
-                frame,
-                (
-                    display_width,
-                    display_height,
-                ),
-                interpolation=cv2.INTER_AREA,
-            )
+            for detected_face in detected_faces:
+                detected_embedding = np.asarray(
+                    detected_face.embedding,
+                    dtype=np.float32,
+                )
 
-            # Put InsightFace processing here.
+                match = best_embedding_candidate(
+                    embedding_index,
+                    detected_embedding,
+                )
 
-            cv2.imshow(
-                window_name,
-                display_frame,
-            )
+                x1, y1, x2, y2 = map(
+                    int,
+                    detected_face.bbox,
+                )
 
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
+                label = "Unknown"
 
-    except Exception as exc:
-        print(
-            f"{camera.camera_id}: {exc}",
-            flush=True,
+                if (
+                    match is not None
+                    and match["score"] >= 0.50
+                ):
+                    employee_name = (
+                        match.get("employeeName")
+                        or match["employeeId"]
+                    )
+
+                    label = (
+                        f"{employee_name} "
+                        f"{match['score']:.2f}"
+                    )
+                    try:
+                        attendance_queue.put_nowait(
+                            {
+                                "etsAuth": match["etsAuth"],
+                                "cameraId": camera_config.cameraId,
+                                "cameraDirection": camera_config.direction,
+                                "employeeId": match["employeeId"],
+                                "employeeName": employee_name,
+                                "confidence": float(match["score"]),
+                            }
+                        )
+                    except Full:
+                        logger.warning(
+                            "Attendance queue is full"
+                        )
+                    # attendance_service.record_attendance_if_allowed(
+                    #     tsAuth=match.get("etsAuth"),
+                    #     camera_id=camera.cameraId,
+                    #     camera_direction="TEST",
+                    #     employee_id=match.get("employeeName"),
+                    #     confidence=match['score'],
+                    #     rules="",
+                    #     snapshot_path="",
+                    #     metadata="",
+                    # )
+
+                    
+                cv2.rectangle(
+                    frame,
+                    (x1, y1),
+                    (x2, y2),
+                    (0, 255, 0),
+                    2,
+                )
+
+                cv2.putText(
+                    frame,
+                    label,
+                    (x1, max(20, y1 - 10)),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6,
+                    (0, 255, 0),
+                    2,
+                )
+
+            if frame_queue is not None:
+                display_frame = cv2.resize(
+                    frame,
+                    (1280, 720),
+                    interpolation=cv2.INTER_AREA,
+                )
+
+                try:
+                   send_latest_frame(
+                        frame_queue,
+                        display_frame,
+                    )
+                except Exception:
+                    pass
+
+    except Exception:
+        logger.exception(
+            "Camera %s worker failed",
+            camera.camera_id,
         )
 
     finally:
         capture.release()
-        cv2.destroyAllWindows()
 
-        print(
-            f"{camera.camera_id}: camera stopped",
-            flush=True,
+        logger.info(
+            "Camera %s stopped",
+            camera.camera_id,
         )
+
+def send_latest_frame(
+    frame_queue: Any,
+    frame: np.ndarray,
+) -> None:
+    try:
+        frame_queue.put_nowait(frame)
+        return
+    except Full:
+        pass
+
+    # Remove the previous frame.
+    try:
+        frame_queue.get_nowait()
+    except Empty:
+        pass
+
+    # Insert the newest frame.
+    try:
+        frame_queue.put_nowait(frame)
+    except Full:
+        pass

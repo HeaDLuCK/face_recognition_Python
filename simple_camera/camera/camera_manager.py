@@ -26,6 +26,35 @@ class CameraManager:
     def enabled(self) -> bool:
         return self.config.enabled
 
+
+    def getVideoSource(self,raw_source) -> str:
+        if isinstance(raw_source, str):
+            raw_source = raw_source.strip()
+
+        # Accept "usb://0"
+        if (
+            isinstance(raw_source, str)
+            and raw_source.lower().startswith("usb://")
+        ):
+            index_text = raw_source.split("://", 1)[1]
+
+            if not index_text.isdigit():
+                raise ValueError(
+                    f"Invalid USB source: {raw_source}"
+                )
+
+            source: int | str = int(index_text)
+
+        elif (
+            isinstance(raw_source, str)
+            and raw_source.isdigit()
+        ):
+            source = int(raw_source)
+
+        else:
+            source = raw_source
+        return source
+    
     def start_camera(
         self,
         open_timeout_ms: int = 10_000,
@@ -35,17 +64,8 @@ class CameraManager:
             raise RuntimeError(
                 f"Camera {self.camera_id} is disabled"
             )
-
-        capture = cv2.VideoCapture(
-            self.rtsp_url,
-            cv2.CAP_FFMPEG,
-            [
-                cv2.CAP_PROP_OPEN_TIMEOUT_MSEC,
-                open_timeout_ms,
-                cv2.CAP_PROP_READ_TIMEOUT_MSEC,
-                read_timeout_ms,
-            ],
-        )
+        print(f"Starting camera {self.camera_id} ({self.rtsp_url})")
+        capture = cv2.VideoCapture(self.getVideoSource(self.rtsp_url))
 
         if not capture.isOpened():
             capture.release()
