@@ -454,3 +454,933 @@ AttributeError: 'NoneType' object has no attribute 'recognitionThreshold'
 2026-08-05 02:02:23,448 | INFO | MainProcess:39968 | camera.camera_process_manager | Stopping camera 0
 2026-08-05 02:02:23,488 | INFO | MainProcess:39968 | camera.camera_process_manager | Stopped camera 0
 2026-08-05 02:02:23,489 | INFO | MainProcess:39968 | __main__ | FastAPI shutdown completed
+2026-08-05 12:11:47,593 | INFO | MainProcess:3344 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 12:11:49,267 | INFO | MainProcess:3344 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 12:11:55,953 | INFO | MainProcess:3344 | camera.camera_process_manager | Started camera CAM_Juniv with PID 12100
+2026-08-05 12:11:55,979 | INFO | camera-CAM_Juniv:12100 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 12:12:03,524 | INFO | MainProcess:3344 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 19144
+2026-08-05 12:12:03,533 | INFO | MainProcess:3344 | camera.camera_process_manager | Started camera grid with PID 14988
+2026-08-05 12:12:03,533 | INFO | MainProcess:3344 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 12:12:03,533 | INFO | MainProcess:3344 | __main__ | FastAPI startup completed
+2026-08-05 12:12:03,534 | INFO | MainProcess:3344 | uvicorn.error | Application startup complete.
+2026-08-05 12:12:03,535 | INFO | MainProcess:3344 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 12:12:03,549 | INFO | camera-CAM_Juniv301:19144 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 12:12:17,902 | INFO | camera-CAM_Juniv301:19144 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 12:12:17,905 | INFO | camera-CAM_Juniv:12100 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 12:12:17,909 | ERROR | MainProcess:3344 | camera.camera_process_manager | Failed to create attendance
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_process_manager.py", line 297, in _consume_attendance
+    result = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 198, in record_attendance_if_allowed
+    minimum_score = float(rule.minimumScore)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'AttendanceRules' object has no attribute 'minimumScore'
+2026-08-05 12:12:17,918 | ERROR | MainProcess:3344 | camera.camera_process_manager | Failed to create attendance
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_process_manager.py", line 297, in _consume_attendance
+    result = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 198, in record_attendance_if_allowed
+    minimum_score = float(rule.minimumScore)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'AttendanceRules' object has no attribute 'minimumScore'
+2026-08-05 12:13:15,774 | INFO | camera-CAM_Juniv301:19144 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 12:13:15,779 | ERROR | MainProcess:3344 | camera.camera_process_manager | Failed to create attendance
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_process_manager.py", line 297, in _consume_attendance
+    result = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 198, in record_attendance_if_allowed
+    minimum_score = float(rule.minimumScore)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'AttendanceRules' object has no attribute 'minimumScore'
+2026-08-05 12:13:15,802 | INFO | camera-CAM_Juniv:12100 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 12:13:15,805 | ERROR | MainProcess:3344 | camera.camera_process_manager | Failed to create attendance
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_process_manager.py", line 297, in _consume_attendance
+    result = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 198, in record_attendance_if_allowed
+    minimum_score = float(rule.minimumScore)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'AttendanceRules' object has no attribute 'minimumScore'
+2026-08-05 12:13:19,872 | INFO | MainProcess:3344 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 12:13:19,892 | INFO | camera-CAM_Juniv:12100 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 12:13:19,892 | INFO | camera-CAM_Juniv301:19144 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 12:13:19,935 | INFO | MainProcess:3344 | uvicorn.error | Shutting down
+2026-08-05 12:13:20,046 | INFO | MainProcess:3344 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 12:13:20,046 | INFO | MainProcess:3344 | __main__ | FastAPI shutdown started
+2026-08-05 12:13:20,047 | INFO | MainProcess:3344 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 12:13:20,048 | INFO | MainProcess:3344 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 12:13:20,103 | INFO | MainProcess:3344 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 12:13:20,103 | INFO | MainProcess:3344 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 12:13:20,105 | INFO | MainProcess:3344 | __main__ | Camera processes stopped
+2026-08-05 12:13:20,107 | INFO | MainProcess:3344 | database | Closed MongoDB connection
+2026-08-05 12:13:20,107 | INFO | MainProcess:3344 | __main__ | MongoDB connection closed
+2026-08-05 12:13:20,107 | INFO | MainProcess:3344 | __main__ | FastAPI shutdown completed
+2026-08-05 12:14:15,565 | INFO | MainProcess:2116 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 12:14:16,858 | INFO | MainProcess:2116 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 12:14:23,165 | INFO | MainProcess:2116 | camera.camera_process_manager | Started camera CAM_Juniv with PID 17196
+2026-08-05 12:14:23,188 | INFO | camera-CAM_Juniv:17196 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 12:14:30,153 | INFO | MainProcess:2116 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 13404
+2026-08-05 12:14:30,163 | INFO | MainProcess:2116 | camera.camera_process_manager | Started camera grid with PID 11484
+2026-08-05 12:14:30,163 | INFO | MainProcess:2116 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 12:14:30,163 | INFO | MainProcess:2116 | __main__ | FastAPI startup completed
+2026-08-05 12:14:30,164 | INFO | MainProcess:2116 | uvicorn.error | Application startup complete.
+2026-08-05 12:14:30,166 | INFO | MainProcess:2116 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 12:14:30,189 | INFO | camera-CAM_Juniv301:13404 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 12:14:36,143 | INFO | camera-CAM_Juniv:17196 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 12:14:36,147 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5367 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:14:36,147 | WARNING | MainProcess:2116 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5367 details={'reason': 'below_threshold', 'confidence': 0.5366664528846741, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:36,147 | WARNING | MainProcess:2116 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5366664528846741, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:36,295 | INFO | camera-CAM_Juniv301:13404 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 12:14:36,298 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5733 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:14:36,298 | WARNING | MainProcess:2116 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5733 details={'reason': 'below_threshold', 'confidence': 0.5733311772346497, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:36,298 | WARNING | MainProcess:2116 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5733311772346497, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:46,057 | INFO | camera-CAM_Juniv:17196 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 12:14:46,060 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5030 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:14:46,061 | WARNING | MainProcess:2116 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5030 details={'reason': 'below_threshold', 'confidence': 0.5030086040496826, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:46,061 | WARNING | MainProcess:2116 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5030086040496826, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:46,176 | INFO | camera-CAM_Juniv301:13404 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 12:14:46,180 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5011 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:14:46,180 | WARNING | MainProcess:2116 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5011 details={'reason': 'below_threshold', 'confidence': 0.5011475086212158, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:46,180 | WARNING | MainProcess:2116 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5011475086212158, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:56,847 | INFO | camera-CAM_Juniv301:13404 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 12:14:56,850 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5327 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:14:56,850 | WARNING | MainProcess:2116 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5327 details={'reason': 'below_threshold', 'confidence': 0.5327476263046265, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:56,850 | WARNING | MainProcess:2116 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5327476263046265, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:56,989 | INFO | camera-CAM_Juniv:17196 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 12:14:56,992 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5454 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:14:56,992 | WARNING | MainProcess:2116 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5454 details={'reason': 'below_threshold', 'confidence': 0.5453766584396362, 'recognitionThreshold': 0.58}
+2026-08-05 12:14:56,992 | WARNING | MainProcess:2116 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5453766584396362, 'recognitionThreshold': 0.58}
+2026-08-05 12:16:00,626 | INFO | camera-CAM_Juniv301:13404 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 12:16:00,630 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6435 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:16:00,630 | INFO | MainProcess:2116 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T11:13:10.630153+00:00 end=2026-08-05T11:16:00.630153+00:00 cooldownSeconds=170
+2026-08-05 12:16:00,632 | INFO | MainProcess:2116 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6435
+2026-08-05 12:16:00,635 | INFO | MainProcess:2116 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL detectionId=dc2b9754-459d-4cc7-98ce-6888e68d853a
+2026-08-05 12:16:00,635 | INFO | MainProcess:2116 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=created
+2026-08-05 12:16:00,733 | INFO | camera-CAM_Juniv:17196 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 12:16:00,736 | INFO | MainProcess:2116 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6360 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 12:16:00,736 | INFO | MainProcess:2116 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T11:13:10.736727+00:00 end=2026-08-05T11:16:00.736727+00:00 cooldownSeconds=170
+2026-08-05 12:16:00,739 | INFO | MainProcess:2116 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6360
+2026-08-05 12:16:00,742 | INFO | MainProcess:2116 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL detectionId=efe19252-1dce-4525-9ff9-31554774761f
+2026-08-05 12:16:00,742 | INFO | MainProcess:2116 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=created
+2026-08-05 12:16:28,960 | INFO | MainProcess:2116 | uvicorn.error | Shutting down
+2026-08-05 12:16:28,976 | INFO | camera-CAM_Juniv:17196 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 12:16:28,985 | INFO | camera-CAM_Juniv301:13404 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 12:16:29,013 | INFO | MainProcess:2116 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 12:16:29,073 | INFO | MainProcess:2116 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 12:16:29,073 | INFO | MainProcess:2116 | __main__ | FastAPI shutdown started
+2026-08-05 12:16:29,073 | INFO | MainProcess:2116 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 12:16:29,074 | INFO | MainProcess:2116 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 12:16:29,132 | INFO | MainProcess:2116 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 12:16:29,137 | INFO | MainProcess:2116 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 12:16:29,139 | INFO | MainProcess:2116 | __main__ | Camera processes stopped
+2026-08-05 12:16:29,140 | INFO | MainProcess:2116 | database | Closed MongoDB connection
+2026-08-05 12:16:29,140 | INFO | MainProcess:2116 | __main__ | MongoDB connection closed
+2026-08-05 12:16:29,140 | INFO | MainProcess:2116 | __main__ | FastAPI shutdown completed
+2026-08-05 13:05:25,141 | INFO | MainProcess:16908 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 13:05:26,936 | INFO | MainProcess:16908 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 13:05:35,281 | INFO | MainProcess:16908 | camera.camera_process_manager | Started camera CAM_Juniv with PID 18752
+2026-08-05 13:05:35,310 | INFO | camera-CAM_Juniv:18752 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 13:05:44,680 | INFO | MainProcess:16908 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 14552
+2026-08-05 13:05:44,694 | INFO | MainProcess:16908 | camera.camera_process_manager | Started camera grid with PID 15284
+2026-08-05 13:05:44,694 | INFO | MainProcess:16908 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 13:05:44,695 | INFO | MainProcess:16908 | __main__ | FastAPI startup completed
+2026-08-05 13:05:44,695 | INFO | MainProcess:16908 | uvicorn.error | Application startup complete.
+2026-08-05 13:05:44,697 | INFO | MainProcess:16908 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 13:05:44,705 | INFO | camera-CAM_Juniv301:14552 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 13:05:49,715 | INFO | camera-CAM_Juniv:18752 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 13:05:49,720 | INFO | MainProcess:16908 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6324 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 13:05:49,720 | INFO | MainProcess:16908 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T12:02:59.720809+00:00 end=2026-08-05T12:05:49.720809+00:00 cooldownSeconds=170
+2026-08-05 13:05:49,723 | INFO | MainProcess:16908 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6324
+2026-08-05 13:05:49,727 | INFO | MainProcess:16908 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL detectionId=0bf2d76c-53cf-4b65-b321-9110602b2a03
+2026-08-05 13:05:49,727 | INFO | MainProcess:16908 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=created
+2026-08-05 13:05:50,623 | INFO | camera-CAM_Juniv301:14552 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 13:05:50,635 | INFO | MainProcess:16908 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6601 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 13:05:50,636 | INFO | MainProcess:16908 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T12:03:00.635338+00:00 end=2026-08-05T12:05:50.635338+00:00 cooldownSeconds=170
+2026-08-05 13:05:50,639 | INFO | MainProcess:16908 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6601
+2026-08-05 13:05:50,704 | INFO | MainProcess:16908 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL detectionId=caa1e2c9-c7f0-4436-a187-5306642d5624
+2026-08-05 13:05:50,705 | INFO | MainProcess:16908 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=created
+2026-08-05 13:05:54,204 | INFO | camera-CAM_Juniv:18752 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 13:05:54,227 | INFO | camera-CAM_Juniv301:14552 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 13:05:54,278 | INFO | MainProcess:16908 | uvicorn.error | Shutting down
+2026-08-05 13:05:54,390 | INFO | MainProcess:16908 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 13:05:54,391 | INFO | MainProcess:16908 | __main__ | FastAPI shutdown started
+2026-08-05 13:05:54,393 | INFO | MainProcess:16908 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 13:05:54,394 | INFO | MainProcess:16908 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 13:05:54,455 | INFO | MainProcess:16908 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 13:05:54,455 | INFO | MainProcess:16908 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 13:05:54,457 | INFO | MainProcess:16908 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 13:05:54,458 | INFO | MainProcess:16908 | __main__ | Camera processes stopped
+2026-08-05 13:05:54,460 | INFO | MainProcess:16908 | database | Closed MongoDB connection
+2026-08-05 13:05:54,460 | INFO | MainProcess:16908 | __main__ | MongoDB connection closed
+2026-08-05 13:05:54,460 | INFO | MainProcess:16908 | __main__ | FastAPI shutdown completed
+2026-08-05 15:16:42,977 | INFO | MainProcess:4132 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 15:16:45,128 | INFO | MainProcess:4132 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 15:16:53,160 | INFO | MainProcess:4132 | camera.camera_process_manager | Started camera CAM_Juniv with PID 4052
+2026-08-05 15:16:53,191 | INFO | camera-CAM_Juniv:4052 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 15:17:02,335 | INFO | MainProcess:4132 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15184
+2026-08-05 15:17:02,347 | INFO | MainProcess:4132 | camera.camera_process_manager | Started camera grid with PID 3052
+2026-08-05 15:17:02,347 | INFO | MainProcess:4132 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 15:17:02,347 | INFO | MainProcess:4132 | __main__ | FastAPI startup completed
+2026-08-05 15:17:02,348 | INFO | MainProcess:4132 | uvicorn.error | Application startup complete.
+2026-08-05 15:17:02,350 | INFO | MainProcess:4132 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 15:17:02,369 | INFO | camera-CAM_Juniv301:15184 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 15:17:16,262 | INFO | camera-CAM_Juniv:4052 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 15:17:16,267 | INFO | MainProcess:4132 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6200 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:17:16,267 | INFO | MainProcess:4132 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T14:14:26.267186+00:00 end=2026-08-05T14:17:16.267186+00:00 cooldownSeconds=170
+2026-08-05 15:17:16,270 | INFO | MainProcess:4132 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6200
+2026-08-05 15:17:16,273 | INFO | camera-CAM_Juniv301:15184 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 15:17:16,274 | INFO | MainProcess:4132 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL detectionId=7bda310c-f313-41f4-881d-c37e93e9c846
+2026-08-05 15:17:16,274 | INFO | MainProcess:4132 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=created
+2026-08-05 15:17:16,285 | INFO | MainProcess:4132 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6436 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:17:16,285 | INFO | MainProcess:4132 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T14:14:26.284190+00:00 end=2026-08-05T14:17:16.284190+00:00 cooldownSeconds=170
+2026-08-05 15:17:16,288 | INFO | MainProcess:4132 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6436
+2026-08-05 15:17:16,291 | INFO | MainProcess:4132 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL detectionId=56b9e117-3183-41a9-a814-6d1bbddfa1a5
+2026-08-05 15:17:16,291 | INFO | MainProcess:4132 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=created
+2026-08-05 15:17:36,884 | INFO | camera-CAM_Juniv301:15184 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 15:17:36,902 | INFO | camera-CAM_Juniv:4052 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 15:17:36,925 | INFO | MainProcess:4132 | uvicorn.error | Shutting down
+2026-08-05 15:17:37,093 | INFO | MainProcess:4132 | uvicorn.error | Finished server process [4132]
+2026-08-05 15:17:37,096 | INFO | MainProcess:4132 | __main__ | FastAPI shutdown started
+2026-08-05 15:17:37,098 | INFO | MainProcess:4132 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 15:17:37,099 | INFO | MainProcess:4132 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 15:17:37,192 | INFO | MainProcess:4132 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 15:17:37,192 | INFO | MainProcess:4132 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 15:17:37,194 | INFO | MainProcess:4132 | __main__ | FastAPI shutdown completed
+2026-08-05 15:18:10,577 | INFO | MainProcess:12096 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 15:18:11,785 | INFO | MainProcess:12096 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 15:18:17,802 | INFO | MainProcess:12096 | camera.camera_process_manager | Started camera CAM_Juniv with PID 12480
+2026-08-05 15:18:17,824 | INFO | camera-CAM_Juniv:12480 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 15:18:25,023 | INFO | MainProcess:12096 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 12216
+2026-08-05 15:18:25,034 | INFO | MainProcess:12096 | camera.camera_process_manager | Started camera grid with PID 904
+2026-08-05 15:18:25,034 | INFO | MainProcess:12096 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 15:18:25,034 | INFO | MainProcess:12096 | __main__ | FastAPI startup completed
+2026-08-05 15:18:25,034 | INFO | MainProcess:12096 | uvicorn.error | Application startup complete.
+2026-08-05 15:18:25,036 | INFO | MainProcess:12096 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 15:18:25,048 | INFO | camera-CAM_Juniv301:12216 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 15:19:17,131 | INFO | camera-CAM_Juniv301:12216 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 15:19:17,174 | INFO | MainProcess:12096 | uvicorn.error | Shutting down
+2026-08-05 15:19:17,286 | INFO | MainProcess:12096 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 15:19:17,286 | INFO | MainProcess:12096 | __main__ | FastAPI shutdown started
+2026-08-05 15:19:17,287 | INFO | MainProcess:12096 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 15:19:17,287 | INFO | MainProcess:12096 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 15:19:17,331 | INFO | MainProcess:12096 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 15:19:17,334 | INFO | MainProcess:12096 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 15:19:17,334 | INFO | MainProcess:12096 | __main__ | Camera processes stopped
+2026-08-05 15:19:17,337 | INFO | MainProcess:12096 | database | Closed MongoDB connection
+2026-08-05 15:19:17,337 | INFO | MainProcess:12096 | __main__ | MongoDB connection closed
+2026-08-05 15:19:17,337 | INFO | MainProcess:12096 | __main__ | FastAPI shutdown completed
+2026-08-05 15:19:27,508 | INFO | MainProcess:18032 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 15:19:28,588 | INFO | MainProcess:18032 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 15:19:34,764 | INFO | MainProcess:18032 | camera.camera_process_manager | Started camera CAM_Juniv with PID 3608
+2026-08-05 15:19:34,784 | INFO | camera-CAM_Juniv:3608 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 15:19:41,577 | INFO | MainProcess:18032 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 11912
+2026-08-05 15:19:41,589 | INFO | MainProcess:18032 | camera.camera_process_manager | Started camera grid with PID 6544
+2026-08-05 15:19:41,589 | INFO | MainProcess:18032 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 15:19:41,589 | INFO | MainProcess:18032 | __main__ | FastAPI startup completed
+2026-08-05 15:19:41,589 | INFO | MainProcess:18032 | uvicorn.error | Application startup complete.
+2026-08-05 15:19:41,591 | INFO | MainProcess:18032 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 15:19:41,603 | INFO | camera-CAM_Juniv301:11912 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 15:19:53,296 | INFO | camera-CAM_Juniv:3608 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 15:19:53,300 | INFO | MainProcess:18032 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5462 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:19:53,300 | WARNING | MainProcess:18032 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5462 details={'reason': 'below_threshold', 'confidence': 0.5462404489517212, 'recognitionThreshold': 0.58}
+2026-08-05 15:19:53,300 | WARNING | MainProcess:18032 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5462404489517212, 'recognitionThreshold': 0.58}
+2026-08-05 15:19:53,509 | INFO | camera-CAM_Juniv301:11912 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 15:19:53,515 | INFO | MainProcess:18032 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6011 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:19:53,515 | INFO | MainProcess:18032 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T14:17:03.515676+00:00 end=2026-08-05T14:19:53.515676+00:00 cooldownSeconds=170
+2026-08-05 15:19:53,518 | WARNING | MainProcess:18032 | service.attendance_service | Attendance rejected: reason=duplicate_cooldown etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.6011 details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 170, 'previousDetectionId': '6a7345ec8c7369e25bfbde88', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 15:19:53,518 | WARNING | MainProcess:18032 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=duplicate_cooldown details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 170, 'previousDetectionId': '6a7345ec8c7369e25bfbde88', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 15:20:00,237 | INFO | camera-CAM_Juniv301:11912 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 15:20:00,244 | INFO | camera-CAM_Juniv:3608 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 15:20:00,295 | INFO | MainProcess:18032 | uvicorn.error | Shutting down
+2026-08-05 15:20:00,428 | INFO | MainProcess:18032 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 15:20:00,428 | INFO | MainProcess:18032 | __main__ | FastAPI shutdown started
+2026-08-05 15:20:00,461 | INFO | MainProcess:18032 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 15:20:00,462 | INFO | MainProcess:18032 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 15:20:00,545 | INFO | MainProcess:18032 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 15:20:00,553 | INFO | MainProcess:18032 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 15:20:00,555 | INFO | MainProcess:18032 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 15:20:00,556 | INFO | MainProcess:18032 | __main__ | Camera processes stopped
+2026-08-05 15:20:00,557 | INFO | MainProcess:18032 | database | Closed MongoDB connection
+2026-08-05 15:20:00,557 | INFO | MainProcess:18032 | __main__ | MongoDB connection closed
+2026-08-05 15:20:00,557 | INFO | MainProcess:18032 | __main__ | FastAPI shutdown completed
+2026-08-05 15:20:15,418 | INFO | MainProcess:260 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 15:20:16,560 | INFO | MainProcess:260 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 15:20:22,818 | INFO | MainProcess:260 | camera.camera_process_manager | Started camera CAM_Juniv with PID 16048
+2026-08-05 15:20:22,842 | INFO | camera-CAM_Juniv:16048 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 15:20:29,747 | INFO | MainProcess:260 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 5064
+2026-08-05 15:20:29,760 | INFO | MainProcess:260 | camera.camera_process_manager | Started camera grid with PID 18584
+2026-08-05 15:20:29,761 | INFO | MainProcess:260 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 15:20:29,761 | INFO | MainProcess:260 | __main__ | FastAPI startup completed
+2026-08-05 15:20:29,761 | INFO | MainProcess:260 | uvicorn.error | Application startup complete.
+2026-08-05 15:20:29,762 | INFO | MainProcess:260 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 15:20:29,776 | INFO | camera-CAM_Juniv301:5064 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 15:20:39,826 | INFO | camera-CAM_Juniv:16048 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 15:20:39,830 | INFO | MainProcess:260 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6165 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:20:39,830 | INFO | MainProcess:260 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T14:17:49.830157+00:00 end=2026-08-05T14:20:39.830157+00:00 cooldownSeconds=170
+2026-08-05 15:20:39,833 | INFO | MainProcess:260 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6165
+2026-08-05 15:20:39,835 | INFO | MainProcess:260 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL detectionId=fb47d369-312d-4053-b568-ad33ac24706f
+2026-08-05 15:20:39,835 | INFO | MainProcess:260 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=created
+2026-08-05 15:20:39,886 | INFO | camera-CAM_Juniv301:5064 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 15:20:39,890 | INFO | MainProcess:260 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6403 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:20:39,890 | INFO | MainProcess:260 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T14:17:49.890228+00:00 end=2026-08-05T14:20:39.890228+00:00 cooldownSeconds=170
+2026-08-05 15:20:39,892 | INFO | MainProcess:260 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6403
+2026-08-05 15:20:39,895 | INFO | MainProcess:260 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL detectionId=a68799ef-44e6-4e92-a884-5419d93b7965
+2026-08-05 15:20:39,895 | INFO | MainProcess:260 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=created
+2026-08-05 15:20:47,436 | INFO | MainProcess:260 | uvicorn.error | Shutting down
+2026-08-05 15:20:47,471 | INFO | camera-CAM_Juniv:16048 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 15:20:47,474 | INFO | camera-CAM_Juniv301:5064 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 15:20:47,544 | INFO | MainProcess:260 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 15:20:47,545 | INFO | MainProcess:260 | __main__ | FastAPI shutdown started
+2026-08-05 15:20:47,546 | INFO | MainProcess:260 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 15:20:47,546 | INFO | MainProcess:260 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 15:20:47,600 | INFO | MainProcess:260 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 15:20:47,600 | INFO | MainProcess:260 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 15:20:47,602 | INFO | MainProcess:260 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 15:20:47,603 | INFO | MainProcess:260 | __main__ | Camera processes stopped
+2026-08-05 15:20:47,605 | INFO | MainProcess:260 | database | Closed MongoDB connection
+2026-08-05 15:20:47,605 | INFO | MainProcess:260 | __main__ | MongoDB connection closed
+2026-08-05 15:20:47,605 | INFO | MainProcess:260 | __main__ | FastAPI shutdown completed
+2026-08-05 15:46:45,981 | INFO | MainProcess:15548 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 15:46:47,347 | INFO | MainProcess:15548 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 15:46:55,136 | INFO | MainProcess:15548 | camera.camera_process_manager | Started camera CAM_Juniv with PID 11960
+2026-08-05 15:46:55,162 | INFO | camera-CAM_Juniv:11960 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 15:47:03,958 | INFO | MainProcess:15548 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 13052
+2026-08-05 15:47:03,968 | INFO | MainProcess:15548 | camera.camera_process_manager | Started camera grid with PID 16884
+2026-08-05 15:47:03,968 | INFO | MainProcess:15548 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 15:47:03,968 | INFO | MainProcess:15548 | __main__ | FastAPI startup completed
+2026-08-05 15:47:03,969 | INFO | MainProcess:15548 | uvicorn.error | Application startup complete.
+2026-08-05 15:47:03,971 | INFO | MainProcess:15548 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 15:47:03,982 | INFO | camera-CAM_Juniv301:13052 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 15:47:18,823 | INFO | camera-CAM_Juniv301:13052 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 15:47:18,826 | INFO | MainProcess:15548 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5635 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:47:18,826 | WARNING | MainProcess:15548 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5635 details={'reason': 'below_threshold', 'confidence': 0.5634857416152954, 'recognitionThreshold': 0.58}
+2026-08-05 15:47:18,827 | WARNING | MainProcess:15548 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5634857416152954, 'recognitionThreshold': 0.58}
+2026-08-05 15:47:19,073 | INFO | camera-CAM_Juniv:11960 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 15:47:19,077 | INFO | MainProcess:15548 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6926 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:47:19,077 | INFO | MainProcess:15548 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T14:44:29.077691+00:00 end=2026-08-05T14:47:19.077691+00:00 cooldownSeconds=170
+2026-08-05 15:47:19,080 | INFO | MainProcess:15548 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6926
+2026-08-05 15:47:19,083 | INFO | MainProcess:15548 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL detectionId=c60eeb16-be13-4589-8a41-48ce84adb2f7
+2026-08-05 15:47:19,083 | INFO | MainProcess:15548 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=created
+2026-08-05 15:48:00,541 | INFO | camera-CAM_Juniv:11960 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 15:48:00,546 | INFO | MainProcess:15548 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5933 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:48:00,546 | INFO | MainProcess:15548 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T14:45:10.546600+00:00 end=2026-08-05T14:48:00.546600+00:00 cooldownSeconds=170
+2026-08-05 15:48:00,548 | WARNING | MainProcess:15548 | service.attendance_service | Attendance rejected: reason=duplicate_cooldown etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5933 details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 170, 'previousDetectionId': '6a734cf7017eb172b94b555e', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 15:48:00,549 | WARNING | MainProcess:15548 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=duplicate_cooldown details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 170, 'previousDetectionId': '6a734cf7017eb172b94b555e', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 15:48:00,675 | INFO | camera-CAM_Juniv301:13052 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 15:48:00,678 | INFO | MainProcess:15548 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6313 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:48:00,679 | INFO | MainProcess:15548 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T14:45:10.678597+00:00 end=2026-08-05T14:48:00.678597+00:00 cooldownSeconds=170
+2026-08-05 15:48:00,682 | INFO | MainProcess:15548 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6313
+2026-08-05 15:48:00,684 | INFO | MainProcess:15548 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL detectionId=39efe00e-5da5-4fc7-91dc-35dc9a5ea97b
+2026-08-05 15:48:00,684 | INFO | MainProcess:15548 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=created
+2026-08-05 15:48:06,458 | INFO | camera-CAM_Juniv301:13052 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 15:48:06,461 | INFO | camera-CAM_Juniv:11960 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 15:48:06,497 | INFO | MainProcess:15548 | uvicorn.error | Shutting down
+2026-08-05 15:48:06,608 | INFO | MainProcess:15548 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 15:48:06,609 | INFO | MainProcess:15548 | __main__ | FastAPI shutdown started
+2026-08-05 15:48:06,610 | INFO | MainProcess:15548 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 15:48:06,610 | INFO | MainProcess:15548 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 15:48:06,710 | INFO | MainProcess:15548 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 15:48:06,710 | INFO | MainProcess:15548 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 15:48:06,713 | INFO | MainProcess:15548 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 15:48:06,713 | INFO | MainProcess:15548 | __main__ | Camera processes stopped
+2026-08-05 15:48:06,715 | INFO | MainProcess:15548 | database | Closed MongoDB connection
+2026-08-05 15:48:06,715 | INFO | MainProcess:15548 | __main__ | MongoDB connection closed
+2026-08-05 15:48:06,715 | INFO | MainProcess:15548 | __main__ | FastAPI shutdown completed
+2026-08-05 15:58:02,565 | INFO | MainProcess:1368 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 15:58:04,182 | INFO | MainProcess:1368 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 15:58:12,217 | INFO | MainProcess:1368 | camera.camera_process_manager | Started camera CAM_Juniv with PID 15840
+2026-08-05 15:58:12,240 | INFO | camera-CAM_Juniv:15840 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 15:58:21,138 | INFO | MainProcess:1368 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 18620
+2026-08-05 15:58:21,153 | INFO | MainProcess:1368 | camera.camera_process_manager | Started camera grid with PID 12380
+2026-08-05 15:58:21,153 | INFO | MainProcess:1368 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 15:58:21,153 | INFO | MainProcess:1368 | __main__ | FastAPI startup completed
+2026-08-05 15:58:21,153 | INFO | MainProcess:1368 | uvicorn.error | Application startup complete.
+2026-08-05 15:58:21,154 | INFO | MainProcess:1368 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 15:58:21,171 | INFO | camera-CAM_Juniv301:18620 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 15:58:35,441 | INFO | camera-CAM_Juniv:15840 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 15:58:35,442 | INFO | camera-CAM_Juniv301:18620 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 15:58:35,455 | INFO | MainProcess:1368 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5792 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:58:35,455 | WARNING | MainProcess:1368 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5792 details={'reason': 'below_threshold', 'confidence': 0.5791659355163574, 'recognitionThreshold': 0.58}
+2026-08-05 15:58:35,456 | WARNING | MainProcess:1368 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5791659355163574, 'recognitionThreshold': 0.58}
+2026-08-05 15:58:35,461 | INFO | MainProcess:1368 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5591 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 15:58:35,461 | WARNING | MainProcess:1368 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5591 details={'reason': 'below_threshold', 'confidence': 0.559083104133606, 'recognitionThreshold': 0.58}
+2026-08-05 15:58:35,461 | WARNING | MainProcess:1368 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.559083104133606, 'recognitionThreshold': 0.58}
+2026-08-05 15:58:42,500 | INFO | camera-CAM_Juniv301:18620 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 15:58:42,509 | INFO | camera-CAM_Juniv:15840 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 15:58:42,548 | INFO | MainProcess:1368 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 15:58:42,548 | INFO | MainProcess:1368 | uvicorn.error | Shutting down
+2026-08-05 15:58:42,657 | INFO | MainProcess:1368 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 15:58:42,657 | INFO | MainProcess:1368 | __main__ | FastAPI shutdown started
+2026-08-05 15:58:42,657 | INFO | MainProcess:1368 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 15:58:42,658 | INFO | MainProcess:1368 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 15:58:42,794 | INFO | MainProcess:1368 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 15:58:42,794 | INFO | MainProcess:1368 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 15:58:42,800 | INFO | MainProcess:1368 | __main__ | Camera processes stopped
+2026-08-05 15:58:42,802 | INFO | MainProcess:1368 | database | Closed MongoDB connection
+2026-08-05 15:58:42,802 | INFO | MainProcess:1368 | __main__ | MongoDB connection closed
+2026-08-05 15:58:42,802 | INFO | MainProcess:1368 | __main__ | FastAPI shutdown completed
+2026-08-05 16:00:14,753 | INFO | MainProcess:17972 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 16:00:16,194 | INFO | MainProcess:17972 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 16:00:24,199 | INFO | MainProcess:17972 | camera.camera_process_manager | Started camera CAM_Juniv with PID 16152
+2026-08-05 16:00:24,227 | INFO | camera-CAM_Juniv:16152 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 16:00:31,808 | INFO | camera-CAM_Juniv:16152 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 16:00:33,953 | INFO | MainProcess:17972 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 17360
+2026-08-05 16:00:33,962 | INFO | MainProcess:17972 | camera.camera_process_manager | Started camera grid with PID 3368
+2026-08-05 16:00:33,963 | INFO | MainProcess:17972 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 16:00:33,963 | INFO | MainProcess:17972 | __main__ | FastAPI startup completed
+2026-08-05 16:00:33,963 | INFO | MainProcess:17972 | uvicorn.error | Application startup complete.
+2026-08-05 16:00:33,965 | INFO | MainProcess:17972 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 16:00:33,975 | INFO | MainProcess:17972 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6624 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 16:00:33,976 | INFO | MainProcess:17972 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T14:57:43.975855+00:00 end=2026-08-05T15:00:33.975855+00:00 cooldownSeconds=170
+2026-08-05 16:00:33,979 | INFO | MainProcess:17972 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6624
+2026-08-05 16:00:33,982 | INFO | MainProcess:17972 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL detectionId=a9907239-378d-4e1c-a49b-e3e7986bcb4f
+2026-08-05 16:00:33,982 | INFO | MainProcess:17972 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=created
+2026-08-05 16:00:33,981 | INFO | camera-CAM_Juniv301:17360 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 16:00:47,766 | INFO | camera-CAM_Juniv:16152 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 16:00:47,769 | INFO | MainProcess:17972 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.6433 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 16:00:47,769 | INFO | MainProcess:17972 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv eventType=FACE_RECOGNIZED start=2026-08-05T14:57:57.769539+00:00 end=2026-08-05T15:00:47.769539+00:00 cooldownSeconds=170
+2026-08-05 16:00:47,776 | WARNING | MainProcess:17972 | service.attendance_service | Attendance rejected: reason=duplicate_cooldown etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.6433 details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 170, 'previousDetectionId': '6a7350118d6a7aafd92c05b2', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 16:00:47,776 | WARNING | MainProcess:17972 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=duplicate_cooldown details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 170, 'previousDetectionId': '6a7350118d6a7aafd92c05b2', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 16:00:47,783 | INFO | camera-CAM_Juniv301:17360 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 16:00:47,788 | INFO | MainProcess:17972 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.6212 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 16:00:47,788 | INFO | MainProcess:17972 | service.attendance_service | Checking attendance cooldown: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 eventType=FACE_RECOGNIZED start=2026-08-05T14:57:57.788549+00:00 end=2026-08-05T15:00:47.788549+00:00 cooldownSeconds=170
+2026-08-05 16:00:47,792 | INFO | MainProcess:17972 | service.attendance_service | Attendance accepted for insertion: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.6212
+2026-08-05 16:00:47,804 | INFO | MainProcess:17972 | service.attendance_service | Attendance created: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL detectionId=1ae4eb7e-4b58-4029-8cb9-88152c24b298
+2026-08-05 16:00:47,804 | INFO | MainProcess:17972 | camera.camera_process_manager | Attendance created: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=created
+2026-08-05 16:00:59,360 | INFO | camera-CAM_Juniv301:17360 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 16:00:59,400 | INFO | camera-CAM_Juniv:16152 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 16:00:59,438 | INFO | MainProcess:17972 | uvicorn.error | Shutting down
+2026-08-05 16:00:59,538 | INFO | MainProcess:17972 | uvicorn.error | Finished server process [17972]
+2026-08-05 16:00:59,539 | INFO | MainProcess:17972 | __main__ | FastAPI shutdown started
+2026-08-05 16:00:59,539 | INFO | MainProcess:17972 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 16:00:59,540 | INFO | MainProcess:17972 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 16:00:59,617 | INFO | MainProcess:17972 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 16:00:59,617 | INFO | MainProcess:17972 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 16:00:59,619 | INFO | MainProcess:17972 | __main__ | FastAPI shutdown completed
+2026-08-05 17:00:17,763 | INFO | MainProcess:19260 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:00:19,561 | INFO | MainProcess:19260 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:00:26,778 | INFO | MainProcess:19260 | camera.camera_process_manager | Started camera CAM_Juniv with PID 5100
+2026-08-05 17:00:26,806 | INFO | camera-CAM_Juniv:5100 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:00:32,025 | ERROR | camera-CAM_Juniv:5100 | camera.camera_worker | Camera CAM_Juniv worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 93, in read_camera
+    print(fire_position)
+UnboundLocalError: local variable 'fire_position' referenced before assignment
+2026-08-05 17:00:32,035 | INFO | camera-CAM_Juniv:5100 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:00:34,255 | INFO | MainProcess:19260 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 14780
+2026-08-05 17:00:34,265 | INFO | MainProcess:19260 | camera.camera_process_manager | Started camera grid with PID 13216
+2026-08-05 17:00:34,265 | INFO | MainProcess:19260 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:00:34,265 | INFO | MainProcess:19260 | __main__ | FastAPI startup completed
+2026-08-05 17:00:34,265 | INFO | MainProcess:19260 | uvicorn.error | Application startup complete.
+2026-08-05 17:00:34,267 | INFO | MainProcess:19260 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:00:34,282 | INFO | camera-CAM_Juniv301:14780 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:00:38,962 | ERROR | camera-CAM_Juniv301:14780 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 93, in read_camera
+    print(fire_position)
+UnboundLocalError: local variable 'fire_position' referenced before assignment
+2026-08-05 17:00:38,973 | INFO | camera-CAM_Juniv301:14780 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:03:35,765 | INFO | MainProcess:19260 | uvicorn.error | Shutting down
+2026-08-05 17:03:35,875 | INFO | MainProcess:19260 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:03:35,875 | INFO | MainProcess:19260 | __main__ | FastAPI shutdown started
+2026-08-05 17:03:35,876 | INFO | MainProcess:19260 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:03:35,876 | INFO | MainProcess:19260 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:03:35,879 | INFO | MainProcess:19260 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:03:35,880 | INFO | MainProcess:19260 | __main__ | Camera processes stopped
+2026-08-05 17:03:35,882 | INFO | MainProcess:19260 | database | Closed MongoDB connection
+2026-08-05 17:03:35,882 | INFO | MainProcess:19260 | __main__ | MongoDB connection closed
+2026-08-05 17:03:35,882 | INFO | MainProcess:19260 | __main__ | FastAPI shutdown completed
+2026-08-05 17:03:44,027 | INFO | MainProcess:15996 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:03:45,152 | INFO | MainProcess:15996 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:03:51,559 | INFO | MainProcess:15996 | camera.camera_process_manager | Started camera CAM_Juniv with PID 16868
+2026-08-05 17:03:51,582 | INFO | camera-CAM_Juniv:16868 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:03:54,918 | ERROR | camera-CAM_Juniv:16868 | camera.camera_worker | Camera CAM_Juniv worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 93, in read_camera
+    print(fire_position)
+UnboundLocalError: local variable 'fire_position' referenced before assignment
+2026-08-05 17:03:54,928 | INFO | camera-CAM_Juniv:16868 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:03:58,518 | INFO | MainProcess:15996 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 16880
+2026-08-05 17:03:58,527 | INFO | MainProcess:15996 | camera.camera_process_manager | Started camera grid with PID 3712
+2026-08-05 17:03:58,527 | INFO | MainProcess:15996 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:03:58,527 | INFO | MainProcess:15996 | __main__ | FastAPI startup completed
+2026-08-05 17:03:58,527 | INFO | MainProcess:15996 | uvicorn.error | Application startup complete.
+2026-08-05 17:03:58,528 | INFO | MainProcess:15996 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:03:58,541 | INFO | camera-CAM_Juniv301:16880 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:04:01,755 | ERROR | camera-CAM_Juniv301:16880 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 93, in read_camera
+    print(fire_position)
+UnboundLocalError: local variable 'fire_position' referenced before assignment
+2026-08-05 17:04:01,765 | INFO | camera-CAM_Juniv301:16880 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:06:22,226 | INFO | MainProcess:15996 | uvicorn.error | Shutting down
+2026-08-05 17:06:22,320 | INFO | MainProcess:15996 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:06:22,320 | INFO | MainProcess:15996 | __main__ | FastAPI shutdown started
+2026-08-05 17:06:22,320 | INFO | MainProcess:15996 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:06:22,320 | INFO | MainProcess:15996 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:06:22,323 | INFO | MainProcess:15996 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:06:22,324 | INFO | MainProcess:15996 | __main__ | Camera processes stopped
+2026-08-05 17:06:22,326 | INFO | MainProcess:15996 | database | Closed MongoDB connection
+2026-08-05 17:06:22,326 | INFO | MainProcess:15996 | __main__ | MongoDB connection closed
+2026-08-05 17:06:22,326 | INFO | MainProcess:15996 | __main__ | FastAPI shutdown completed
+2026-08-05 17:06:31,510 | INFO | MainProcess:14464 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:06:32,707 | INFO | MainProcess:14464 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:06:39,101 | INFO | MainProcess:14464 | camera.camera_process_manager | Started camera CAM_Juniv with PID 15804
+2026-08-05 17:06:39,123 | INFO | camera-CAM_Juniv:15804 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:06:43,391 | INFO | camera-CAM_Juniv:15804 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 17:06:47,111 | INFO | MainProcess:14464 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 11328
+2026-08-05 17:06:47,125 | INFO | MainProcess:14464 | camera.camera_process_manager | Started camera grid with PID 6980
+2026-08-05 17:06:47,125 | INFO | MainProcess:14464 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:06:47,125 | INFO | MainProcess:14464 | __main__ | FastAPI startup completed
+2026-08-05 17:06:47,125 | INFO | MainProcess:14464 | uvicorn.error | Application startup complete.
+2026-08-05 17:06:47,127 | INFO | MainProcess:14464 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:06:47,142 | INFO | camera-CAM_Juniv301:11328 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:06:51,348 | INFO | camera-CAM_Juniv301:11328 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 17:07:29,605 | INFO | camera-CAM_Juniv301:11328 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:07:29,613 | INFO | camera-CAM_Juniv:15804 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:07:29,625 | INFO | MainProcess:14464 | uvicorn.error | Shutting down
+2026-08-05 17:07:29,734 | INFO | MainProcess:14464 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:07:29,734 | INFO | MainProcess:14464 | __main__ | FastAPI shutdown started
+2026-08-05 17:07:29,735 | INFO | MainProcess:14464 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 17:07:29,735 | INFO | MainProcess:14464 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 17:07:29,805 | INFO | MainProcess:14464 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:07:29,811 | INFO | MainProcess:14464 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:07:29,813 | INFO | MainProcess:14464 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:07:29,814 | INFO | MainProcess:14464 | __main__ | Camera processes stopped
+2026-08-05 17:07:29,816 | INFO | MainProcess:14464 | database | Closed MongoDB connection
+2026-08-05 17:07:29,816 | INFO | MainProcess:14464 | __main__ | MongoDB connection closed
+2026-08-05 17:07:29,816 | INFO | MainProcess:14464 | __main__ | FastAPI shutdown completed
+2026-08-05 17:08:11,094 | INFO | MainProcess:19384 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:08:13,090 | INFO | MainProcess:19384 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:08:21,303 | INFO | MainProcess:19384 | camera.camera_process_manager | Started camera CAM_Juniv with PID 4340
+2026-08-05 17:08:21,328 | INFO | camera-CAM_Juniv:4340 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:08:25,049 | INFO | camera-CAM_Juniv:4340 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 17:08:29,405 | INFO | MainProcess:19384 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 10992
+2026-08-05 17:08:29,417 | INFO | MainProcess:19384 | camera.camera_process_manager | Started camera grid with PID 10100
+2026-08-05 17:08:29,417 | INFO | MainProcess:19384 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:08:29,417 | INFO | MainProcess:19384 | __main__ | FastAPI startup completed
+2026-08-05 17:08:29,418 | INFO | MainProcess:19384 | uvicorn.error | Application startup complete.
+2026-08-05 17:08:29,419 | INFO | MainProcess:19384 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:08:29,437 | INFO | camera-CAM_Juniv301:10992 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:08:33,776 | INFO | camera-CAM_Juniv301:10992 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 17:08:55,141 | INFO | camera-CAM_Juniv301:10992 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:08:55,141 | INFO | camera-CAM_Juniv:4340 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:08:55,198 | INFO | MainProcess:19384 | uvicorn.error | Shutting down
+2026-08-05 17:08:55,314 | INFO | MainProcess:19384 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:08:55,314 | INFO | MainProcess:19384 | __main__ | FastAPI shutdown started
+2026-08-05 17:08:55,316 | INFO | MainProcess:19384 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 17:08:55,317 | INFO | MainProcess:19384 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 17:08:55,399 | INFO | MainProcess:19384 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:08:55,413 | INFO | MainProcess:19384 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:08:55,415 | INFO | MainProcess:19384 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:08:55,416 | INFO | MainProcess:19384 | __main__ | Camera processes stopped
+2026-08-05 17:08:55,418 | INFO | MainProcess:19384 | database | Closed MongoDB connection
+2026-08-05 17:08:55,418 | INFO | MainProcess:19384 | __main__ | MongoDB connection closed
+2026-08-05 17:08:55,418 | INFO | MainProcess:19384 | __main__ | FastAPI shutdown completed
+2026-08-05 17:09:12,093 | INFO | MainProcess:10808 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:09:13,253 | INFO | MainProcess:10808 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:09:20,310 | INFO | MainProcess:10808 | camera.camera_process_manager | Started camera CAM_Juniv with PID 14040
+2026-08-05 17:09:20,333 | INFO | camera-CAM_Juniv:14040 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:09:28,991 | INFO | MainProcess:10808 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 13092
+2026-08-05 17:09:28,999 | INFO | MainProcess:10808 | camera.camera_process_manager | Started camera grid with PID 14844
+2026-08-05 17:09:29,000 | INFO | MainProcess:10808 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:09:29,000 | INFO | MainProcess:10808 | __main__ | FastAPI startup completed
+2026-08-05 17:09:29,000 | INFO | MainProcess:10808 | uvicorn.error | Application startup complete.
+2026-08-05 17:09:29,002 | INFO | MainProcess:10808 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:09:29,020 | INFO | camera-CAM_Juniv301:13092 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:09:47,404 | INFO | camera-CAM_Juniv301:13092 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:09:47,405 | INFO | camera-CAM_Juniv:14040 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:09:47,422 | INFO | MainProcess:10808 | uvicorn.error | Shutting down
+2026-08-05 17:09:47,534 | INFO | MainProcess:10808 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:09:47,535 | INFO | MainProcess:10808 | __main__ | FastAPI shutdown started
+2026-08-05 17:09:47,537 | INFO | MainProcess:10808 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 17:09:47,537 | INFO | MainProcess:10808 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 17:09:47,686 | INFO | MainProcess:10808 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:09:47,686 | INFO | MainProcess:10808 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:09:47,690 | INFO | MainProcess:10808 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:09:47,691 | INFO | MainProcess:10808 | __main__ | Camera processes stopped
+2026-08-05 17:09:47,692 | INFO | MainProcess:10808 | database | Closed MongoDB connection
+2026-08-05 17:09:47,692 | INFO | MainProcess:10808 | __main__ | MongoDB connection closed
+2026-08-05 17:09:47,692 | INFO | MainProcess:10808 | __main__ | FastAPI shutdown completed
+2026-08-05 17:11:51,865 | INFO | MainProcess:13476 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:11:52,985 | INFO | MainProcess:13476 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:11:58,972 | INFO | MainProcess:13476 | camera.camera_process_manager | Started camera CAM_Juniv with PID 18816
+2026-08-05 17:11:58,993 | INFO | camera-CAM_Juniv:18816 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:12:05,835 | INFO | MainProcess:13476 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 19280
+2026-08-05 17:12:05,844 | INFO | MainProcess:13476 | camera.camera_process_manager | Started camera grid with PID 12584
+2026-08-05 17:12:05,844 | INFO | MainProcess:13476 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:12:05,844 | INFO | MainProcess:13476 | __main__ | FastAPI startup completed
+2026-08-05 17:12:05,844 | INFO | MainProcess:13476 | uvicorn.error | Application startup complete.
+2026-08-05 17:12:05,846 | INFO | MainProcess:13476 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:12:05,863 | INFO | camera-CAM_Juniv301:19280 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:12:58,640 | INFO | MainProcess:13476 | uvicorn.error | Shutting down
+2026-08-05 17:12:58,650 | INFO | camera-CAM_Juniv301:19280 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:12:58,652 | INFO | camera-CAM_Juniv:18816 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:12:58,750 | INFO | MainProcess:13476 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:12:58,750 | INFO | MainProcess:13476 | __main__ | FastAPI shutdown started
+2026-08-05 17:12:58,751 | INFO | MainProcess:13476 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 17:12:58,751 | INFO | MainProcess:13476 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 17:12:58,800 | INFO | MainProcess:13476 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:12:58,801 | INFO | MainProcess:13476 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:12:58,804 | INFO | MainProcess:13476 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:12:58,804 | INFO | MainProcess:13476 | __main__ | Camera processes stopped
+2026-08-05 17:12:58,806 | INFO | MainProcess:13476 | database | Closed MongoDB connection
+2026-08-05 17:12:58,806 | INFO | MainProcess:13476 | __main__ | MongoDB connection closed
+2026-08-05 17:12:58,807 | INFO | MainProcess:13476 | __main__ | FastAPI shutdown completed
+2026-08-05 17:13:06,999 | INFO | MainProcess:15832 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:13:08,147 | INFO | MainProcess:15832 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:13:14,238 | INFO | MainProcess:15832 | camera.camera_process_manager | Started camera CAM_Juniv with PID 19308
+2026-08-05 17:13:14,262 | INFO | camera-CAM_Juniv:19308 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:13:17,676 | ERROR | camera-CAM_Juniv:19308 | camera.camera_worker | Camera CAM_Juniv worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 93, in read_camera
+    fire_position = fire_module.detect_frame(frame)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\fire_detection_service.py", line 28, in detect_frame
+    model = self._load_model()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\fire_detection_service.py", line 69, in _load_model
+    self._model = YOLO(
+TypeError: YOLO.__init__() got an unexpected keyword argument 'stream'
+2026-08-05 17:13:17,684 | INFO | camera-CAM_Juniv:19308 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:13:20,634 | INFO | MainProcess:15832 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 16484
+2026-08-05 17:13:20,644 | INFO | MainProcess:15832 | camera.camera_process_manager | Started camera grid with PID 11392
+2026-08-05 17:13:20,644 | INFO | MainProcess:15832 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:13:20,644 | INFO | MainProcess:15832 | __main__ | FastAPI startup completed
+2026-08-05 17:13:20,645 | INFO | MainProcess:15832 | uvicorn.error | Application startup complete.
+2026-08-05 17:13:20,646 | INFO | MainProcess:15832 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:13:20,665 | INFO | camera-CAM_Juniv301:16484 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:13:24,424 | ERROR | camera-CAM_Juniv301:16484 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 93, in read_camera
+    fire_position = fire_module.detect_frame(frame)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\fire_detection_service.py", line 28, in detect_frame
+    model = self._load_model()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\fire_detection_service.py", line 69, in _load_model
+    self._model = YOLO(
+TypeError: YOLO.__init__() got an unexpected keyword argument 'stream'
+2026-08-05 17:13:24,435 | INFO | camera-CAM_Juniv301:16484 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:13:35,823 | INFO | MainProcess:15832 | uvicorn.error | Shutting down
+2026-08-05 17:13:35,923 | INFO | MainProcess:15832 | uvicorn.error | Finished server process [15832]
+2026-08-05 17:13:35,924 | INFO | MainProcess:15832 | __main__ | FastAPI shutdown started
+2026-08-05 17:13:35,925 | INFO | MainProcess:15832 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:13:35,925 | INFO | MainProcess:15832 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:13:35,928 | INFO | MainProcess:15832 | __main__ | FastAPI shutdown completed
+2026-08-05 17:18:05,762 | INFO | MainProcess:16456 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 17:18:07,109 | INFO | MainProcess:16456 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 17:18:14,712 | INFO | MainProcess:16456 | camera.camera_process_manager | Started camera CAM_Juniv with PID 19056
+2026-08-05 17:18:14,729 | INFO | camera-CAM_Juniv:19056 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 17:18:18,452 | INFO | camera-CAM_Juniv:19056 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 17:18:22,784 | INFO | MainProcess:16456 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 17148
+2026-08-05 17:18:22,796 | INFO | MainProcess:16456 | camera.camera_process_manager | Started camera grid with PID 5656
+2026-08-05 17:18:22,796 | INFO | MainProcess:16456 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 17:18:22,796 | INFO | MainProcess:16456 | __main__ | FastAPI startup completed
+2026-08-05 17:18:22,797 | INFO | MainProcess:16456 | uvicorn.error | Application startup complete.
+2026-08-05 17:18:22,798 | INFO | MainProcess:16456 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 17:18:22,816 | INFO | camera-CAM_Juniv301:17148 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 17:18:27,009 | INFO | camera-CAM_Juniv301:17148 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 17:23:42,983 | INFO | MainProcess:16456 | uvicorn.error | Shutting down
+2026-08-05 17:23:43,010 | INFO | camera-CAM_Juniv301:17148 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 17:23:43,023 | INFO | camera-CAM_Juniv:19056 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 17:23:43,092 | INFO | MainProcess:16456 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 17:23:43,093 | INFO | MainProcess:16456 | __main__ | FastAPI shutdown started
+2026-08-05 17:23:43,093 | INFO | MainProcess:16456 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 17:23:43,093 | INFO | MainProcess:16456 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 17:23:43,177 | INFO | MainProcess:16456 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 17:23:43,180 | INFO | MainProcess:16456 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 17:23:43,182 | INFO | MainProcess:16456 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 17:23:43,183 | INFO | MainProcess:16456 | __main__ | Camera processes stopped
+2026-08-05 17:23:43,185 | INFO | MainProcess:16456 | database | Closed MongoDB connection
+2026-08-05 17:23:43,185 | INFO | MainProcess:16456 | __main__ | MongoDB connection closed
+2026-08-05 17:23:43,185 | INFO | MainProcess:16456 | __main__ | FastAPI shutdown completed
+2026-08-05 18:40:49,779 | INFO | MainProcess:4896 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 18:40:51,691 | INFO | MainProcess:4896 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 18:40:57,832 | INFO | MainProcess:4896 | camera.camera_process_manager | Started camera CAM_Juniv with PID 5608
+2026-08-05 18:40:57,856 | INFO | camera-CAM_Juniv:5608 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 18:41:02,013 | INFO | camera-CAM_Juniv:5608 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 18:41:05,683 | INFO | MainProcess:4896 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 12868
+2026-08-05 18:41:05,694 | INFO | MainProcess:4896 | camera.camera_process_manager | Started camera grid with PID 5604
+2026-08-05 18:41:05,695 | INFO | MainProcess:4896 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 18:41:05,695 | INFO | MainProcess:4896 | __main__ | FastAPI startup completed
+2026-08-05 18:41:05,696 | INFO | MainProcess:4896 | uvicorn.error | Application startup complete.
+2026-08-05 18:41:05,697 | INFO | MainProcess:4896 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 18:41:05,711 | INFO | camera-CAM_Juniv301:12868 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 18:41:09,923 | INFO | camera-CAM_Juniv301:12868 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 18:41:44,357 | ERROR | camera-CAM_Juniv:5608 | camera.camera_worker | Camera CAM_Juniv worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 99, in read_camera
+    cv2.putText(frame, f'Fire', [x1 + 8, y1 + 100],
+cv2.error: OpenCV(4.13.0) :-1: error: (-5:Bad argument) in function 'putText'
+> Overload resolution failed:
+>  - putText() missing required argument 'fontFace' (pos 4)
+>  - putText() missing required argument 'fontFace' (pos 4)
+
+2026-08-05 18:41:44,374 | INFO | camera-CAM_Juniv:5608 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 18:41:44,633 | ERROR | camera-CAM_Juniv301:12868 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 99, in read_camera
+    cv2.putText(frame, f'Fire', [x1 + 8, y1 + 100],
+cv2.error: OpenCV(4.13.0) :-1: error: (-5:Bad argument) in function 'putText'
+> Overload resolution failed:
+>  - putText() missing required argument 'fontFace' (pos 4)
+>  - putText() missing required argument 'fontFace' (pos 4)
+
+2026-08-05 18:41:44,655 | INFO | camera-CAM_Juniv301:12868 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 18:43:04,184 | INFO | MainProcess:4896 | uvicorn.error | Shutting down
+2026-08-05 18:43:04,301 | INFO | MainProcess:4896 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 18:43:04,302 | INFO | MainProcess:4896 | __main__ | FastAPI shutdown started
+2026-08-05 18:43:04,306 | INFO | MainProcess:4896 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 18:43:04,306 | INFO | MainProcess:4896 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 18:43:04,344 | INFO | MainProcess:4896 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 18:43:04,345 | INFO | MainProcess:4896 | __main__ | Camera processes stopped
+2026-08-05 18:43:04,346 | INFO | MainProcess:4896 | database | Closed MongoDB connection
+2026-08-05 18:43:04,346 | INFO | MainProcess:4896 | __main__ | MongoDB connection closed
+2026-08-05 18:43:04,347 | INFO | MainProcess:4896 | __main__ | FastAPI shutdown completed
+2026-08-05 18:43:11,898 | INFO | MainProcess:19144 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 18:43:13,235 | INFO | MainProcess:19144 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 18:43:19,874 | INFO | MainProcess:19144 | camera.camera_process_manager | Started camera CAM_Juniv with PID 18900
+2026-08-05 18:43:19,895 | INFO | camera-CAM_Juniv:18900 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 18:43:23,588 | ERROR | camera-CAM_Juniv:18900 | camera.camera_worker | Camera CAM_Juniv worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 94, in read_camera
+    if fire_detection != None:
+UnboundLocalError: local variable 'fire_detection' referenced before assignment
+2026-08-05 18:43:23,599 | INFO | camera-CAM_Juniv:18900 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 18:43:27,829 | INFO | MainProcess:19144 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 19192
+2026-08-05 18:43:27,840 | INFO | MainProcess:19144 | camera.camera_process_manager | Started camera grid with PID 14464
+2026-08-05 18:43:27,840 | INFO | MainProcess:19144 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 18:43:27,841 | INFO | MainProcess:19144 | __main__ | FastAPI startup completed
+2026-08-05 18:43:27,841 | INFO | MainProcess:19144 | uvicorn.error | Application startup complete.
+2026-08-05 18:43:27,843 | INFO | MainProcess:19144 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 18:43:27,856 | INFO | camera-CAM_Juniv301:19192 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 18:43:31,269 | ERROR | camera-CAM_Juniv301:19192 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 94, in read_camera
+    if fire_detection != None:
+UnboundLocalError: local variable 'fire_detection' referenced before assignment
+2026-08-05 18:43:31,283 | INFO | camera-CAM_Juniv301:19192 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 18:44:57,069 | INFO | MainProcess:19144 | uvicorn.error | Shutting down
+2026-08-05 18:44:57,180 | INFO | MainProcess:19144 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 18:44:57,181 | INFO | MainProcess:19144 | __main__ | FastAPI shutdown started
+2026-08-05 18:44:57,181 | INFO | MainProcess:19144 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 18:44:57,181 | INFO | MainProcess:19144 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 18:44:57,186 | INFO | MainProcess:19144 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 18:44:57,186 | INFO | MainProcess:19144 | __main__ | Camera processes stopped
+2026-08-05 18:44:57,188 | INFO | MainProcess:19144 | database | Closed MongoDB connection
+2026-08-05 18:44:57,188 | INFO | MainProcess:19144 | __main__ | MongoDB connection closed
+2026-08-05 18:44:57,188 | INFO | MainProcess:19144 | __main__ | FastAPI shutdown completed
+2026-08-05 18:45:05,139 | INFO | MainProcess:17736 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 18:45:06,372 | INFO | MainProcess:17736 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 18:45:14,812 | INFO | MainProcess:17736 | camera.camera_process_manager | Started camera CAM_Juniv with PID 18688
+2026-08-05 18:45:14,843 | INFO | camera-CAM_Juniv:18688 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 18:45:18,845 | INFO | camera-CAM_Juniv:18688 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 18:45:24,663 | INFO | MainProcess:17736 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 10316
+2026-08-05 18:45:24,675 | INFO | MainProcess:17736 | camera.camera_process_manager | Started camera grid with PID 11000
+2026-08-05 18:45:24,675 | INFO | MainProcess:17736 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 18:45:24,675 | INFO | MainProcess:17736 | __main__ | FastAPI startup completed
+2026-08-05 18:45:24,676 | INFO | MainProcess:17736 | uvicorn.error | Application startup complete.
+2026-08-05 18:45:24,677 | INFO | MainProcess:17736 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 18:45:24,691 | INFO | camera-CAM_Juniv301:10316 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 18:45:29,779 | INFO | camera-CAM_Juniv301:10316 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 18:46:16,562 | INFO | camera-CAM_Juniv301:10316 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 18:46:16,575 | INFO | camera-CAM_Juniv:18688 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 18:46:16,647 | INFO | MainProcess:17736 | uvicorn.error | Shutting down
+2026-08-05 18:46:16,742 | INFO | MainProcess:17736 | uvicorn.error | Finished server process [17736]
+2026-08-05 18:46:16,743 | INFO | MainProcess:17736 | __main__ | FastAPI shutdown started
+2026-08-05 18:46:16,746 | INFO | MainProcess:17736 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 18:46:16,746 | INFO | MainProcess:17736 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 18:46:16,814 | INFO | MainProcess:17736 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 18:46:16,823 | INFO | MainProcess:17736 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 18:46:16,826 | INFO | MainProcess:17736 | __main__ | FastAPI shutdown completed
+2026-08-05 18:46:52,156 | INFO | MainProcess:5148 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 18:46:53,774 | INFO | MainProcess:5148 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 18:47:01,732 | INFO | MainProcess:5148 | camera.camera_process_manager | Started camera CAM_Juniv with PID 13864
+2026-08-05 18:47:01,754 | INFO | camera-CAM_Juniv:13864 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 18:47:05,767 | INFO | camera-CAM_Juniv:13864 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 18:47:08,733 | INFO | MainProcess:5148 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 1260
+2026-08-05 18:47:08,743 | INFO | MainProcess:5148 | camera.camera_process_manager | Started camera grid with PID 14280
+2026-08-05 18:47:08,743 | INFO | MainProcess:5148 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 18:47:08,743 | INFO | MainProcess:5148 | __main__ | FastAPI startup completed
+2026-08-05 18:47:08,743 | INFO | MainProcess:5148 | uvicorn.error | Application startup complete.
+2026-08-05 18:47:08,746 | INFO | MainProcess:5148 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 18:47:08,759 | INFO | camera-CAM_Juniv301:1260 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 18:47:12,904 | INFO | camera-CAM_Juniv301:1260 | service.fire_detection_service | Loaded fire YOLO model: app\fire\model\fire_model.pt
+2026-08-05 18:47:47,081 | INFO | camera-CAM_Juniv301:1260 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 18:47:47,081 | INFO | camera-CAM_Juniv:13864 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 18:47:47,120 | INFO | MainProcess:5148 | uvicorn.error | Shutting down
+2026-08-05 18:47:47,231 | INFO | MainProcess:5148 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 18:47:47,232 | INFO | MainProcess:5148 | __main__ | FastAPI shutdown started
+2026-08-05 18:47:47,232 | INFO | MainProcess:5148 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 18:47:47,233 | INFO | MainProcess:5148 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 18:47:47,298 | INFO | MainProcess:5148 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 18:47:47,298 | INFO | MainProcess:5148 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 18:47:47,300 | INFO | MainProcess:5148 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 18:47:47,301 | INFO | MainProcess:5148 | __main__ | Camera processes stopped
+2026-08-05 18:47:47,302 | INFO | MainProcess:5148 | database | Closed MongoDB connection
+2026-08-05 18:47:47,303 | INFO | MainProcess:5148 | __main__ | MongoDB connection closed
+2026-08-05 18:47:47,303 | INFO | MainProcess:5148 | __main__ | FastAPI shutdown completed
+2026-08-05 18:59:05,805 | INFO | MainProcess:15972 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 18:59:07,339 | INFO | MainProcess:15972 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 18:59:13,429 | INFO | MainProcess:15972 | camera.camera_process_manager | Started camera CAM_Juniv with PID 15888
+2026-08-05 18:59:13,453 | INFO | camera-CAM_Juniv:15888 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 18:59:20,437 | INFO | MainProcess:15972 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 5404
+2026-08-05 18:59:20,446 | INFO | MainProcess:15972 | camera.camera_process_manager | Started camera grid with PID 15104
+2026-08-05 18:59:20,447 | INFO | MainProcess:15972 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 18:59:20,447 | INFO | MainProcess:15972 | __main__ | FastAPI startup completed
+2026-08-05 18:59:20,447 | INFO | MainProcess:15972 | uvicorn.error | Application startup complete.
+2026-08-05 18:59:20,449 | INFO | MainProcess:15972 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 18:59:20,467 | INFO | camera-CAM_Juniv301:5404 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 18:59:37,773 | INFO | camera-CAM_Juniv301:5404 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 18:59:37,779 | INFO | MainProcess:15972 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5250 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 18:59:37,779 | WARNING | MainProcess:15972 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5250 details={'reason': 'below_threshold', 'confidence': 0.5250016450881958, 'recognitionThreshold': 0.58}
+2026-08-05 18:59:37,779 | WARNING | MainProcess:15972 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5250016450881958, 'recognitionThreshold': 0.58}
+2026-08-05 18:59:37,837 | INFO | camera-CAM_Juniv:15888 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 18:59:37,842 | INFO | MainProcess:15972 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5250 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 18:59:37,842 | WARNING | MainProcess:15972 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5250 details={'reason': 'below_threshold', 'confidence': 0.5250016450881958, 'recognitionThreshold': 0.58}
+2026-08-05 18:59:37,842 | WARNING | MainProcess:15972 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5250016450881958, 'recognitionThreshold': 0.58}
+2026-08-05 19:00:13,199 | INFO | camera-CAM_Juniv301:5404 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 19:00:13,199 | INFO | camera-CAM_Juniv:15888 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 19:00:13,233 | INFO | MainProcess:15972 | uvicorn.error | Shutting down
+2026-08-05 19:00:13,281 | INFO | MainProcess:15972 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 19:00:13,345 | INFO | MainProcess:15972 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 19:00:13,345 | INFO | MainProcess:15972 | __main__ | FastAPI shutdown started
+2026-08-05 19:00:13,346 | INFO | MainProcess:15972 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 19:00:13,347 | INFO | MainProcess:15972 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 19:00:13,392 | INFO | MainProcess:15972 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 19:00:13,392 | INFO | MainProcess:15972 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 19:00:13,393 | INFO | MainProcess:15972 | __main__ | Camera processes stopped
+2026-08-05 19:00:13,394 | INFO | MainProcess:15972 | database | Closed MongoDB connection
+2026-08-05 19:00:13,394 | INFO | MainProcess:15972 | __main__ | MongoDB connection closed
+2026-08-05 19:00:13,395 | INFO | MainProcess:15972 | __main__ | FastAPI shutdown completed
+2026-08-05 19:00:21,212 | INFO | MainProcess:15732 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 19:00:22,352 | INFO | MainProcess:15732 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 19:00:28,175 | INFO | MainProcess:15732 | camera.camera_process_manager | Started camera CAM_Juniv with PID 17332
+2026-08-05 19:00:28,195 | INFO | camera-CAM_Juniv:17332 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 19:00:35,090 | INFO | MainProcess:15732 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 17480
+2026-08-05 19:00:35,101 | INFO | MainProcess:15732 | camera.camera_process_manager | Started camera grid with PID 13900
+2026-08-05 19:00:35,101 | INFO | MainProcess:15732 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 19:00:35,101 | INFO | MainProcess:15732 | __main__ | FastAPI startup completed
+2026-08-05 19:00:35,101 | INFO | MainProcess:15732 | uvicorn.error | Application startup complete.
+2026-08-05 19:00:35,103 | INFO | MainProcess:15732 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 19:00:35,117 | INFO | camera-CAM_Juniv301:17480 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 19:11:44,499 | INFO | camera-CAM_Juniv301:17480 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 19:11:44,512 | INFO | MainProcess:15732 | uvicorn.error | Shutting down
+2026-08-05 19:11:44,515 | INFO | camera-CAM_Juniv:17332 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 19:11:44,605 | INFO | MainProcess:15732 | uvicorn.error | Finished server process [15732]
+2026-08-05 19:11:44,606 | INFO | MainProcess:15732 | __main__ | FastAPI shutdown started
+2026-08-05 19:11:44,606 | INFO | MainProcess:15732 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 19:11:44,606 | INFO | MainProcess:15732 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 19:11:44,653 | INFO | MainProcess:15732 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 19:11:44,653 | INFO | MainProcess:15732 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 19:11:44,655 | INFO | MainProcess:15732 | __main__ | FastAPI shutdown completed
+2026-08-05 19:11:53,361 | INFO | MainProcess:15588 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 19:11:54,742 | INFO | MainProcess:15588 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 19:12:01,496 | INFO | MainProcess:15588 | camera.camera_process_manager | Started camera CAM_Juniv with PID 2192
+2026-08-05 19:12:01,517 | INFO | camera-CAM_Juniv:2192 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 19:12:10,601 | INFO | MainProcess:15588 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 14152
+2026-08-05 19:12:10,614 | INFO | MainProcess:15588 | camera.camera_process_manager | Started camera grid with PID 2616
+2026-08-05 19:12:10,614 | INFO | MainProcess:15588 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 19:12:10,614 | INFO | MainProcess:15588 | __main__ | FastAPI startup completed
+2026-08-05 19:12:10,614 | INFO | MainProcess:15588 | uvicorn.error | Application startup complete.
+2026-08-05 19:12:10,615 | INFO | MainProcess:15588 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 19:12:10,632 | INFO | camera-CAM_Juniv301:14152 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 19:13:13,258 | INFO | camera-CAM_Juniv:2192 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1
+2026-08-05 19:13:13,262 | INFO | MainProcess:15588 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5138 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 19:13:13,262 | WARNING | MainProcess:15588 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5138 details={'reason': 'below_threshold', 'confidence': 0.5137995481491089, 'recognitionThreshold': 0.58}
+2026-08-05 19:13:13,262 | WARNING | MainProcess:15588 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5137995481491089, 'recognitionThreshold': 0.58}
+2026-08-05 19:13:14,726 | INFO | camera-CAM_Juniv301:14152 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1
+2026-08-05 19:13:14,740 | INFO | MainProcess:15588 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5138 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 19:13:14,740 | WARNING | MainProcess:15588 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5138 details={'reason': 'below_threshold', 'confidence': 0.5137995481491089, 'recognitionThreshold': 0.58}
+2026-08-05 19:13:14,740 | WARNING | MainProcess:15588 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.5137995481491089, 'recognitionThreshold': 0.58}
+2026-08-05 19:14:00,234 | INFO | camera-CAM_Juniv:2192 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 19:14:00,250 | INFO | camera-CAM_Juniv301:14152 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 19:14:00,273 | INFO | MainProcess:15588 | uvicorn.error | Shutting down
+2026-08-05 19:14:00,385 | INFO | MainProcess:15588 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 19:14:00,385 | INFO | MainProcess:15588 | __main__ | FastAPI shutdown started
+2026-08-05 19:14:00,385 | INFO | MainProcess:15588 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 19:14:00,386 | INFO | MainProcess:15588 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 19:14:00,440 | INFO | MainProcess:15588 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 19:14:00,445 | INFO | MainProcess:15588 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 19:14:00,448 | INFO | MainProcess:15588 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 19:14:00,448 | INFO | MainProcess:15588 | __main__ | Camera processes stopped
+2026-08-05 19:14:00,450 | INFO | MainProcess:15588 | database | Closed MongoDB connection
+2026-08-05 19:14:00,450 | INFO | MainProcess:15588 | __main__ | MongoDB connection closed
+2026-08-05 19:14:00,450 | INFO | MainProcess:15588 | __main__ | FastAPI shutdown completed
+2026-08-05 19:25:00,394 | INFO | MainProcess:1796 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 19:25:01,822 | INFO | MainProcess:1796 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 19:25:08,026 | INFO | MainProcess:1796 | camera.camera_process_manager | Started camera CAM_Juniv with PID 15432
+2026-08-05 19:25:08,051 | INFO | camera-CAM_Juniv:15432 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 19:25:15,733 | INFO | MainProcess:1796 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15640
+2026-08-05 19:25:15,744 | INFO | MainProcess:1796 | camera.camera_process_manager | Started camera grid with PID 2012
+2026-08-05 19:25:15,745 | INFO | MainProcess:1796 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 19:25:15,745 | INFO | MainProcess:1796 | __main__ | FastAPI startup completed
+2026-08-05 19:25:15,745 | INFO | MainProcess:1796 | uvicorn.error | Application startup complete.
+2026-08-05 19:25:15,747 | INFO | MainProcess:1796 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 19:25:15,764 | INFO | camera-CAM_Juniv301:15640 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 19:25:55,550 | ERROR | camera-CAM_Juniv:15432 | camera.camera_worker | Camera CAM_Juniv worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 143, in read_camera
+    settings.default_recognition_threshold,
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Settings' object has no attribute 'default_recognition_threshold'
+2026-08-05 19:25:55,592 | INFO | camera-CAM_Juniv:15432 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-05 19:25:56,708 | ERROR | camera-CAM_Juniv301:15640 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 143, in read_camera
+    settings.default_recognition_threshold,
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Settings' object has no attribute 'default_recognition_threshold'
+2026-08-05 19:25:56,744 | INFO | camera-CAM_Juniv301:15640 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-05 19:27:07,266 | INFO | MainProcess:1796 | uvicorn.error | Shutting down
+2026-08-05 19:27:07,374 | INFO | MainProcess:1796 | uvicorn.error | Finished server process [1796]
+2026-08-05 19:27:07,375 | INFO | MainProcess:1796 | __main__ | FastAPI shutdown started
+2026-08-05 19:27:07,377 | INFO | MainProcess:1796 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 19:27:07,377 | INFO | MainProcess:1796 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 19:27:07,379 | INFO | MainProcess:1796 | __main__ | FastAPI shutdown completed
+2026-08-05 19:27:15,966 | INFO | MainProcess:11640 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 19:27:17,067 | INFO | MainProcess:11640 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 19:27:23,273 | INFO | MainProcess:11640 | camera.camera_process_manager | Started camera CAM_Juniv with PID 10188
+2026-08-05 19:27:23,306 | INFO | camera-CAM_Juniv:10188 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-05 19:27:30,784 | INFO | MainProcess:11640 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15008
+2026-08-05 19:27:30,796 | INFO | MainProcess:11640 | camera.camera_process_manager | Started camera grid with PID 10776
+2026-08-05 19:27:30,796 | INFO | MainProcess:11640 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301'], 'count': 2, 'embeddingCount': 298}
+2026-08-05 19:27:30,797 | INFO | MainProcess:11640 | __main__ | FastAPI startup completed
+2026-08-05 19:27:30,797 | INFO | MainProcess:11640 | uvicorn.error | Application startup complete.
+2026-08-05 19:27:30,798 | INFO | MainProcess:11640 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 19:27:30,812 | INFO | camera-CAM_Juniv301:15008 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-05 19:29:10,034 | INFO | camera-CAM_Juniv:10188 | camera.camera_worker | Face candidate: camera=CAM_Juniv employee=000003-1 name=zak score=0.5004 threshold=0.5000
+2026-08-05 19:29:10,078 | INFO | camera-CAM_Juniv:10188 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1 score=0.5004
+2026-08-05 19:29:10,082 | INFO | MainProcess:11640 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5004 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 19:29:10,083 | WARNING | MainProcess:11640 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5004 details={'reason': 'below_threshold', 'confidence': 0.500407338142395, 'recognitionThreshold': 0.58}
+2026-08-05 19:29:10,083 | WARNING | MainProcess:11640 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.500407338142395, 'recognitionThreshold': 0.58}
+2026-08-05 19:29:11,502 | INFO | camera-CAM_Juniv301:15008 | camera.camera_worker | Face candidate: camera=CAM_Juniv301 employee=000003-1 name=zak score=0.5004 threshold=0.5000
+2026-08-05 19:29:11,529 | INFO | camera-CAM_Juniv301:15008 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1 score=0.5004
+2026-08-05 19:29:11,535 | INFO | MainProcess:11640 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5004 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 19:29:11,536 | WARNING | MainProcess:11640 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5004 details={'reason': 'below_threshold', 'confidence': 0.500407338142395, 'recognitionThreshold': 0.58}
+2026-08-05 19:29:11,536 | WARNING | MainProcess:11640 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.500407338142395, 'recognitionThreshold': 0.58}
+2026-08-05 19:29:59,044 | INFO | camera-CAM_Juniv:10188 | camera.camera_worker | Face candidate: camera=CAM_Juniv employee=000003-1 name=zak score=0.5137 threshold=0.5000
+2026-08-05 19:29:59,068 | INFO | camera-CAM_Juniv:10188 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv employee=000003-1 score=0.5137
+2026-08-05 19:29:59,091 | INFO | MainProcess:11640 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv direction=BIDIRECTIONAL score=0.5137 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 19:29:59,091 | WARNING | MainProcess:11640 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5137 details={'reason': 'below_threshold', 'confidence': 0.513728141784668, 'recognitionThreshold': 0.58}
+2026-08-05 19:29:59,092 | WARNING | MainProcess:11640 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.513728141784668, 'recognitionThreshold': 0.58}
+2026-08-05 19:30:00,549 | INFO | camera-CAM_Juniv301:15008 | camera.camera_worker | Face candidate: camera=CAM_Juniv301 employee=000003-1 name=zak score=0.5137 threshold=0.5000
+2026-08-05 19:30:00,568 | INFO | camera-CAM_Juniv301:15008 | camera.camera_worker | Attendance event queued: camera=CAM_Juniv301 employee=000003-1 score=0.5137
+2026-08-05 19:30:00,620 | INFO | MainProcess:11640 | service.attendance_service | Attendance evaluation started: etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 direction=BIDIRECTIONAL score=0.5137 minimum_score=0.5800 cooldown_seconds=170
+2026-08-05 19:30:00,621 | WARNING | MainProcess:11640 | service.attendance_service | Attendance rejected: reason=below_threshold etsAuth=Resta2 employee=000003-1 camera=CAM_Juniv301 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5137 details={'reason': 'below_threshold', 'confidence': 0.513728141784668, 'recognitionThreshold': 0.58}
+2026-08-05 19:30:00,621 | WARNING | MainProcess:11640 | camera.camera_process_manager | Attendance skipped: employee=000003-1 etsAuth=Resta2 camera=CAM_Juniv301 reason=below_threshold details={'reason': 'below_threshold', 'confidence': 0.513728141784668, 'recognitionThreshold': 0.58}
+2026-08-05 19:30:24,002 | INFO | MainProcess:11640 | uvicorn.error | Shutting down
+2026-08-05 19:30:24,118 | INFO | MainProcess:11640 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 19:30:24,120 | INFO | MainProcess:11640 | __main__ | FastAPI shutdown started
+2026-08-05 19:30:24,122 | INFO | MainProcess:11640 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-05 19:30:24,124 | INFO | MainProcess:11640 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-05 19:30:24,415 | INFO | MainProcess:11640 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 19:30:24,707 | INFO | MainProcess:11640 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-05 19:30:24,767 | INFO | MainProcess:11640 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-05 19:30:24,803 | INFO | MainProcess:11640 | __main__ | Camera processes stopped
+2026-08-05 19:30:24,809 | INFO | MainProcess:11640 | database | Closed MongoDB connection
+2026-08-05 19:30:24,810 | INFO | MainProcess:11640 | __main__ | MongoDB connection closed
+2026-08-05 19:30:24,811 | INFO | MainProcess:11640 | __main__ | FastAPI shutdown completed

@@ -7,6 +7,9 @@ from pymongo import ASCENDING, DESCENDING
 from database import serialize_mongo_docs
 from schemas.project_schema import AttendanceRules
 from typing import Any
+import logging
+logger = logging.getLogger(__name__)
+
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -56,27 +59,72 @@ class AttendanceService:
         confidence: float | None,
         rule: AttendanceRules,
         event_time: datetime | None = None,
-    ) -> tuple[bool, str | None]:
+    ) -> tuple[bool, str | None, dict[str, Any]]:
         direction = self._attendance_direction(
             camera_direction
         )
         if direction is None:
-            return False, None
-
-        if (
-            confidence is None
-            or confidence < rule.recognitionThreshold
-        ):  
-            return False, direction
-
+            return (
+                False,
+                None,
+                {
+                    "reason": "invalid_direction",
+                    "cameraDirection": camera_direction,
+                },
+            )
+        minimum_confidence = float(rule.recognitionThreshold)
+        if confidence is None:
+            return (
+                False,
+                direction,
+                {
+                    "reason": "missing_confidence",
+                    "recognitionThreshold": minimum_confidence,
+                },
+            )
+        if confidence < minimum_confidence:
+            return (
+                False,
+                direction,
+                {
+                    "reason": "below_threshold",
+                    "confidence": confidence,
+                    "recognitionThreshold": minimum_confidence,
+                },)
+            
         now = event_time or utc_now()
-
+        cooldown_seconds = int(
+            rule.duplicateCooldownSeconds
+        )
         cooldown = timedelta(
             seconds=rule.duplicateCooldownSeconds
         )
-
+        cooldown_start = now - cooldown
         event_type = self._event_type_filter(direction,None)
+        cooldown_query = {
+            "etsAuth": ets_auth,
+            "employeeId": employee_id,
+            "cameraId": camera_id,
+            "eventType": event_type,
+            "timestamp": {
+                "$gte": cooldown_start,
+                "$lte": now,
+            },
+        }
 
+        logger.info(
+            "Checking attendance cooldown: "
+            "etsAuth=%s employee=%s camera=%s "
+            "eventType=%s start=%s end=%s "
+            "cooldownSeconds=%s",
+            ets_auth,
+            employee_id,
+            camera_id,
+            event_type,
+            cooldown_start.isoformat(),
+            now.isoformat(),
+            cooldown_seconds,
+        )
         last_log = await self.db.attendance_detections.find_one(
             {
                 "etsAuth": ets_auth,
@@ -93,8 +141,41 @@ class AttendanceService:
         )
         
         if last_log is not None:
-            return False, direction
-        return True, direction
+            return (
+                False,
+                direction,
+                {
+                    "reason": "duplicate_cooldown",
+                    "cooldownSeconds": cooldown_seconds,
+                    "previousDetectionId": (
+                        last_log.get("detectionId")
+                        or str(last_log.get("_id"))
+                    ),
+                    "previousEmployeeId": last_log.get(
+                        "employeeId"
+                    ),
+                    "previousCameraId": last_log.get(
+                        "cameraId"
+                    ),
+                    "previousEventType": last_log.get(
+                        "eventType"
+                    ),
+                    "previousTimestamp": last_log.get(
+                        "timestamp"
+                    ),
+                },
+            )
+
+        return (
+            True,
+            direction,
+            {
+                "reason": "allowed",
+                "confidence": confidence,
+                "recognitionThreshold": minimum_confidence,
+                "eventType": event_type,
+            },
+        )
 
 
     async def record_attendance_if_allowed(
@@ -110,7 +191,23 @@ class AttendanceService:
     ) -> dict:
         now = event_time or utc_now()
 
-        allowed, direction = (
+        # Change these names if your rule model uses different fields.
+        minimum_score = float(rule.recognitionThreshold)
+        cooldown_seconds = int(rule.duplicateCooldownSeconds)
+
+        logger.info(
+            "Attendance evaluation started: "
+            "etsAuth=%s employee=%s camera=%s direction=%s "
+            "score=%.4f minimum_score=%.4f cooldown_seconds=%s",
+            ets_auth,
+            employee_id,
+            camera_id,
+            camera_direction,
+            confidence,
+            minimum_score,
+            cooldown_seconds,
+        )
+        allowed, direction, decision = (
             await self.should_create_attendance(
                 ets_auth=ets_auth,
                 employee_id=employee_id,
@@ -122,27 +219,83 @@ class AttendanceService:
             )
         )
         if not allowed or direction is None:
+            reason = decision.get(
+            "reason",
+            "unknown_rejection",
+            )
+
+            logger.warning(
+                "Attendance rejected: "
+                "reason=%s etsAuth=%s employee=%s "
+                "camera=%s cameraDirection=%s "
+                "resolvedDirection=%s confidence=%.4f "
+                "details=%s",
+                reason,
+                ets_auth,
+                employee_id,
+                camera_id,
+                camera_direction,
+                direction,
+                confidence,
+                decision,
+            )
             return {
                 "created": False,
                 "direction": direction,
-                "reason": "threshold_or_cooldown",
+                "reason": reason,
+                "details": decision,
             }
 
         event_type = self._event_type_filter(direction,None)
-        detection = await self.record_detection(
-            ets_auth=ets_auth,
-            camera_id=camera_id,
-            event_type=event_type,
-            employee_id=employee_id,
-            matched=True,
-            confidence=confidence,
-            snapshot_path=snapshot_path,
-            timestamp=now,
+        logger.info(
+            "Attendance accepted for insertion: "
+            "etsAuth=%s employee=%s camera=%s "
+            "direction=%s eventType=%s confidence=%.4f",
+            ets_auth,
+            employee_id,
+            camera_id,
+            direction,
+            event_type,
+            confidence,
         )
+        try:
+            detection = await self.record_detection(
+                ets_auth=ets_auth,
+                camera_id=camera_id,
+                event_type=event_type,
+                employee_id=employee_id,
+                matched=True,
+                confidence=confidence,
+                snapshot_path=snapshot_path,
+                timestamp=now,
+            )
+        except Exception:
+            logger.exception(
+                "MongoDB attendance insertion failed: "
+                "etsAuth=%s employee=%s camera=%s "
+                "direction=%s eventType=%s",
+                ets_auth,
+                employee_id,
+                camera_id,
+                direction,
+                event_type,
+            )
+            raise
+        logger.info(
+            "Attendance created: "
+            "etsAuth=%s employee=%s camera=%s "
+            "direction=%s detectionId=%s",
+            ets_auth,
+            employee_id,
+            camera_id,
+            direction,
+            detection.get("detectionId"),
+            )
 
         return {
             "created": True,
             "direction": direction,
+            "reason": "created",
             "detection": detection,
         }
 
@@ -157,7 +310,7 @@ class AttendanceService:
         since: datetime | None = None,
     ) -> str:
         query = self._attendance_query(
-            etsAuth=ets_auth,
+            ets_auth=ets_auth,
             employee_id=employee_id,
             camera_id=camera_id,
             direction=direction,
@@ -168,46 +321,6 @@ class AttendanceService:
         data = serialize_mongo_docs(await cursor.to_list(length=limit))
         return self._format_attendance_rows(data)
 
-    async def list_attendance(
-        self,
-        ets_auth: str,
-        limit: int = 100,
-        employee_id: str | None = None,
-        camera_id: str | None = None,
-        direction: str | None = None,
-        event_type: str | None = None,
-        since: datetime | None = None,
-    ) -> str:
-        safe_limit = max(1, min(limit, 1000))
-
-        query = self._attendance_query(
-            ets_auth=ets_auth,
-            employee_id=employee_id,
-            camera_id=camera_id,
-            direction=direction,
-            event_type=event_type,
-            since=since,
-        )
-
-        cursor = (
-            self.db.attendance_detections
-            .find(query)
-            .sort(
-                [
-                    ("timestamp", ASCENDING),
-                    ("detectionId", ASCENDING),
-                ]
-            )
-            .limit(safe_limit)
-        )
-
-        documents = await cursor.to_list(
-            length=safe_limit
-        )
-
-        data = serialize_mongo_docs(documents)
-
-        return self._format_attendance_rows(data)
 
 
     @staticmethod

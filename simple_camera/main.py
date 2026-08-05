@@ -18,6 +18,7 @@ from logging_setup import (
     configure_queue_logging,
     start_log_listener,
 )
+from config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ LOG_DIR = BASE_DIR / "logs"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    settings = get_settings()
     mp_context = mp.get_context("spawn")
     log_queue = mp_context.Queue()
 
@@ -43,13 +45,7 @@ async def lifespan(app: FastAPI):
         embedding_service = EmbeddingService(database)
         attendance_service = AttendanceService(database)
         app.state.embedding_service = embedding_service
-        face_engine = InsightFaceEngine(
-                    model_name="buffalo_s",
-                    providers=["CPUExecutionProvider"],
-                    ctx_id=-1,
-                    det_size=640,
-                    min_score=0.6,
-                )
+        face_engine = InsightFaceEngine()
         sync_service = SyncService(
                 db=database,
                 embedding_service=embedding_service,

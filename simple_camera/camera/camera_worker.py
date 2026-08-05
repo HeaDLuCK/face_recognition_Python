@@ -6,6 +6,7 @@ import numpy as np
 
 from camera.camera_manager import CameraManager
 from face_recognition import InsightFaceEngine
+from service.fire_detection_service import FireDetectionService
 from schemas.project_schema import CameraConfig,AiCapability
 from service.embedding_index import (
     EmbeddingIndex,
@@ -36,10 +37,9 @@ def read_camera(
             log_queue
         )
 
-    cv2.setNumThreads(1)
-
     settings = get_settings()
 
+    cv2.setNumThreads(settings.opencv_num_threads)
     known_snapshot_dir = (settings.snapshot_dir)
 
     known_snapshot_dir.mkdir(
@@ -53,14 +53,21 @@ def read_camera(
         camera_config.cameraId,
     )
     camera = CameraManager(camera_config)
-    engine = InsightFaceEngine(
-        model_name="buffalo_s",
-        providers=["CPUExecutionProvider"],
-        ctx_id=-1,
-        det_size=640,
-        min_score=0.6,
-    )
-    has_capability = camera_config.has_capability(AiCapability.FACE_RECOGNITION)
+
+    face_reco_engine: InsightFaceEngine | None = None
+    fire_module: FireDetectionService | None = None
+    # tracking_module: FireDetectionService | None = None
+    has_face_reco_module = camera_config.has_capability(AiCapability.FACE_RECOGNITION)
+    has_fire_module = camera_config.has_capability(AiCapability.FIRE_DETECTION)
+    # has_tracking_module = camera_config.has_capability(AiCapability.PERSON_COUNTING)
+    if has_face_reco_module:
+        face_reco_engine = InsightFaceEngine()
+    if has_fire_module:
+        fire_module = FireDetectionService(settings)
+    # if has_tracking_module:
+    #         tracking_module = InsightFaceEngine()
+    
+
     capture = camera.start_camera()
     frame_number = 0
     detected_faces = []
@@ -72,139 +79,220 @@ def read_camera(
             ret, frame = capture.read()
 
             if not ret or frame is None:
-                logger.error(
-                    "Camera %s failed to read frame",
-                    camera.camera_id,
-                )
+                logger.error("Camera %s failed to read frame",camera.camera_id,)
                 break
 
             frame_number += 1
 
-            if frame_number % 4 == 0 and has_capability:
-                detected_faces = engine.detect_faces(frame)
-
-            for detected_face in detected_faces:
-                detected_embedding = np.asarray(
-                    detected_face.embedding,
-                    dtype=np.float32,
+            # if has_tracking_module:
+            #     print("has_tracking_module")
+            # if has_fire_module:
+            #     fire_detection:Any | None = None
+            #     if frame_number % 20 == 0: 
+            #         fire_detection = fire_module.detect_frame(frame)
+            #     if fire_detection != None:
+            #         for info in fire_detection:
+            #             x1, y1, x2, y2 = info
+            #             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+            #             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 5)
+            #             cv2.putText(
+            #                 frame,
+            #                 "Fire",
+            #                 (x1 + 8, y1 + 30),
+            #                 cv2.FONT_HERSHEY_SIMPLEX,
+            #                 0.8,
+            #                 (0, 0, 255),
+            #                 2,
+            #                 cv2.LINE_AA,
+            #             )
+            if (face_reco_engine is not None and frame_number % settings.camera_frame_skip == 0 ):
+                detected_faces = (
+                    face_reco_engine.detect_faces(frame)
                 )
 
-                match = best_embedding_candidate(
-                    embedding_index,
-                    detected_embedding,
-                )
-
-                x1, y1, x2, y2 = map(
-                    int,
-                    detected_face.bbox,
-                )
-
-                label = "Unknown"
-
-                if (
-                    match is not None
-                    and match["score"] >= 0.50
-                ):
-                    employee_name = (
-                        match.get("employeeName")
-                        or match["employeeId"]
+                for detected_face in detected_faces:
+                    detected_embedding = np.asarray(
+                        detected_face.embedding,
+                        dtype=np.float32,
                     )
 
-                    label = (
-                        f"{employee_name} "
-                        f"{match['score']:.2f}"
+                    match = best_embedding_candidate(
+                        embedding_index,
+                        detected_embedding,
                     )
-                    camera_assignment = camera_config.assigned_for(match["etsAuth"],AiCapability.FACE_RECOGNITION)
-                    if (
-                        camera_assignment is not None
-                        and camera_assignment.enabled
-                    ):
-                        now = monotonic()
-                        person_key = (
+
+                    x1, y1, x2, y2 = map(
+                        int,
+                        detected_face.bbox,
+                    )
+
+                    label = "Unknown"
+                    color = (0, 0, 255)
+
+                    if match is not None:
+                        score = float(match["score"])
+
+                        logger.info(
+                            "Face candidate: "
+                            "camera=%s employee=%s name=%s "
+                            "score=%.4f threshold=%.4f",
                             camera_config.cameraId,
-                            match["etsAuth"],
-                            match["employeeId"],
+                            match.get("employeeId"),
+                            match.get("employeeName"),
+                            score,
+                            settings.default_recognition_threshold,
                         )
-                        state = presence_state.get(person_key)
 
-                        if state is None:
-                            state = {
-                                "last_seen": now,
-                                "queued": False,
-                                "next_retry": 0.0,
-                            }
+                        if (  score >= settings.default_recognition_threshold ):
+                            employee_name = (
+                                match.get("employeeName")
+                                or match["employeeId"]
+                            )
 
-                            presence_state[person_key] = state
-                        else:
-                            state["last_seen"] = now
-                        if (
-                            not state["queued"]
-                            and now >= state["next_retry"]
-                        ):
-                            snapshot_path = save_known_snapshot(
-                                            snapshot_root=known_snapshot_dir,
+                            label = (
+                                f"{employee_name} "
+                                f"{score:.2f}"
+                            )
+
+                            color = (0, 255, 0)
+
+                            camera_assignment = (
+                                camera_config.assigned_for(
+                                    match["etsAuth"],
+                                    AiCapability.FACE_RECOGNITION,
+                                )
+                            )
+
+                            if (
+                                camera_assignment is not None
+                                and camera_assignment.enabled
+                            ):
+                                now = monotonic()
+
+                                person_key = (
+                                    camera_config.cameraId,
+                                    match["etsAuth"],
+                                    match["employeeId"],
+                                )
+
+                                state = presence_state.get(
+                                    person_key
+                                )
+
+                                if state is None:
+                                    state = {
+                                        "last_seen": now,
+                                        "queued": False,
+                                        "next_retry": 0.0,
+                                    }
+
+                                    presence_state[
+                                        person_key
+                                    ] = state
+                                else:
+                                    state["last_seen"] = now
+
+                                if (
+                                    attendance_queue is not None
+                                    and not state["queued"]
+                                    and now
+                                    >= state["next_retry"]
+                                ):
+                                    snapshot_path = (
+                                        save_known_snapshot(
+                                            snapshot_root=(
+                                                known_snapshot_dir
+                                            ),
                                             frame=frame,
-                                            bbox=detected_face.bbox,
-                                            camera_id=camera_config.cameraId,
-                                            ets_auth=match["etsAuth"],
-                                            employee_id=match["employeeId"],
-                                            employee_name=employee_name,
-                                            confidence=float(match["score"]),
-                                        ) 
-                            attendance_event = {
-                                "etsAuth": match["etsAuth"],
-                                "cameraId": camera_config.cameraId,
-                                "cameraDirection": (
-                                    camera_assignment.direction
-                                ),
-                                "employeeId": match["employeeId"],
-                                "employeeName": employee_name,
-                                "confidence": float(match["score"]),
-                                "snapshotPath": snapshot_path,
-                            }
+                                            bbox=(
+                                                detected_face.bbox
+                                            ),
+                                            camera_id=(
+                                                camera_config.cameraId
+                                            ),
+                                            ets_auth=(
+                                                match["etsAuth"]
+                                            ),
+                                            employee_id=(
+                                                match["employeeId"]
+                                            ),
+                                            employee_name=(
+                                                employee_name
+                                            ),
+                                            confidence=score,
+                                        )
+                                    )
 
-                            try:
-                                attendance_queue.put_nowait(
-                                    attendance_event
-                                )
-                                  
-                            except Full:
-                                state["next_retry"] = (
-                                    now + QUEUE_RETRY_SECONDS
-                                )
+                                    attendance_event = {
+                                        "etsAuth": (
+                                            match["etsAuth"]
+                                        ),
+                                        "cameraId": (
+                                            camera_config.cameraId
+                                        ),
+                                        "cameraDirection": (
+                                            camera_assignment.direction
+                                        ),
+                                        "employeeId": (
+                                            match["employeeId"]
+                                        ),
+                                        "employeeName": (
+                                            employee_name
+                                        ),
+                                        "confidence": score,
+                                        "snapshotPath": (
+                                            snapshot_path
+                                        ),
+                                    }
 
-                                logger.warning(
-                                    "Attendance queue full: "
-                                    "camera=%s employee=%s",
-                                    camera_config.cameraId,
-                                    match["employeeId"],
-                                )
+                                    try:
+                                        attendance_queue.put_nowait(
+                                            attendance_event
+                                        )
 
-                            else:
-                                state["queued"] = True
-                                logger.info(
-                                    "Attendance event queued: "
-                                    "camera=%s employee=%s",
-                                    camera_config.cameraId,
-                                    match["employeeId"],
-                                )   
-                cv2.rectangle(
-                    frame,
-                    (x1, y1),
-                    (x2, y2),
-                    (0, 255, 0),
-                    2,
-                )
+                                    except Full:
+                                        state["next_retry"] = (
+                                            now
+                                            + QUEUE_RETRY_SECONDS
+                                        )
 
-                cv2.putText(
-                    frame,
-                    label,
-                    (x1, max(20, y1 - 10)),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6,
-                    (0, 255, 0),
-                    2,
-                )
+                                        logger.warning(
+                                            "Attendance queue full: "
+                                            "camera=%s employee=%s",
+                                            camera_config.cameraId,
+                                            match["employeeId"],
+                                        )
+
+                                    else:
+                                        state["queued"] = True
+
+                                        logger.info(
+                                            "Attendance event queued: "
+                                            "camera=%s employee=%s "
+                                            "score=%.4f",
+                                            camera_config.cameraId,
+                                            match["employeeId"],
+                                            score,
+                                        )
+
+                        cv2.rectangle(
+                            frame,
+                            (x1, y1),
+                            (x2, y2),
+                            color,
+                            2,
+                        )
+
+                        cv2.putText(
+                            frame,
+                            label,
+                            (x1, max(20, y1 - 10)),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.6,
+                            color,
+                            2,
+                        )
+
             # Cleanup goes after the face loop.
             now = monotonic()
 

@@ -139,7 +139,7 @@ class EmployeeConfig(GenBaseModel):
 
 class AttendanceRules(GenBaseModel):
     etsAuth: str
-    recognitionThreshold: float = Field(default=0.55, ge=0.0, le=1.0)
+    recognitionThreshold: float = Field(default=0.50, ge=0.0, le=1.0)
     duplicateCooldownSeconds: int = Field(default=60, ge=0)
     saveFaceSnapshots: bool = True
     saveUnknownFaces: bool = True

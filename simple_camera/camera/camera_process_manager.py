@@ -311,14 +311,25 @@ class CameraProcessManager:
 
                 if result.get("created"):
                     logger.info(
-                        "Attendance created for %s",
-                        event["employeeId"]+ " "+ event["etsAuth"],
+                        "Attendance created: "
+                        "employee=%s etsAuth=%s camera=%s "
+                        "reason=%s",
+                        event["employeeId"],
+                        event["etsAuth"],
+                        event["cameraId"],
+                        result.get("reason"),
                     )
                 else:
-                    logger.info(
-                            event["employeeId"]+ " "+ event["etsAuth"] +"Attendance Skipped due to %s",
-                            result["reason"],
-                        )
+                    logger.warning(
+                        "Attendance skipped: "
+                        "employee=%s etsAuth=%s camera=%s "
+                        "reason=%s details=%s",
+                        event["employeeId"],
+                        event["etsAuth"],
+                        event["cameraId"],
+                        result.get("reason"),
+                        result.get("details"),
+                    )
                 
 
             except Exception:

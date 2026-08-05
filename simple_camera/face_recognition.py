@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
-
+from config import get_settings
 
 @dataclass
 class DetectedFace:
@@ -12,28 +12,22 @@ class DetectedFace:
 
 
 class InsightFaceEngine:
-    def __init__(
-        self,
-        model_name: str = "buffalo_s",
-        providers: list[str] | None = None,
-        ctx_id: int = -1,
-        det_size: int = 640,
-        min_score: float = 0.6,
-    ) -> None:
-        self.min_score = min_score
-
-        self.model = FaceAnalysis(
-            name=model_name,
-            providers=providers or ["CPUExecutionProvider"],
-            allowed_modules=["detection", "recognition"],
-        )
-
-        self.model.prepare(
-            ctx_id=ctx_id,
-            det_size=(det_size, det_size),
-            det_thresh=min_score,
-        )
-
+    def __init__(self,) -> None:
+            settings = get_settings()
+            self.min_score = settings.face_detection_min_score
+            self.model = FaceAnalysis(
+                name=settings.insightface_model_name,
+                providers=settings.insightface_provider_list or ["CPUExecutionProvider"],
+                allowed_modules=["detection", "recognition"],
+            )
+    
+            self.model.prepare(
+                ctx_id=settings.insightface_ctx_id,
+                det_size=(settings.insightface_det_size, settings.insightface_det_size),
+                det_thresh=settings.face_detection_min_score,
+            )
+    
+    
     def detect_faces(
         self,
         frame: np.ndarray,
