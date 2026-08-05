@@ -12,18 +12,34 @@ from service.sync_service import SyncService
 from camera.camera_process_manager import CameraProcessManager
 from api import attendance, cameras, sync,register
 from service.attendance_service import AttendanceService
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+from pathlib import Path
+import multiprocessing as mp
+from logging_setup import (
+    configure_queue_logging,
+    start_log_listener,
 )
+
 logger = logging.getLogger(__name__)
+
+BASE_DIR = Path(__file__).resolve().parent
+LOG_DIR = BASE_DIR / "logs"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    mp_context = mp.get_context("spawn")
+    log_queue = mp_context.Queue()
+
+    log_listener = start_log_listener(
+        log_queue=log_queue,
+        log_directory=LOG_DIR,
+    )
+
+    configure_queue_logging(log_queue)
+
     database = await connect_to_mongo()
     camera_manager: CameraProcessManager | None = None
     try:
+        
         embedding_service = EmbeddingService(database)
         attendance_service = AttendanceService(database)
         app.state.embedding_service = embedding_service
@@ -43,6 +59,8 @@ async def lifespan(app: FastAPI):
                 sync_service=sync_service,
                 embedding_service=embedding_service,
                 attendance_service=attendance_service,
+                mp_context=mp_context,
+                log_queue=log_queue,
             )
         
         
@@ -51,26 +69,55 @@ async def lifespan(app: FastAPI):
         app.state.sync_service = sync_service
         app.state.camera_process_manager = camera_manager
 
-        start_result = await camera_manager.start_all()
+        result  = await camera_manager.start_all()
 
         logger.info(
             "Camera startup result: %s",
-            start_result,
+            result,
         )
 
-
-        logger.info("FastAPI startup completed")
+        logger.info(
+            "FastAPI startup completed"
+        )
     
         yield
+    except Exception:
+        logger.exception(
+            "Application startup or runtime failed"
+        )
+        raise
     finally:
-        logger.info("FastAPI shutdown started")
+        logger.info(
+            "FastAPI shutdown started"
+        )
 
-        if camera_manager is not None:
-            await camera_manager.stop_all()
+        try:
+            if camera_manager is not None:
+                await camera_manager.stop_all()
 
-        await close_mongo_connection()
+                logger.info(
+                    "Camera processes stopped"
+                )
 
-        logger.info("FastAPI shutdown completed")
+            if database is not None:
+                await close_mongo_connection()
+
+                logger.info(
+                    "MongoDB connection closed"
+                )
+        except Exception:
+            logger.exception(
+                "Application shutdown failed"
+            )
+
+        finally:
+            logger.info(
+                "FastAPI shutdown completed"
+            )
+            log_listener.stop()
+
+            log_queue.close()
+            log_queue.join_thread()
 
 
 
@@ -85,8 +132,10 @@ app.include_router(attendance.router, prefix="/api/attendance", tags=["attendanc
 app.include_router(register.router, prefix="/api/test", tags=["recognition-test"])
 
 if __name__ == "__main__":
+    mp.freeze_support()
+
     uvicorn.run(
-        "main:app",
+        app,
         host="0.0.0.0",
         port=8000,
         log_level="info",

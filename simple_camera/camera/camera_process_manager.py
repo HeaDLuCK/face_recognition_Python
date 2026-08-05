@@ -21,16 +21,19 @@ class CameraProcessManager:
         sync_service: SyncService,
         embedding_service: EmbeddingService,
         attendance_service: AttendanceService,
+        mp_context: Any,
+        log_queue: Any,
     ) -> None:
         self.sync_service = sync_service
         self.embedding_service = embedding_service
         self.attendance_service = attendance_service
         # Suitable for Windows multiprocessing.
-        self._context = mp.get_context("spawn")
+        self._context = mp_context
 
         self._processes: dict[str, mp.Process] = {}
         self._lock = asyncio.Lock()
         self._frame_queues: dict[str, Any] = {}
+        self._log_queue = log_queue
         self._attendance_queue = self._context.Queue(maxsize=500)
         self._attendance_task: asyncio.Task | None = None
         self._stop_event = self._context.Event()
@@ -191,6 +194,7 @@ class CameraProcessManager:
                     embedding_index,
                     self._frame_queues[camera.cameraId],
                     self._attendance_queue,
+                    self._log_queue,
                     self._stop_event,
                 ),
                 name=f"camera-{camera.cameraId}",

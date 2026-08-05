@@ -16,6 +16,9 @@ from time import monotonic
 from config import get_settings  # adjust import path
 from pathlib import Path
 from datetime import datetime, timezone
+from logging_setup import (
+    configure_queue_logging,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +28,14 @@ def read_camera(
     embedding_index: EmbeddingIndex,
     frame_queue: Any | None = None,
     attendance_queue: Any | None = None,
+    log_queue: Any | None = None,
     stop_event: Any | None = None,
 ) -> None:
+    if log_queue is not None:
+        configure_queue_logging(
+            log_queue
+        )
+
     cv2.setNumThreads(1)
 
     settings = get_settings()
@@ -39,6 +48,10 @@ def read_camera(
     )
 
     camera_config = CameraConfig.model_validate(camera_data)
+    logger.info(
+        "Camera worker starting: camera=%s",
+        camera_config.cameraId,
+    )
     camera = CameraManager(camera_config)
     engine = InsightFaceEngine(
         model_name="buffalo_s",

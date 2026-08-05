@@ -1,0 +1,456 @@
+2026-08-05 00:55:37,853 | INFO | MainProcess:30756 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 00:55:38,871 | INFO | MainProcess:30756 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 00:55:38,934 | INFO | MainProcess:30756 | camera.camera_process_manager | Started camera 0 with PID 25688
+2026-08-05 00:55:38,940 | INFO | MainProcess:30756 | camera.camera_process_manager | Started camera grid with PID 6492
+2026-08-05 00:55:38,940 | INFO | MainProcess:30756 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 00:55:38,940 | INFO | MainProcess:30756 | __main__ | FastAPI startup completed
+2026-08-05 00:55:38,940 | INFO | MainProcess:30756 | uvicorn.error | Application startup complete.
+2026-08-05 00:55:38,940 | INFO | MainProcess:30756 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 00:55:42,781 | INFO | camera-0:25688 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 00:56:06,131 | WARNING | camera-0:25688 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 00:57:03,869 | INFO | MainProcess:30756 | uvicorn.error | Shutting down
+2026-08-05 00:57:03,937 | INFO | camera-0:25688 | camera.camera_worker | Camera 0 stopped
+2026-08-05 00:57:03,975 | INFO | MainProcess:30756 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 00:57:03,975 | INFO | MainProcess:30756 | __main__ | FastAPI shutdown started
+2026-08-05 00:57:03,975 | INFO | MainProcess:30756 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 00:57:04,004 | INFO | MainProcess:30756 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 00:57:04,005 | INFO | MainProcess:30756 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 00:57:04,005 | INFO | MainProcess:30756 | __main__ | Camera processes stopped
+2026-08-05 00:57:04,006 | INFO | MainProcess:30756 | database | Closed MongoDB connection
+2026-08-05 00:57:04,006 | INFO | MainProcess:30756 | __main__ | MongoDB connection closed
+2026-08-05 00:57:04,006 | INFO | MainProcess:30756 | __main__ | FastAPI shutdown completed
+2026-08-05 00:57:09,543 | INFO | MainProcess:37976 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 00:57:10,069 | INFO | MainProcess:37976 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 00:57:10,121 | INFO | MainProcess:37976 | camera.camera_process_manager | Started camera 0 with PID 37556
+2026-08-05 00:57:10,126 | INFO | MainProcess:37976 | camera.camera_process_manager | Started camera grid with PID 29736
+2026-08-05 00:57:10,126 | INFO | MainProcess:37976 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 00:57:10,126 | INFO | MainProcess:37976 | __main__ | FastAPI startup completed
+2026-08-05 00:57:10,126 | INFO | MainProcess:37976 | uvicorn.error | Application startup complete.
+2026-08-05 00:57:10,127 | INFO | MainProcess:37976 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 00:57:13,644 | INFO | camera-0:37556 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 00:57:19,275 | WARNING | camera-0:37556 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 01:23:12,883 | INFO | MainProcess:37976 | uvicorn.error | Shutting down
+2026-08-05 01:23:12,907 | INFO | camera-0:37556 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:23:12,991 | INFO | MainProcess:37976 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:23:12,991 | INFO | MainProcess:37976 | __main__ | FastAPI shutdown started
+2026-08-05 01:23:12,991 | INFO | MainProcess:37976 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:23:13,033 | INFO | MainProcess:37976 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:23:13,034 | INFO | MainProcess:37976 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:23:13,034 | INFO | MainProcess:37976 | __main__ | Camera processes stopped
+2026-08-05 01:23:13,035 | INFO | MainProcess:37976 | database | Closed MongoDB connection
+2026-08-05 01:23:13,035 | INFO | MainProcess:37976 | __main__ | MongoDB connection closed
+2026-08-05 01:23:13,035 | INFO | MainProcess:37976 | __main__ | FastAPI shutdown completed
+2026-08-05 01:24:52,048 | INFO | MainProcess:34324 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:24:52,600 | INFO | MainProcess:34324 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:24:52,657 | INFO | MainProcess:34324 | camera.camera_process_manager | Started camera 0 with PID 40280
+2026-08-05 01:24:52,661 | INFO | MainProcess:34324 | camera.camera_process_manager | Started camera grid with PID 39980
+2026-08-05 01:24:52,661 | INFO | MainProcess:34324 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 01:24:52,661 | INFO | MainProcess:34324 | __main__ | FastAPI startup completed
+2026-08-05 01:24:52,661 | INFO | MainProcess:34324 | uvicorn.error | Application startup complete.
+2026-08-05 01:24:52,661 | INFO | MainProcess:34324 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:24:56,227 | INFO | camera-0:40280 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:25:12,997 | WARNING | camera-0:40280 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 01:25:53,920 | INFO | camera-0:40280 | camera.camera_worker | Attendance event queued: camera=0 employee=ME
+2026-08-05 01:25:53,931 | INFO | MainProcess:34324 | camera.camera_process_manager | Attendance created for ME DEV_COMPANY
+2026-08-05 01:26:16,779 | INFO | MainProcess:34324 | uvicorn.error | Shutting down
+2026-08-05 01:26:16,800 | INFO | camera-0:40280 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:26:16,886 | INFO | MainProcess:34324 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:26:16,886 | INFO | MainProcess:34324 | __main__ | FastAPI shutdown started
+2026-08-05 01:26:16,886 | INFO | MainProcess:34324 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:26:16,918 | INFO | MainProcess:34324 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:26:16,920 | INFO | MainProcess:34324 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:26:16,920 | INFO | MainProcess:34324 | __main__ | Camera processes stopped
+2026-08-05 01:26:16,921 | INFO | MainProcess:34324 | database | Closed MongoDB connection
+2026-08-05 01:26:16,921 | INFO | MainProcess:34324 | __main__ | MongoDB connection closed
+2026-08-05 01:26:16,921 | INFO | MainProcess:34324 | __main__ | FastAPI shutdown completed
+2026-08-05 01:26:35,031 | INFO | MainProcess:12216 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:26:35,639 | INFO | MainProcess:12216 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:26:35,696 | INFO | MainProcess:12216 | camera.camera_process_manager | Started camera 0 with PID 41132
+2026-08-05 01:26:35,701 | INFO | MainProcess:12216 | camera.camera_process_manager | Started camera grid with PID 38020
+2026-08-05 01:26:35,701 | INFO | MainProcess:12216 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 01:26:35,701 | INFO | MainProcess:12216 | __main__ | FastAPI startup completed
+2026-08-05 01:26:35,701 | INFO | MainProcess:12216 | uvicorn.error | Application startup complete.
+2026-08-05 01:26:35,702 | INFO | MainProcess:12216 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:26:39,719 | INFO | camera-0:41132 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:35:22,688 | INFO | MainProcess:12216 | uvicorn.access | 127.0.0.1:50227 - "GET //api/attendance?etsAuth=DEV_COMPANY HTTP/1.1" 404
+2026-08-05 01:35:36,132 | INFO | MainProcess:12216 | uvicorn.access | 127.0.0.1:58454 - "GET /api/attendance?etsAuth=DEV_COMPANY HTTP/1.1" 500
+2026-08-05 01:35:36,133 | ERROR | MainProcess:12216 | uvicorn.error | Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\api\attendance.py", line 21, in list_attendance
+    etsAuth=ets_auth,
+             ^^^^^^^^
+TypeError: AttendanceService.list_attendance() got an unexpected keyword argument 'tenant_id'
+2026-08-05 01:37:11,074 | INFO | MainProcess:12216 | uvicorn.access | 127.0.0.1:52225 - "GET /api/attendance?etsAuth=DEV_COMPANY HTTP/1.1" 500
+2026-08-05 01:37:11,074 | ERROR | MainProcess:12216 | uvicorn.error | Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\api\attendance.py", line 21, in list_attendance
+    etsAuth=ets_auth,
+             ^^^^^^^^
+TypeError: AttendanceService.list_attendance() got an unexpected keyword argument 'tenant_id'
+2026-08-05 01:37:25,917 | INFO | MainProcess:41868 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:37:26,588 | INFO | MainProcess:41868 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:37:26,647 | INFO | MainProcess:41868 | camera.camera_process_manager | Started camera 0 with PID 41504
+2026-08-05 01:37:26,654 | INFO | MainProcess:41868 | camera.camera_process_manager | Started camera grid with PID 43572
+2026-08-05 01:37:26,654 | INFO | MainProcess:41868 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 01:37:26,654 | INFO | MainProcess:41868 | __main__ | FastAPI startup completed
+2026-08-05 01:37:26,654 | INFO | MainProcess:41868 | uvicorn.error | Application startup complete.
+2026-08-05 01:37:26,655 | INFO | MainProcess:41868 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:37:30,328 | INFO | camera-0:41504 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:37:34,488 | INFO | MainProcess:41868 | uvicorn.access | 127.0.0.1:53528 - "GET /api/attendance?etsAuth=DEV_COMPANY HTTP/1.1" 500
+2026-08-05 01:37:34,488 | ERROR | MainProcess:41868 | uvicorn.error | Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\api\attendance.py", line 20, in list_attendance
+    return await request.app.state.attendance_service.list_attendance(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: AttendanceService.list_attendance() got an unexpected keyword argument 'etsAuth'
+2026-08-05 01:38:01,229 | INFO | MainProcess:41868 | uvicorn.error | Shutting down
+2026-08-05 01:38:01,266 | INFO | camera-0:41504 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:38:01,340 | INFO | MainProcess:41868 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:38:01,340 | INFO | MainProcess:41868 | __main__ | FastAPI shutdown started
+2026-08-05 01:38:01,340 | INFO | MainProcess:41868 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:38:01,369 | INFO | MainProcess:41868 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:38:01,370 | INFO | MainProcess:41868 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:38:01,370 | INFO | MainProcess:41868 | __main__ | Camera processes stopped
+2026-08-05 01:38:01,370 | INFO | MainProcess:41868 | database | Closed MongoDB connection
+2026-08-05 01:38:01,370 | INFO | MainProcess:41868 | __main__ | MongoDB connection closed
+2026-08-05 01:38:01,370 | INFO | MainProcess:41868 | __main__ | FastAPI shutdown completed
+2026-08-05 01:38:06,729 | INFO | MainProcess:5668 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:38:07,255 | INFO | MainProcess:5668 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:38:07,310 | INFO | MainProcess:5668 | camera.camera_process_manager | Started camera 0 with PID 43396
+2026-08-05 01:38:07,315 | INFO | MainProcess:5668 | camera.camera_process_manager | Started camera grid with PID 41340
+2026-08-05 01:38:07,315 | INFO | MainProcess:5668 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 01:38:07,315 | INFO | MainProcess:5668 | __main__ | FastAPI startup completed
+2026-08-05 01:38:07,315 | INFO | MainProcess:5668 | uvicorn.error | Application startup complete.
+2026-08-05 01:38:07,315 | INFO | MainProcess:5668 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:38:10,839 | INFO | camera-0:43396 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:38:13,157 | INFO | MainProcess:5668 | uvicorn.access | 127.0.0.1:59846 - "GET /api/attendance?etsAuth=DEV_COMPANY HTTP/1.1" 200
+2026-08-05 01:38:18,345 | INFO | MainProcess:5668 | uvicorn.access | 127.0.0.1:59850 - "GET /api/attendance?etsAuth=DEV_COMPANY HTTP/1.1" 200
+2026-08-05 01:42:30,242 | INFO | MainProcess:5668 | uvicorn.error | Shutting down
+2026-08-05 01:42:30,246 | INFO | camera-0:43396 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:42:30,350 | INFO | MainProcess:5668 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:42:30,350 | INFO | MainProcess:5668 | __main__ | FastAPI shutdown started
+2026-08-05 01:42:30,350 | INFO | MainProcess:5668 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:42:30,365 | INFO | MainProcess:5668 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:42:30,386 | INFO | MainProcess:5668 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:42:30,387 | INFO | MainProcess:5668 | __main__ | Camera processes stopped
+2026-08-05 01:42:30,388 | INFO | MainProcess:5668 | database | Closed MongoDB connection
+2026-08-05 01:42:30,388 | INFO | MainProcess:5668 | __main__ | MongoDB connection closed
+2026-08-05 01:42:30,388 | INFO | MainProcess:5668 | __main__ | FastAPI shutdown completed
+2026-08-05 01:42:35,434 | INFO | MainProcess:31688 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:42:36,099 | INFO | MainProcess:31688 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:42:36,155 | INFO | MainProcess:31688 | camera.camera_process_manager | Started camera 0 with PID 34244
+2026-08-05 01:42:36,161 | INFO | MainProcess:31688 | camera.camera_process_manager | Started camera grid with PID 42052
+2026-08-05 01:42:36,161 | INFO | MainProcess:31688 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 01:42:36,162 | INFO | MainProcess:31688 | __main__ | FastAPI startup completed
+2026-08-05 01:42:36,162 | INFO | MainProcess:31688 | uvicorn.error | Application startup complete.
+2026-08-05 01:42:36,162 | INFO | MainProcess:31688 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:42:40,040 | INFO | camera-0:34244 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:43:12,755 | INFO | MainProcess:31688 | uvicorn.error | Shutting down
+2026-08-05 01:43:12,826 | INFO | camera-0:34244 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:43:12,866 | INFO | MainProcess:31688 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:43:12,866 | INFO | MainProcess:31688 | __main__ | FastAPI shutdown started
+2026-08-05 01:43:12,866 | INFO | MainProcess:31688 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:43:12,898 | INFO | MainProcess:31688 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:43:12,900 | INFO | MainProcess:31688 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:43:12,900 | INFO | MainProcess:31688 | __main__ | Camera processes stopped
+2026-08-05 01:43:12,901 | INFO | MainProcess:31688 | database | Closed MongoDB connection
+2026-08-05 01:43:12,901 | INFO | MainProcess:31688 | __main__ | MongoDB connection closed
+2026-08-05 01:43:12,901 | INFO | MainProcess:31688 | __main__ | FastAPI shutdown completed
+2026-08-05 01:43:17,889 | INFO | MainProcess:37512 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:43:18,436 | INFO | MainProcess:37512 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:43:18,491 | INFO | MainProcess:37512 | camera.camera_process_manager | Started camera 0 with PID 40188
+2026-08-05 01:43:18,496 | INFO | MainProcess:37512 | camera.camera_process_manager | Started camera grid with PID 32740
+2026-08-05 01:43:18,496 | INFO | MainProcess:37512 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 1}
+2026-08-05 01:43:18,496 | INFO | MainProcess:37512 | __main__ | FastAPI startup completed
+2026-08-05 01:43:18,496 | INFO | MainProcess:37512 | uvicorn.error | Application startup complete.
+2026-08-05 01:43:18,497 | INFO | MainProcess:37512 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:43:22,074 | INFO | camera-0:40188 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:43:50,079 | WARNING | camera-0:40188 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 01:43:53,347 | INFO | camera-0:40188 | camera.camera_worker | Attendance event queued: camera=0 employee=ME
+2026-08-05 01:43:53,352 | INFO | MainProcess:37512 | camera.camera_process_manager | Attendance created for ME DEV_COMPANY
+2026-08-05 01:44:09,261 | INFO | MainProcess:37512 | uvicorn.error | Shutting down
+2026-08-05 01:44:09,269 | INFO | camera-0:40188 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:44:09,370 | INFO | MainProcess:37512 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:44:09,370 | INFO | MainProcess:37512 | __main__ | FastAPI shutdown started
+2026-08-05 01:44:09,371 | INFO | MainProcess:37512 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:44:09,399 | INFO | MainProcess:37512 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:44:09,400 | INFO | MainProcess:37512 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:44:09,401 | INFO | MainProcess:37512 | __main__ | Camera processes stopped
+2026-08-05 01:44:09,402 | INFO | MainProcess:37512 | database | Closed MongoDB connection
+2026-08-05 01:44:09,402 | INFO | MainProcess:37512 | __main__ | MongoDB connection closed
+2026-08-05 01:44:09,402 | INFO | MainProcess:37512 | __main__ | FastAPI shutdown completed
+2026-08-05 01:53:14,384 | INFO | MainProcess:40332 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:53:15,106 | INFO | MainProcess:40332 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:53:18,899 | INFO | MainProcess:40332 | camera.camera_process_manager | Started camera 0 with PID 43884
+2026-08-05 01:53:18,905 | INFO | MainProcess:40332 | camera.camera_process_manager | Started camera grid with PID 41668
+2026-08-05 01:53:18,905 | INFO | MainProcess:40332 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 296}
+2026-08-05 01:53:18,905 | INFO | MainProcess:40332 | __main__ | FastAPI startup completed
+2026-08-05 01:53:18,905 | INFO | MainProcess:40332 | uvicorn.error | Application startup complete.
+2026-08-05 01:53:18,906 | INFO | MainProcess:40332 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:53:18,910 | INFO | camera-0:43884 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:53:51,297 | WARNING | camera-0:43884 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 01:56:39,747 | INFO | camera-0:43884 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:56:39,782 | INFO | MainProcess:40332 | uvicorn.error | Shutting down
+2026-08-05 01:56:39,889 | INFO | MainProcess:40332 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:56:39,889 | INFO | MainProcess:40332 | __main__ | FastAPI shutdown started
+2026-08-05 01:56:39,889 | INFO | MainProcess:40332 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:56:39,927 | INFO | MainProcess:40332 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:56:39,928 | INFO | MainProcess:40332 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:56:39,928 | INFO | MainProcess:40332 | __main__ | Camera processes stopped
+2026-08-05 01:56:39,929 | INFO | MainProcess:40332 | database | Closed MongoDB connection
+2026-08-05 01:56:39,929 | INFO | MainProcess:40332 | __main__ | MongoDB connection closed
+2026-08-05 01:56:39,929 | INFO | MainProcess:40332 | __main__ | FastAPI shutdown completed
+2026-08-05 01:56:44,903 | INFO | MainProcess:36868 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:56:45,493 | INFO | MainProcess:36868 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:56:49,353 | INFO | MainProcess:36868 | camera.camera_process_manager | Started camera 0 with PID 44024
+2026-08-05 01:56:49,359 | INFO | MainProcess:36868 | camera.camera_process_manager | Started camera grid with PID 43196
+2026-08-05 01:56:49,359 | INFO | MainProcess:36868 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 296}
+2026-08-05 01:56:49,359 | INFO | MainProcess:36868 | __main__ | FastAPI startup completed
+2026-08-05 01:56:49,359 | INFO | MainProcess:36868 | uvicorn.error | Application startup complete.
+2026-08-05 01:56:49,360 | INFO | MainProcess:36868 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:56:49,364 | INFO | camera-0:44024 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:57:02,047 | WARNING | camera-0:44024 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 01:57:04,830 | INFO | camera-0:44024 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 01:57:04,831 | ERROR | MainProcess:36868 | camera.camera_process_manager | Failed to create attendance
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\camera\camera_process_manager.py", line 297, in _consume_attendance
+    result = await (
+             ^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 114, in record_attendance_if_allowed
+    await self.should_create_attendance(
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 68, in should_create_attendance
+    or confidence < rule.recognitionThreshold
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'recognitionThreshold'
+2026-08-05 01:57:06,431 | INFO | camera-0:44024 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 01:57:06,435 | ERROR | MainProcess:36868 | camera.camera_process_manager | Failed to create attendance
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\camera\camera_process_manager.py", line 297, in _consume_attendance
+    result = await (
+             ^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 114, in record_attendance_if_allowed
+    await self.should_create_attendance(
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\attendance_service.py", line 68, in should_create_attendance
+    or confidence < rule.recognitionThreshold
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'recognitionThreshold'
+2026-08-05 01:58:22,410 | INFO | camera-0:44024 | camera.camera_worker | Camera 0 stopped
+2026-08-05 01:58:22,436 | INFO | MainProcess:36868 | uvicorn.error | Shutting down
+2026-08-05 01:58:22,545 | INFO | MainProcess:36868 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 01:58:22,545 | INFO | MainProcess:36868 | __main__ | FastAPI shutdown started
+2026-08-05 01:58:22,545 | INFO | MainProcess:36868 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 01:58:22,575 | INFO | MainProcess:36868 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 01:58:22,576 | INFO | MainProcess:36868 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 01:58:22,577 | INFO | MainProcess:36868 | __main__ | Camera processes stopped
+2026-08-05 01:58:22,577 | INFO | MainProcess:36868 | database | Closed MongoDB connection
+2026-08-05 01:58:22,577 | INFO | MainProcess:36868 | __main__ | MongoDB connection closed
+2026-08-05 01:58:22,577 | INFO | MainProcess:36868 | __main__ | FastAPI shutdown completed
+2026-08-05 01:58:28,258 | INFO | MainProcess:37160 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 01:58:28,826 | INFO | MainProcess:37160 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 01:58:32,393 | INFO | MainProcess:37160 | camera.camera_process_manager | Started camera 0 with PID 9916
+2026-08-05 01:58:32,398 | INFO | MainProcess:37160 | camera.camera_process_manager | Started camera grid with PID 32508
+2026-08-05 01:58:32,398 | INFO | MainProcess:37160 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 296}
+2026-08-05 01:58:32,398 | INFO | MainProcess:37160 | __main__ | FastAPI startup completed
+2026-08-05 01:58:32,398 | INFO | MainProcess:37160 | uvicorn.error | Application startup complete.
+2026-08-05 01:58:32,399 | INFO | MainProcess:37160 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 01:58:32,401 | INFO | camera-0:9916 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 01:58:39,820 | WARNING | camera-0:9916 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 01:58:39,947 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 01:58:39,953 | INFO | MainProcess:37160 | camera.camera_process_manager | Attendance created for H05-38 TEMPORAL_PLUS
+2026-08-05 01:58:40,070 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 01:58:40,077 | INFO | MainProcess:37160 | camera.camera_process_manager | Attendance created for H-05-38 TEMPORAL_PLUS
+2026-08-05 02:00:14,606 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 02:00:14,617 | INFO | MainProcess:37160 | camera.camera_process_manager | H-05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:00:15,139 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 02:00:15,142 | INFO | MainProcess:37160 | camera.camera_process_manager | H05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:00:23,541 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 02:00:23,556 | INFO | MainProcess:37160 | camera.camera_process_manager | H-05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:00:31,015 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 02:00:31,025 | INFO | MainProcess:37160 | camera.camera_process_manager | H-05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:00:40,867 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 02:00:40,876 | INFO | MainProcess:37160 | camera.camera_process_manager | H-05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:00:43,808 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 02:00:43,813 | INFO | MainProcess:37160 | camera.camera_process_manager | H05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:00:57,538 | INFO | camera-0:9916 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 02:00:57,543 | INFO | MainProcess:37160 | camera.camera_process_manager | H05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:01:05,238 | INFO | MainProcess:37160 | uvicorn.error | Shutting down
+2026-08-05 02:01:05,262 | INFO | camera-0:9916 | camera.camera_worker | Camera 0 stopped
+2026-08-05 02:01:05,346 | INFO | MainProcess:37160 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 02:01:05,346 | INFO | MainProcess:37160 | __main__ | FastAPI shutdown started
+2026-08-05 02:01:05,346 | INFO | MainProcess:37160 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 02:01:05,376 | INFO | MainProcess:37160 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 02:01:05,378 | INFO | MainProcess:37160 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 02:01:05,378 | INFO | MainProcess:37160 | __main__ | Camera processes stopped
+2026-08-05 02:01:05,378 | INFO | MainProcess:37160 | database | Closed MongoDB connection
+2026-08-05 02:01:05,378 | INFO | MainProcess:37160 | __main__ | MongoDB connection closed
+2026-08-05 02:01:05,378 | INFO | MainProcess:37160 | __main__ | FastAPI shutdown completed
+2026-08-05 02:01:16,226 | INFO | MainProcess:39968 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 02:01:16,820 | INFO | MainProcess:39968 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 02:01:20,567 | INFO | MainProcess:39968 | camera.camera_process_manager | Started camera 0 with PID 35700
+2026-08-05 02:01:20,573 | INFO | MainProcess:39968 | camera.camera_process_manager | Started camera grid with PID 38612
+2026-08-05 02:01:20,573 | INFO | MainProcess:39968 | __main__ | Camera startup result: {'started': ['0'], 'count': 1, 'embeddingCount': 296}
+2026-08-05 02:01:20,573 | INFO | MainProcess:39968 | __main__ | FastAPI startup completed
+2026-08-05 02:01:20,573 | INFO | MainProcess:39968 | uvicorn.error | Application startup complete.
+2026-08-05 02:01:20,574 | INFO | MainProcess:39968 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 02:01:20,578 | INFO | camera-0:35700 | camera.camera_worker | Camera worker starting: camera=0
+2026-08-05 02:01:27,652 | WARNING | camera-0:35700 | py.warnings | C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+
+2026-08-05 02:01:27,794 | INFO | camera-0:35700 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 02:01:27,798 | INFO | MainProcess:39968 | camera.camera_process_manager | Attendance created for H-05-38 TEMPORAL_PLUS
+2026-08-05 02:01:32,027 | INFO | camera-0:35700 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 02:01:32,043 | INFO | MainProcess:39968 | camera.camera_process_manager | Attendance created for H05-38 TEMPORAL_PLUS
+2026-08-05 02:01:44,036 | INFO | camera-0:35700 | camera.camera_worker | Attendance event queued: camera=0 employee=H-05-38
+2026-08-05 02:01:44,041 | INFO | MainProcess:39968 | camera.camera_process_manager | H-05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:01:44,443 | INFO | camera-0:35700 | camera.camera_worker | Attendance event queued: camera=0 employee=H05-38
+2026-08-05 02:01:44,448 | INFO | MainProcess:39968 | camera.camera_process_manager | H05-38 TEMPORAL_PLUSAttendance Skipped due to threshold_or_cooldown
+2026-08-05 02:02:23,329 | INFO | camera-0:35700 | camera.camera_worker | Camera 0 stopped
+2026-08-05 02:02:23,341 | INFO | MainProcess:39968 | uvicorn.error | Shutting down
+2026-08-05 02:02:23,447 | INFO | MainProcess:39968 | uvicorn.error | Finished server process [39968]
+2026-08-05 02:02:23,448 | INFO | MainProcess:39968 | __main__ | FastAPI shutdown started
+2026-08-05 02:02:23,448 | INFO | MainProcess:39968 | camera.camera_process_manager | Stopping camera 0
+2026-08-05 02:02:23,488 | INFO | MainProcess:39968 | camera.camera_process_manager | Stopped camera 0
+2026-08-05 02:02:23,489 | INFO | MainProcess:39968 | __main__ | FastAPI shutdown completed

@@ -94,9 +94,6 @@ class AttendanceService:
         
         if last_log is not None:
             return False, direction
-        print(last_log)
-        print(True)
-        print(ets_auth)
         return True, direction
 
 
@@ -151,7 +148,7 @@ class AttendanceService:
 
     async def list_attendance(
         self,
-        tenant_id: str,
+        ets_auth: str,
         limit: int = 100,
         employee_id: str | None = None,
         camera_id: str | None = None,
@@ -160,7 +157,7 @@ class AttendanceService:
         since: datetime | None = None,
     ) -> str:
         query = self._attendance_query(
-            tenant_id=tenant_id,
+            etsAuth=ets_auth,
             employee_id=employee_id,
             camera_id=camera_id,
             direction=direction,
@@ -236,14 +233,14 @@ class AttendanceService:
 
     def _attendance_query(
         self,
-        tenant_id: str,
+        ets_auth: str,
         employee_id: str | None = None,
         camera_id: str | None = None,
         direction: str | None = None,
         event_type: str | None = None,
         since: datetime | None = None,
     ) -> dict:
-        query = {"etsAuth": tenant_id}
+        query = {"etsAuth": ets_auth}
         normalized_event_type = self._event_type_filter(direction, event_type)
         if normalized_event_type:
             query["eventType"] = normalized_event_type
