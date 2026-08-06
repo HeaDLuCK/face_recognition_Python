@@ -81,13 +81,11 @@ class SyncService:
             datetime.now(timezone.utc).isoformat()
         )
 
-        # await self.log_service.write(
-        #     "INFO",
-        #     f"Synced cameras from {source}",
-        #     metadata={
-        #         "count": len(cameras),
-        #     },
-        # )
+        logger.info(
+            "Synced cameras from %s: count=%d",
+            source,
+            len(cameras),
+        )
 
         return {
             "count": len(cameras),
@@ -282,36 +280,13 @@ class SyncService:
 ) -> list[CameraConfig]:
         grouped: dict[str, CameraConfig] = {}
 
-        print(
-            "1. INPUT CAMERAS:",
-            [camera.cameraId for camera in cameras],
-            flush=True,
-        )
-
         for camera in cameras:
             try:
-                print(
-                    "2. LOOP START:",
-                    camera.cameraId,
-                    flush=True,
-                )
 
                 current = grouped.get(camera.cameraId)
 
-                print(
-                    "3. CURRENT:",
-                    current,
-                    flush=True,
-                )
 
                 if current is not None:
-                    print(
-                        "4. CHECKING RTSP:",
-                        current.rtspUrl,
-                        camera.rtspUrl,
-                        flush=True,
-                    )
-
                     if not self._same_camera_source(
                         current.rtspUrl,
                         camera.rtspUrl,
@@ -321,11 +296,6 @@ class SyncService:
                             "with multiple RTSP sources"
                         )
 
-                print(
-                    "5. CAMERA ASSIGNMENTS:",
-                    camera.assignments,
-                    flush=True,
-                )
 
                 assignments_by_ets_auth = {
                     assignment.etsAuth: assignment
@@ -336,11 +306,6 @@ class SyncService:
                     )
                 }
 
-                print(
-                    "6. EXISTING ASSIGNMENTS:",
-                    assignments_by_ets_auth,
-                    flush=True,
-                )
 
                 assignments_by_ets_auth.update(
                     {
@@ -349,16 +314,6 @@ class SyncService:
                     }
                 )
 
-                print(
-                    "7. MERGED ASSIGNMENTS:",
-                    assignments_by_ets_auth,
-                    flush=True,
-                )
-
-                print(
-                    "8. CALLING _camera_with_assignments",
-                    flush=True,
-                )
 
                 result_camera = self._camera_with_assignments(
                     base=current or camera,
@@ -368,37 +323,14 @@ class SyncService:
                     latest=camera,
                 )
 
-                print(
-                    "9. RESULT CAMERA:",
-                    result_camera,
-                    flush=True,
-                )
 
                 grouped[camera.cameraId] = result_camera
 
-                print(
-                    "10. GROUPED IDS:",
-                    list(grouped.keys()),
-                    flush=True,
-                )
 
             except Exception as exc:
-                print(
-                    "GROUPING FAILED:",
-                    camera.cameraId,
-                    type(exc).__name__,
-                    repr(exc),
-                    flush=True,
-                )
                 raise
 
         result = list(grouped.values())
-
-        print(
-            "11. FINAL RESULT:",
-            [camera.cameraId for camera in result],
-            flush=True,
-        )
 
         return result
 
@@ -540,15 +472,13 @@ class SyncService:
                             employee.employeeId,
                         )
 
-                        # await self.log_service.write(
-                        #     "ERROR",
-                        #     "Failed to process employee face image",
-                        #     etsAuth=etsAuth,
-                        #     metadata={
-                        #         "employeeId": employee.employeeId,
-                        #         "error": str(exc),
-                        #     },
-                        # )
+                        logger.exception(
+                            "Failed to process employee face image: "
+                            "etsAuth=%s employeeId=%s error=%s",
+                            etsAuth,
+                            employee.employeeId,
+                            exc,
+                        )
 
             return processed
 
@@ -658,15 +588,15 @@ class SyncService:
                     await self._purge_images_for_rule(rule)
                 )
 
-                # await self.log_service.write(
-                #     "INFO",
-                #     "Synced attendance rules from ERP push",
-                #     etsAuth=rule.etsAuth,
-                #     metadata=rule.model_dump(
-                #         by_alias=True,
-                #         mode="json",
-                #     ),
-                # )
+                logger.info(
+                    "Synced attendance rules from ERP push: "
+                    "etsAuth=%s rule=%s",
+                    rule.etsAuth,
+                    rule.model_dump(
+                        by_alias=True,
+                        mode="json",
+                    ),
+                )
 
             self.last_sync["rules"] = (
                 datetime.now(timezone.utc).isoformat()
@@ -750,15 +680,13 @@ class SyncService:
         self.last_sync["cameras"] = "loaded_from_mongo"
         self.last_sync["rules"] = "loaded_from_mongo"
 
-        # await self.log_service.write(
-        #     "INFO",
-        #     "Loaded saved configuration",
-        #     metadata={
-        #         "cameras": len(cameras),
-        #         "rules": len(rules),
-        #         "imagePurge": purge_results,
-        #     },
-        # )
+        logger.info(
+            "Loaded saved configuration: "
+            "cameras=%d rules=%d imagePurge=%s",
+            len(cameras),
+            len(rules),
+            purge_results,
+        )
 
         return {
             "cameras": len(cameras),

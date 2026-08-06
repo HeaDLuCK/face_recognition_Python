@@ -1,0 +1,4 @@
+2026-08-06 02:39:59,629 | ERROR | camera-CAM_CAMERA_D7_701:8292 | camera.camera_worker | Camera CAM_CAMERA_D7_701 failed to read frame
+2026-08-06 11:33:36,584 | ERROR | camera-CAM_CAMERA_D7_701:15956 | camera.camera_worker | Camera CAM_CAMERA_D7_701 failed to read frame
+2026-08-06 12:37:52,393 | ERROR | camera-CAM_CAMERA_D8_801:18080 | camera.camera_worker | Camera CAM_CAMERA_D8_801 failed to read frame
+2026-08-06 17:46:03,682 | ERROR | camera-CAM_CAMERA_D7_701:16592 | camera.camera_worker | Camera CAM_CAMERA_D7_701 failed to read frame

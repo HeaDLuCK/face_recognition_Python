@@ -65,7 +65,7 @@ class CameraManager:
                 f"Camera {self.camera_id} is disabled"
             )
         print(f"Starting camera {self.camera_id} ({self.rtsp_url})")
-        capture = cv2.VideoCapture(self.getVideoSource(self.rtsp_url))
+        capture = cv2.VideoCapture(self.getVideoSource(self.rtsp_url),)
 
         if not capture.isOpened():
             capture.release()

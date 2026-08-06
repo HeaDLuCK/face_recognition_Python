@@ -6,7 +6,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 
 
 class Settings(BaseSettings):
@@ -35,7 +35,6 @@ class Settings(BaseSettings):
     recognition_candidate_fast_margin: float = Field(default=0.08,ge=0.0,le=0.5,)
     recognition_candidate_floor_margin: float = Field(default=0.05,ge=0.0,le=0.2,)
     recognition_identity_hold_seconds: float = Field(default=1.2,ge=0.0,le=5.0,)
-
 
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",

@@ -1,0 +1,264 @@
+2026-08-05 12:17:49,550 | INFO | MainProcess:13368 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 12:17:51,180 | INFO | MainProcess:13368 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 12:17:53,308 | INFO | MainProcess:13368 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 11648
+2026-08-05 12:17:53,334 | INFO | camera-CAM_CAMERA_D7_701:11648 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-05 12:17:55,596 | INFO | MainProcess:13368 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 3052
+2026-08-05 12:17:55,606 | INFO | MainProcess:13368 | camera.camera_process_manager | Started camera grid with PID 9696
+2026-08-05 12:17:55,606 | INFO | MainProcess:13368 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-05 12:17:55,606 | INFO | MainProcess:13368 | __main__ | FastAPI startup completed
+2026-08-05 12:17:55,606 | INFO | MainProcess:13368 | uvicorn.error | Application startup complete.
+2026-08-05 12:17:55,607 | INFO | MainProcess:13368 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 12:17:55,623 | INFO | camera-CAM_CAMERA_D8_801:3052 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-05 13:48:52,132 | INFO | MainProcess:13368 | uvicorn.access | 127.0.0.1:60231 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-05 13:49:00,715 | INFO | MainProcess:13368 | uvicorn.access | 127.0.0.1:60239 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-05 13:49:03,376 | INFO | MainProcess:13368 | uvicorn.access | 127.0.0.1:60239 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-05 13:59:21,041 | INFO | camera-CAM_CAMERA_D8_801:3052 | camera.camera_worker | Camera CAM_CAMERA_D8_801 stopped
+2026-08-05 13:59:21,081 | INFO | camera-CAM_CAMERA_D7_701:11648 | camera.camera_worker | Camera CAM_CAMERA_D7_701 stopped
+2026-08-05 13:59:21,127 | INFO | MainProcess:13368 | uvicorn.error | Shutting down
+2026-08-05 13:59:21,239 | INFO | MainProcess:13368 | uvicorn.error | Waiting for application shutdown.
+2026-08-05 13:59:21,241 | INFO | MainProcess:13368 | __main__ | FastAPI shutdown started
+2026-08-05 13:59:21,242 | INFO | MainProcess:13368 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D7_701
+2026-08-05 13:59:21,242 | INFO | MainProcess:13368 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D8_801
+2026-08-05 13:59:21,269 | INFO | MainProcess:13368 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-05 13:59:21,269 | INFO | MainProcess:13368 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-05 13:59:21,270 | INFO | MainProcess:13368 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-05 13:59:21,271 | INFO | MainProcess:13368 | __main__ | Camera processes stopped
+2026-08-05 13:59:21,272 | INFO | MainProcess:13368 | database | Closed MongoDB connection
+2026-08-05 13:59:21,272 | INFO | MainProcess:13368 | __main__ | MongoDB connection closed
+2026-08-05 13:59:21,272 | INFO | MainProcess:13368 | __main__ | FastAPI shutdown completed
+2026-08-05 13:59:25,365 | INFO | MainProcess:13864 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-05 13:59:26,984 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance consumer started
+2026-08-05 13:59:29,127 | INFO | MainProcess:13864 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 10572
+2026-08-05 13:59:29,153 | INFO | camera-CAM_CAMERA_D7_701:10572 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-05 13:59:31,438 | INFO | MainProcess:13864 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 8488
+2026-08-05 13:59:31,447 | INFO | MainProcess:13864 | camera.camera_process_manager | Started camera grid with PID 6568
+2026-08-05 13:59:31,447 | INFO | MainProcess:13864 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-05 13:59:31,447 | INFO | MainProcess:13864 | __main__ | FastAPI startup completed
+2026-08-05 13:59:31,447 | INFO | MainProcess:13864 | uvicorn.error | Application startup complete.
+2026-08-05 13:59:31,449 | INFO | MainProcess:13864 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-05 13:59:31,464 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-05 14:10:08,980 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000011-32
+2026-08-05 14:10:08,989 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5395 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 14:10:08,989 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-05T13:08:08.988612+00:00 end=2026-08-05T13:10:08.988612+00:00 cooldownSeconds=120
+2026-08-05 14:10:08,991 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5395
+2026-08-05 14:10:08,992 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL detectionId=406dcaa4-c0ab-489e-8aa1-4cbc1cedcc71
+2026-08-05 14:10:08,993 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000011-32 etsAuth=SEA_FOOD camera=CAM_CAMERA_D8_801 reason=created
+2026-08-05 15:12:29,411 | INFO | camera-CAM_CAMERA_D7_701:10572 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D7_701 employee=000359-38
+2026-08-05 15:12:29,414 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000359-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL score=0.5153 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 15:12:29,415 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000359-38 camera=CAM_CAMERA_D7_701 eventType=FACE_RECOGNIZED start=2026-08-05T14:10:29.414186+00:00 end=2026-08-05T14:12:29.414186+00:00 cooldownSeconds=120
+2026-08-05 15:12:29,416 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000359-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5153
+2026-08-05 15:12:29,418 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000359-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL detectionId=be62a013-6cd9-4d2e-a50a-c03bc7fbb6f9
+2026-08-05 15:12:29,418 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000359-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D7_701 reason=created
+2026-08-05 15:40:07,931 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000370-38
+2026-08-05 15:40:07,972 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5238 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 15:40:07,972 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-05T14:38:07.972606+00:00 end=2026-08-05T14:40:07.972606+00:00 cooldownSeconds=120
+2026-08-05 15:40:07,974 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5238
+2026-08-05 15:40:07,975 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL detectionId=8c50d79b-7d8c-4182-b8e4-905ba463b06a
+2026-08-05 15:40:07,975 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000370-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D8_801 reason=created
+2026-08-05 15:43:30,361 | INFO | camera-CAM_CAMERA_D7_701:10572 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D7_701 employee=000370-38
+2026-08-05 15:43:30,364 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL score=0.5097 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 15:43:30,364 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 eventType=FACE_RECOGNIZED start=2026-08-05T14:41:30.364212+00:00 end=2026-08-05T14:43:30.364212+00:00 cooldownSeconds=120
+2026-08-05 15:43:30,366 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5097
+2026-08-05 15:43:30,367 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL detectionId=3c5b6e41-2cf2-4af8-a58e-89fc52a634a3
+2026-08-05 15:43:30,367 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000370-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D7_701 reason=created
+2026-08-05 15:44:04,108 | INFO | camera-CAM_CAMERA_D7_701:10572 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D7_701 employee=000370-38
+2026-08-05 15:44:04,111 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL score=0.5164 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 15:44:04,111 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 eventType=FACE_RECOGNIZED start=2026-08-05T14:42:04.111304+00:00 end=2026-08-05T14:44:04.111304+00:00 cooldownSeconds=120
+2026-08-05 15:44:04,113 | WARNING | MainProcess:13864 | service.attendance_service | Attendance rejected: reason=duplicate_cooldown etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D7_701 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5164 details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 120, 'previousDetectionId': '6a734c12d2b1bf7add818a5e', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 15:44:04,113 | WARNING | MainProcess:13864 | camera.camera_process_manager | Attendance skipped: employee=000370-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D7_701 reason=duplicate_cooldown details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 120, 'previousDetectionId': '6a734c12d2b1bf7add818a5e', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 15:58:09,500 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000524-38
+2026-08-05 15:58:09,548 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5110 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 15:58:09,548 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-05T14:56:09.548503+00:00 end=2026-08-05T14:58:09.548503+00:00 cooldownSeconds=120
+2026-08-05 15:58:09,550 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5110
+2026-08-05 15:58:09,553 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL detectionId=732c05ba-48fb-4fea-b447-e44f4c5961de
+2026-08-05 15:58:09,553 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000524-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D8_801 reason=created
+2026-08-05 16:07:28,720 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000370-38
+2026-08-05 16:07:28,781 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5104 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 16:07:28,781 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-05T15:05:28.781023+00:00 end=2026-08-05T15:07:28.781023+00:00 cooldownSeconds=120
+2026-08-05 16:07:28,784 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5104
+2026-08-05 16:07:28,785 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL detectionId=15d792fc-5218-48ab-a2b9-27c1daff4a87
+2026-08-05 16:07:28,786 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000370-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D8_801 reason=created
+2026-08-05 16:09:33,588 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000370-38
+2026-08-05 16:09:33,614 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5085 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 16:09:33,614 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-05T15:07:33.614680+00:00 end=2026-08-05T15:09:33.614680+00:00 cooldownSeconds=120
+2026-08-05 16:09:33,616 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5085
+2026-08-05 16:09:33,617 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL detectionId=5e12416a-9a5b-4112-ae61-82f5b838121b
+2026-08-05 16:09:33,618 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000370-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D8_801 reason=created
+2026-08-05 16:09:54,293 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000370-38
+2026-08-05 16:09:54,308 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5151 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 16:09:54,309 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-05T15:07:54.308860+00:00 end=2026-08-05T15:09:54.308860+00:00 cooldownSeconds=120
+2026-08-05 16:09:54,310 | WARNING | MainProcess:13864 | service.attendance_service | Attendance rejected: reason=duplicate_cooldown etsAuth=TEMPORAL_PLUS employee=000370-38 camera=CAM_CAMERA_D8_801 cameraDirection=BIDIRECTIONAL resolvedDirection=BIDIRECTIONAL confidence=0.5151 details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 120, 'previousDetectionId': '6a73522dd2b1bf7add818a61', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 16:09:54,311 | WARNING | MainProcess:13864 | camera.camera_process_manager | Attendance skipped: employee=000370-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D8_801 reason=duplicate_cooldown details={'reason': 'duplicate_cooldown', 'cooldownSeconds': 120, 'previousDetectionId': '6a73522dd2b1bf7add818a61', 'previousEmployeeId': None, 'previousCameraId': None, 'previousEventType': None, 'previousTimestamp': None}
+2026-08-05 18:28:28,497 | INFO | camera-CAM_CAMERA_D7_701:10572 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D7_701 employee=000011-32
+2026-08-05 18:28:28,516 | INFO | MainProcess:13864 | service.attendance_service | Attendance evaluation started: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL score=0.5198 minimum_score=0.5000 cooldown_seconds=120
+2026-08-05 18:28:28,517 | INFO | MainProcess:13864 | service.attendance_service | Checking attendance cooldown: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D7_701 eventType=FACE_RECOGNIZED start=2026-08-05T17:26:28.516692+00:00 end=2026-08-05T17:28:28.516692+00:00 cooldownSeconds=120
+2026-08-05 18:28:28,518 | INFO | MainProcess:13864 | service.attendance_service | Attendance accepted for insertion: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5198
+2026-08-05 18:28:28,520 | INFO | MainProcess:13864 | service.attendance_service | Attendance created: etsAuth=SEA_FOOD employee=000011-32 camera=CAM_CAMERA_D7_701 direction=BIDIRECTIONAL detectionId=7cb1b2bd-5c40-4109-b729-e4cd8e77b0db
+2026-08-05 18:28:28,521 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance created: employee=000011-32 etsAuth=SEA_FOOD camera=CAM_CAMERA_D7_701 reason=created
+2026-08-05 18:43:34,604 | INFO | MainProcess:13864 | uvicorn.access | 127.0.0.1:62044 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-05 19:09:44,069 | INFO | MainProcess:13864 | uvicorn.access | 127.0.0.1:62226 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-05 19:40:23,433 | INFO | MainProcess:13864 | uvicorn.access | 127.0.0.1:62358 - "GET /api/attendance?etsAuth=TEMPORAL_PLUS HTTP/1.1" 200
+2026-08-06 02:28:18,785 | INFO | MainProcess:13864 | uvicorn.error | Shutting down
+2026-08-06 02:28:18,759 | INFO | camera-CAM_CAMERA_D8_801:8488 | camera.camera_worker | Camera CAM_CAMERA_D8_801 stopped
+2026-08-06 02:28:18,822 | INFO | MainProcess:13864 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-06 02:28:18,883 | INFO | MainProcess:13864 | uvicorn.error | Waiting for application shutdown.
+2026-08-06 02:28:18,884 | INFO | MainProcess:13864 | __main__ | FastAPI shutdown started
+2026-08-06 02:28:18,884 | INFO | MainProcess:13864 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D7_701
+2026-08-06 02:28:18,884 | INFO | MainProcess:13864 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D8_801
+2026-08-06 02:28:18,920 | INFO | MainProcess:13864 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-06 02:28:18,939 | INFO | MainProcess:13864 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-06 02:28:18,941 | INFO | MainProcess:13864 | __main__ | Camera processes stopped
+2026-08-06 02:28:18,943 | INFO | MainProcess:13864 | database | Closed MongoDB connection
+2026-08-06 02:28:18,943 | INFO | MainProcess:13864 | __main__ | MongoDB connection closed
+2026-08-06 02:28:18,943 | INFO | MainProcess:13864 | __main__ | FastAPI shutdown completed
+2026-08-06 02:29:19,428 | INFO | MainProcess:14812 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-06 02:29:21,231 | INFO | MainProcess:14812 | camera.camera_process_manager | Attendance consumer started
+2026-08-06 02:29:23,446 | INFO | MainProcess:14812 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 8292
+2026-08-06 02:29:23,473 | INFO | camera-CAM_CAMERA_D7_701:8292 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-06 02:29:25,871 | INFO | MainProcess:14812 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 5700
+2026-08-06 02:29:25,880 | INFO | MainProcess:14812 | camera.camera_process_manager | Started camera grid with PID 7632
+2026-08-06 02:29:25,880 | INFO | MainProcess:14812 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-06 02:29:25,881 | INFO | MainProcess:14812 | __main__ | FastAPI startup completed
+2026-08-06 02:29:25,881 | INFO | MainProcess:14812 | uvicorn.error | Application startup complete.
+2026-08-06 02:29:25,882 | INFO | MainProcess:14812 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-06 02:29:25,904 | INFO | camera-CAM_CAMERA_D8_801:5700 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-06 02:39:59,629 | ERROR | camera-CAM_CAMERA_D7_701:8292 | camera.camera_worker | Camera CAM_CAMERA_D7_701 failed to read frame
+2026-08-06 02:39:59,633 | INFO | camera-CAM_CAMERA_D7_701:8292 | camera.camera_worker | Camera CAM_CAMERA_D7_701 stopped
+2026-08-06 07:09:50,359 | INFO | camera-CAM_CAMERA_D8_801:5700 | camera.camera_worker | Recognition candidate: camera=CAM_CAMERA_D8_801 employee=000524-38 currentScore=0.5338 bestScore=0.5338 threshold=0.5000 confirmed=False
+2026-08-06 07:09:50,510 | INFO | camera-CAM_CAMERA_D8_801:5700 | camera.camera_worker | Recognition candidate: camera=CAM_CAMERA_D8_801 employee=000524-38 currentScore=0.5235 bestScore=0.5338 threshold=0.5000 confirmed=True
+2026-08-06 07:09:50,530 | INFO | camera-CAM_CAMERA_D8_801:5700 | camera.camera_worker | Attendance event queued: camera=CAM_CAMERA_D8_801 employee=000524-38 score=0.5338
+2026-08-06 07:09:50,539 | INFO | MainProcess:14812 | service.attendance_service | Attendance evaluation started: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL score=0.5338 minimum_score=0.5000 cooldown_seconds=120
+2026-08-06 07:09:50,539 | INFO | MainProcess:14812 | service.attendance_service | Checking attendance cooldown: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 eventType=FACE_RECOGNIZED start=2026-08-06T06:07:50.539845+00:00 end=2026-08-06T06:09:50.539845+00:00 cooldownSeconds=120
+2026-08-06 07:09:50,541 | INFO | MainProcess:14812 | service.attendance_service | Attendance accepted for insertion: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL eventType=FACE_RECOGNIZED confidence=0.5338
+2026-08-06 07:09:50,543 | INFO | MainProcess:14812 | service.attendance_service | Attendance created: etsAuth=TEMPORAL_PLUS employee=000524-38 camera=CAM_CAMERA_D8_801 direction=BIDIRECTIONAL detectionId=2739aed2-4041-44f5-9981-357556cc46a6
+2026-08-06 07:09:50,543 | INFO | MainProcess:14812 | camera.camera_process_manager | Attendance created: employee=000524-38 etsAuth=TEMPORAL_PLUS camera=CAM_CAMERA_D8_801 reason=created
+2026-08-06 08:50:02,274 | INFO | MainProcess:14812 | uvicorn.access | 127.0.0.1:65403 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 09:27:17,301 | INFO | MainProcess:14812 | uvicorn.access | 127.0.0.1:49197 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 10:00:05,052 | INFO | MainProcess:14812 | uvicorn.access | 127.0.0.1:49322 - "GET /api/attendance?etsAuth=TEMPORAL_PLUS HTTP/1.1" 200
+2026-08-06 10:48:56,459 | INFO | MainProcess:14812 | uvicorn.access | 127.0.0.1:49586 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 11:18:09,441 | INFO | MainProcess:14812 | uvicorn.error | Shutting down
+2026-08-06 11:18:09,502 | INFO | camera-CAM_CAMERA_D8_801:5700 | camera.camera_worker | Camera CAM_CAMERA_D8_801 stopped
+2026-08-06 11:18:09,551 | INFO | MainProcess:14812 | uvicorn.error | Waiting for application shutdown.
+2026-08-06 11:18:09,552 | INFO | MainProcess:14812 | __main__ | FastAPI shutdown started
+2026-08-06 11:18:09,552 | INFO | MainProcess:14812 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D8_801
+2026-08-06 11:18:09,553 | INFO | MainProcess:14812 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-06 11:18:09,553 | INFO | MainProcess:14812 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-06 11:18:09,582 | INFO | MainProcess:14812 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-06 11:18:09,583 | INFO | MainProcess:14812 | __main__ | Camera processes stopped
+2026-08-06 11:18:09,586 | INFO | MainProcess:14812 | database | Closed MongoDB connection
+2026-08-06 11:18:09,586 | INFO | MainProcess:14812 | __main__ | MongoDB connection closed
+2026-08-06 11:18:09,586 | INFO | MainProcess:14812 | __main__ | FastAPI shutdown completed
+2026-08-06 11:18:17,683 | INFO | MainProcess:19248 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-06 11:18:19,762 | INFO | MainProcess:19248 | camera.camera_process_manager | Attendance consumer started
+2026-08-06 11:18:21,998 | INFO | MainProcess:19248 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 15956
+2026-08-06 11:18:22,025 | INFO | camera-CAM_CAMERA_D7_701:15956 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-06 11:18:24,498 | INFO | MainProcess:19248 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 13744
+2026-08-06 11:18:24,507 | INFO | MainProcess:19248 | camera.camera_process_manager | Started camera grid with PID 312
+2026-08-06 11:18:24,507 | INFO | MainProcess:19248 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-06 11:18:24,507 | INFO | MainProcess:19248 | __main__ | FastAPI startup completed
+2026-08-06 11:18:24,507 | INFO | MainProcess:19248 | uvicorn.error | Application startup complete.
+2026-08-06 11:18:24,508 | INFO | MainProcess:19248 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-06 11:18:24,526 | INFO | camera-CAM_CAMERA_D8_801:13744 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-06 11:33:36,584 | ERROR | camera-CAM_CAMERA_D7_701:15956 | camera.camera_worker | Camera CAM_CAMERA_D7_701 failed to read frame
+2026-08-06 11:33:36,649 | INFO | camera-CAM_CAMERA_D7_701:15956 | camera.camera_worker | Camera CAM_CAMERA_D7_701 stopped
+2026-08-06 12:34:06,099 | INFO | camera-CAM_CAMERA_D8_801:13744 | camera.camera_worker | Camera CAM_CAMERA_D8_801 stopped
+2026-08-06 12:34:06,155 | INFO | MainProcess:19248 | uvicorn.error | Shutting down
+2026-08-06 12:34:06,259 | INFO | MainProcess:19248 | uvicorn.error | Finished server process [19248]
+2026-08-06 12:34:06,260 | INFO | MainProcess:19248 | __main__ | FastAPI shutdown started
+2026-08-06 12:34:06,260 | INFO | MainProcess:19248 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D8_801
+2026-08-06 12:34:06,260 | INFO | MainProcess:19248 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-06 12:34:06,285 | INFO | MainProcess:19248 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-06 12:34:06,286 | INFO | MainProcess:19248 | __main__ | FastAPI shutdown completed
+2026-08-06 12:34:09,589 | INFO | MainProcess:8684 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-06 12:34:11,225 | INFO | MainProcess:8684 | camera.camera_process_manager | Attendance consumer started
+2026-08-06 12:34:13,564 | INFO | MainProcess:8684 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 9032
+2026-08-06 12:34:13,591 | INFO | camera-CAM_CAMERA_D7_701:9032 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-06 12:34:15,919 | INFO | MainProcess:8684 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 18080
+2026-08-06 12:34:15,928 | INFO | MainProcess:8684 | camera.camera_process_manager | Started camera grid with PID 3688
+2026-08-06 12:34:15,928 | INFO | MainProcess:8684 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-06 12:34:15,928 | INFO | MainProcess:8684 | __main__ | FastAPI startup completed
+2026-08-06 12:34:15,928 | INFO | MainProcess:8684 | uvicorn.error | Application startup complete.
+2026-08-06 12:34:15,929 | INFO | MainProcess:8684 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-06 12:34:15,946 | INFO | camera-CAM_CAMERA_D8_801:18080 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-06 12:37:52,393 | ERROR | camera-CAM_CAMERA_D8_801:18080 | camera.camera_worker | Camera CAM_CAMERA_D8_801 failed to read frame
+2026-08-06 12:37:52,398 | INFO | camera-CAM_CAMERA_D8_801:18080 | camera.camera_worker | Camera CAM_CAMERA_D8_801 stopped
+2026-08-06 12:57:42,150 | INFO | MainProcess:8684 | uvicorn.access | 127.0.0.1:50989 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 12:57:53,428 | INFO | MainProcess:8684 | uvicorn.access | 127.0.0.1:50997 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 12:58:42,106 | INFO | MainProcess:8684 | uvicorn.access | 127.0.0.1:51007 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 12:59:52,719 | INFO | MainProcess:8684 | uvicorn.access | 127.0.0.1:51017 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 13:04:01,144 | INFO | camera-CAM_CAMERA_D7_701:9032 | camera.camera_worker | Recognition candidate: camera=CAM_CAMERA_D7_701 employee=000015-32 currentScore=0.5070 bestScore=0.5070 threshold=0.5000 confirmed=False
+2026-08-06 16:06:24,114 | INFO | camera-CAM_CAMERA_D7_701:9032 | camera.camera_worker | Recognition candidate: camera=CAM_CAMERA_D7_701 employee=000187-38 currentScore=0.5178 bestScore=0.5178 threshold=0.5000 confirmed=False
+2026-08-06 17:05:47,827 | INFO | MainProcess:8684 | uvicorn.access | 127.0.0.1:52025 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 17:08:06,807 | INFO | MainProcess:8684 | uvicorn.access | 127.0.0.1:52048 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 17:37:08,464 | INFO | camera-CAM_CAMERA_D7_701:9032 | camera.camera_worker | Camera CAM_CAMERA_D7_701 stopped
+2026-08-06 17:37:08,520 | INFO | MainProcess:8684 | uvicorn.error | Shutting down
+2026-08-06 17:37:08,621 | INFO | MainProcess:8684 | uvicorn.error | Finished server process [8684]
+2026-08-06 17:37:08,622 | INFO | MainProcess:8684 | __main__ | FastAPI shutdown started
+2026-08-06 17:37:08,623 | INFO | MainProcess:8684 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D7_701
+2026-08-06 17:37:08,656 | INFO | MainProcess:8684 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-06 17:37:08,656 | INFO | MainProcess:8684 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-06 17:37:08,657 | INFO | MainProcess:8684 | __main__ | FastAPI shutdown completed
+2026-08-06 17:37:17,061 | INFO | MainProcess:3412 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-06 17:37:18,871 | INFO | MainProcess:3412 | camera.camera_process_manager | Attendance consumer started
+2026-08-06 17:37:20,945 | INFO | MainProcess:3412 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 16592
+2026-08-06 17:37:20,973 | INFO | camera-CAM_CAMERA_D7_701:16592 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-06 17:37:23,215 | INFO | MainProcess:3412 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 10940
+2026-08-06 17:37:23,224 | INFO | MainProcess:3412 | camera.camera_process_manager | Started camera grid with PID 4928
+2026-08-06 17:37:23,224 | INFO | MainProcess:3412 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-06 17:37:23,224 | INFO | MainProcess:3412 | __main__ | FastAPI startup completed
+2026-08-06 17:37:23,224 | INFO | MainProcess:3412 | uvicorn.error | Application startup complete.
+2026-08-06 17:37:23,225 | INFO | MainProcess:3412 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-06 17:37:23,243 | INFO | camera-CAM_CAMERA_D8_801:10940 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-06 17:46:03,682 | ERROR | camera-CAM_CAMERA_D7_701:16592 | camera.camera_worker | Camera CAM_CAMERA_D7_701 failed to read frame
+2026-08-06 17:46:03,713 | INFO | camera-CAM_CAMERA_D7_701:16592 | camera.camera_worker | Camera CAM_CAMERA_D7_701 stopped
+2026-08-06 17:49:53,205 | INFO | MainProcess:3412 | uvicorn.error | Shutting down
+2026-08-06 17:49:53,292 | INFO | camera-CAM_CAMERA_D8_801:10940 | camera.camera_worker | Camera CAM_CAMERA_D8_801 stopped
+2026-08-06 17:49:53,315 | INFO | MainProcess:3412 | uvicorn.error | Waiting for application shutdown.
+2026-08-06 17:49:53,317 | INFO | MainProcess:3412 | __main__ | FastAPI shutdown started
+2026-08-06 17:49:53,317 | INFO | MainProcess:3412 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D8_801
+2026-08-06 17:49:53,317 | INFO | MainProcess:3412 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-06 17:49:53,345 | INFO | MainProcess:3412 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-06 17:49:53,347 | INFO | MainProcess:3412 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-06 17:49:53,347 | INFO | MainProcess:3412 | __main__ | Camera processes stopped
+2026-08-06 17:49:53,348 | INFO | MainProcess:3412 | database | Closed MongoDB connection
+2026-08-06 17:49:53,348 | INFO | MainProcess:3412 | __main__ | MongoDB connection closed
+2026-08-06 17:49:53,349 | INFO | MainProcess:3412 | __main__ | FastAPI shutdown completed
+2026-08-06 17:49:57,609 | INFO | MainProcess:16616 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-06 17:49:59,354 | INFO | MainProcess:16616 | camera.camera_process_manager | Attendance consumer started
+2026-08-06 17:50:01,534 | INFO | MainProcess:16616 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 11504
+2026-08-06 17:50:01,547 | INFO | camera-CAM_CAMERA_D7_701:11504 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-06 17:50:03,765 | INFO | MainProcess:16616 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 2728
+2026-08-06 17:50:03,775 | INFO | MainProcess:16616 | camera.camera_process_manager | Started camera grid with PID 14520
+2026-08-06 17:50:03,775 | INFO | MainProcess:16616 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-06 17:50:03,775 | INFO | MainProcess:16616 | __main__ | FastAPI startup completed
+2026-08-06 17:50:03,775 | INFO | MainProcess:16616 | uvicorn.error | Application startup complete.
+2026-08-06 17:50:03,776 | INFO | MainProcess:16616 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-06 17:50:03,780 | INFO | camera-CAM_CAMERA_D8_801:2728 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-06 17:50:06,226 | INFO | camera-CAM_CAMERA_D7_701:11504 | camera.camera_worker | Camera connected: camera=CAM_CAMERA_D7_701
+2026-08-06 17:50:08,466 | INFO | camera-CAM_CAMERA_D8_801:2728 | camera.camera_worker | Camera connected: camera=CAM_CAMERA_D8_801
+2026-08-06 18:14:13,957 | INFO | MainProcess:16616 | uvicorn.access | 127.0.0.1:52364 - "GET /api/attendance?etsAuth=SEA_FOOD HTTP/1.1" 200
+2026-08-06 18:36:42,972 | INFO | MainProcess:16616 | uvicorn.error | Shutting down
+2026-08-06 18:36:43,097 | INFO | MainProcess:16616 | uvicorn.error | Waiting for application shutdown.
+2026-08-06 18:36:43,097 | INFO | MainProcess:16616 | __main__ | FastAPI shutdown started
+2026-08-06 18:36:43,098 | INFO | MainProcess:16616 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D7_701
+2026-08-06 18:36:43,098 | INFO | MainProcess:16616 | camera.camera_process_manager | Stopping camera CAM_CAMERA_D8_801
+2026-08-06 18:36:43,142 | INFO | MainProcess:16616 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D7_701
+2026-08-06 18:36:43,149 | INFO | MainProcess:16616 | camera.camera_process_manager | Stopped camera CAM_CAMERA_D8_801
+2026-08-06 18:36:43,152 | INFO | MainProcess:16616 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-06 18:36:43,152 | INFO | MainProcess:16616 | __main__ | Camera processes stopped
+2026-08-06 18:36:43,153 | INFO | MainProcess:16616 | database | Closed MongoDB connection
+2026-08-06 18:36:43,153 | INFO | MainProcess:16616 | __main__ | MongoDB connection closed
+2026-08-06 18:36:43,153 | INFO | MainProcess:16616 | __main__ | FastAPI shutdown completed
+2026-08-06 18:37:04,640 | INFO | MainProcess:5372 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-06 18:37:06,245 | INFO | MainProcess:5372 | camera.camera_process_manager | Attendance consumer started
+2026-08-06 18:37:08,342 | INFO | MainProcess:5372 | camera.camera_process_manager | Started camera CAM_CAMERA_D7_701 with PID 6628
+2026-08-06 18:37:08,356 | INFO | camera-CAM_CAMERA_D7_701:6628 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D7_701
+2026-08-06 18:37:10,595 | INFO | MainProcess:5372 | camera.camera_process_manager | Started camera CAM_CAMERA_D8_801 with PID 3604
+2026-08-06 18:37:10,604 | INFO | MainProcess:5372 | camera.camera_process_manager | Started camera grid with PID 14032
+2026-08-06 18:37:10,604 | INFO | MainProcess:5372 | __main__ | Camera startup result: {'started': ['CAM_CAMERA_D7_701', 'CAM_CAMERA_D8_801'], 'count': 2, 'embeddingCount': 295}
+2026-08-06 18:37:10,604 | INFO | MainProcess:5372 | __main__ | FastAPI startup completed
+2026-08-06 18:37:10,605 | INFO | MainProcess:5372 | uvicorn.error | Application startup complete.
+2026-08-06 18:37:10,606 | INFO | MainProcess:5372 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-06 18:37:10,609 | INFO | camera-CAM_CAMERA_D8_801:3604 | camera.camera_worker | Camera worker starting: camera=CAM_CAMERA_D8_801
+2026-08-06 18:37:13,007 | INFO | camera-CAM_CAMERA_D7_701:6628 | camera.camera_worker | Camera connected: camera=CAM_CAMERA_D7_701
+2026-08-06 18:37:15,186 | INFO | camera-CAM_CAMERA_D8_801:3604 | camera.camera_worker | Camera connected: camera=CAM_CAMERA_D8_801

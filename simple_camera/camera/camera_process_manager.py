@@ -66,7 +66,7 @@ class CameraProcessManager:
                 self.sync_service.get_all_cameras()
             )
 
-            started = self._start_processes(
+            started = await  self._start_processes(
                 cameras,
                 embedding_index,
             )
@@ -102,7 +102,7 @@ class CameraProcessManager:
                 self.sync_service.get_all_cameras()
             )
 
-            started = self._start_processes(
+            started = await  self._start_processes(
                 cameras,
                 embedding_index,
             )
@@ -154,7 +154,7 @@ class CameraProcessManager:
             in self._processes.items()
         ]
 
-    def _start_processes(
+    async def _start_processes(
     self,
     cameras: list[CameraConfig],
     embedding_index: EmbeddingIndex,
@@ -186,12 +186,14 @@ class CameraProcessManager:
                 by_alias=True,
                 mode="json",
             )
+            rule = await self.sync_service.get_rule_by_etsAuth(camera.etsAuth)
 
             process = self._context.Process(
                 target=read_camera,
                 args=(
                     camera_data,
                     embedding_index,
+                    rule,
                     self._frame_queues[camera.cameraId],
                     self._attendance_queue,
                     self._log_queue,
@@ -292,7 +294,6 @@ class CameraProcessManager:
                 break
 
             try:
-                rule = await self.sync_service.get_rule_by_etsAuth(event["etsAuth"])
                 print("result ---->" + event["etsAuth"]+ "  " +event["cameraId"])
                 result = await (
                     self.attendance_service
@@ -304,7 +305,7 @@ class CameraProcessManager:
                         ],
                         employee_id=event["employeeId"],
                         confidence=event["confidence"],
-                        rule=rule,
+                        rule=event["rule"],
                         snapshot_path=event["snapshotPath"],
                     )
                 )
