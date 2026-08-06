@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 from logging_setup import (
     configure_queue_logging,
 )
+from collections import deque
+
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +74,7 @@ def read_camera(
     frame_number = 0
     detected_faces = []
     presence_state: dict[tuple[str, str, str], dict] = {}
+    recognition_state: dict[tuple[str, str, str], dict] = {}
     PRESENCE_RESET_SECONDS = 5.0
     QUEUE_RETRY_SECONDS = 0.5
     try:
@@ -125,25 +128,62 @@ def read_camera(
                         int,
                         detected_face.bbox,
                     )
+                    now = monotonic()
 
-                    label = "Unknown"
-                    color = (0, 0, 255)
+                    confirmed = False
+                    confirmed_score = 0.0
 
                     if match is not None:
-                        score = float(match["score"])
-
-                        logger.info(
-                            "Face candidate: "
-                            "camera=%s employee=%s name=%s "
-                            "score=%.4f threshold=%.4f",
-                            camera_config.cameraId,
-                            match.get("employeeId"),
-                            match.get("employeeName"),
-                            score,
-                            settings.default_recognition_threshold,
+                        confirmed, confirmed_score = (
+                            update_recognition_candidate(
+                                match=match,
+                                recognition_state=(
+                                    recognition_state
+                                ),
+                                now=now,
+                                threshold=(
+                                    settings
+                                    .default_recognition_threshold
+                                ),
+                                window_seconds=(
+                                    settings
+                                    .recognition_candidate_window_seconds
+                                ),
+                                minimum_hits=(
+                                    settings
+                                    .recognition_candidate_min_hits
+                                ),
+                                fast_margin=(
+                                    settings
+                                    .recognition_candidate_fast_margin
+                                ),
+                                floor_margin=(
+                                    settings
+                                    .recognition_candidate_floor_margin
+                                ),
+                                hold_seconds=(
+                                    settings
+                                    .recognition_identity_hold_seconds
+                                ),
+                            )
                         )
 
-                        if (  score >= settings.default_recognition_threshold ):
+                        logger.info(
+                            "Recognition candidate: "
+                            "camera=%s employee=%s "
+                            "currentScore=%.4f bestScore=%.4f "
+                            "threshold=%.4f confirmed=%s",
+                            camera_config.cameraId,
+                            match.get("employeeId"),
+                            float(match["score"]),
+                            confirmed_score,
+                            settings.default_recognition_threshold,
+                            confirmed,
+                        )
+
+                        label = "Unknown"
+                        color = (0, 0, 255)
+                        if confirmed and match is not None:
                             employee_name = (
                                 match.get("employeeName")
                                 or match["employeeId"]
@@ -151,7 +191,7 @@ def read_camera(
 
                             label = (
                                 f"{employee_name} "
-                                f"{score:.2f}"
+                                f"{confirmed_score:.2f}"
                             )
 
                             color = (0, 255, 0)
@@ -162,13 +202,10 @@ def read_camera(
                                     AiCapability.FACE_RECOGNITION,
                                 )
                             )
-
                             if (
                                 camera_assignment is not None
                                 and camera_assignment.enabled
                             ):
-                                now = monotonic()
-
                                 person_key = (
                                     camera_config.cameraId,
                                     match["etsAuth"],
@@ -191,7 +228,7 @@ def read_camera(
                                     ] = state
                                 else:
                                     state["last_seen"] = now
-
+                                
                                 if (
                                     attendance_queue is not None
                                     and not state["queued"]
@@ -219,7 +256,9 @@ def read_camera(
                                             employee_name=(
                                                 employee_name
                                             ),
-                                            confidence=score,
+                                            confidence=(
+                                                confirmed_score
+                                            ),
                                         )
                                     )
 
@@ -239,7 +278,9 @@ def read_camera(
                                         "employeeName": (
                                             employee_name
                                         ),
-                                        "confidence": score,
+                                        "confidence": (
+                                            confirmed_score
+                                        ),
                                         "snapshotPath": (
                                             snapshot_path
                                         ),
@@ -272,7 +313,7 @@ def read_camera(
                                             "score=%.4f",
                                             camera_config.cameraId,
                                             match["employeeId"],
-                                            score,
+                                            confirmed_score,
                                         )
 
                         cv2.rectangle(
@@ -295,6 +336,18 @@ def read_camera(
 
             # Cleanup goes after the face loop.
             now = monotonic()
+            expired_candidates = [
+                candidate_key
+                for candidate_key, state
+                in recognition_state.items()
+                if (
+                    now - float(state["last_seen"])
+                    > 2.0
+                )
+            ]
+
+            for candidate_key in expired_candidates:
+                del recognition_state[candidate_key]
 
             expired_people = [
                 person_key
@@ -336,6 +389,105 @@ def read_camera(
             "Camera %s stopped",
             camera.camera_id,
         )
+
+
+def update_recognition_candidate(
+    match: dict | None,
+    recognition_state: dict[
+        tuple[str, str],
+        dict[str, Any],
+    ],
+    now: float,
+    threshold: float,
+    window_seconds: float,
+    minimum_hits: int,
+    fast_margin: float,
+    floor_margin: float,
+    hold_seconds: float,
+) -> tuple[bool, float]:
+    if match is None:
+        return False, 0.0
+
+    ets_auth = str(match["etsAuth"])
+    employee_id = str(match["employeeId"])
+    score = float(match["score"])
+
+    candidate_key = (
+        ets_auth,
+        employee_id,
+    )
+
+    state = recognition_state.get(candidate_key)
+
+    if state is None:
+        state = {
+            "samples": deque(),
+            "confirmed_until": 0.0,
+            "last_seen": now,
+        }
+
+        recognition_state[candidate_key] = state
+
+    state["last_seen"] = now
+
+    samples: deque = state["samples"]
+
+    samples.append(
+        (now, score)
+    )
+
+    # Remove scores outside the confirmation window.
+    while (
+        samples
+        and now - samples[0][0]
+        > window_seconds
+    ):
+        samples.popleft()
+
+    candidate_floor = (
+        threshold - floor_margin
+    )
+
+    # Only near-threshold scores count as useful hits.
+    valid_scores = [
+        sample_score
+        for _, sample_score in samples
+        if sample_score >= candidate_floor
+    ]
+
+    best_score = max(
+        valid_scores,
+        default=score,
+    )
+
+    # Very strong result: confirm immediately.
+    fast_confirmation = (
+        score >= threshold + fast_margin
+    )
+
+    # Normal result:
+    # same candidate appears repeatedly and at least
+    # one result reaches the normal threshold.
+    sequence_confirmation = (
+        len(valid_scores) >= minimum_hits
+        and best_score >= threshold
+    )
+
+    if (
+        fast_confirmation
+        or sequence_confirmation
+    ):
+        state["confirmed_until"] = (
+            now + hold_seconds
+        )
+
+    confirmed = (
+        now
+        <= float(state["confirmed_until"])
+    )
+
+    return confirmed, best_score
+
 
 def send_latest_frame(
     frame_queue: Any,
