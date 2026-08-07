@@ -6,6 +6,9 @@ from service.embedding_service import (
     EmbeddingService,   
     EmbeddingIndex,
 )
+from service.unknown_person_service import UnknownPersonService
+
+from service.unknown_person_consumer import UnknownPersonConsumer
 from service.attendance_service import AttendanceService
 from camera.camera_worker import read_camera
 from schemas.project_schema import CameraConfig
@@ -21,12 +24,14 @@ class CameraProcessManager:
         sync_service: SyncService,
         embedding_service: EmbeddingService,
         attendance_service: AttendanceService,
+        unknown_person_service: UnknownPersonService,
         mp_context: Any,
         log_queue: Any,
     ) -> None:
         self.sync_service = sync_service
         self.embedding_service = embedding_service
         self.attendance_service = attendance_service
+        self.unknown_person_service = unknown_person_service
         # Suitable for Windows multiprocessing.
         self._context = mp_context
 
@@ -35,9 +40,16 @@ class CameraProcessManager:
         self._frame_queues: dict[str, Any] = {}
         self._log_queue = log_queue
         self._attendance_queue = self._context.Queue(maxsize=500)
+        self._unknown_queue = self._context.Queue(maxsize=500)
         self._attendance_task: asyncio.Task | None = None
         self._stop_event = self._context.Event()
         self._display_process: mp.Process | None = None
+
+        self._unknown_consumer =  UnknownPersonConsumer(
+                                    queue=self._unknown_queue,
+                                    service=self.unknown_person_service,
+                                )
+            
 
     async def start_all(self) -> dict[str, Any]:
         async with self._lock:
@@ -56,6 +68,8 @@ class CameraProcessManager:
                 self._attendance_task = asyncio.create_task(
                     self._consume_attendance()
                 )
+
+            await self._unknown_consumer.start()
 
             embedding_index = await (
                 self.embedding_service
@@ -133,10 +147,15 @@ class CameraProcessManager:
             except Full:
                 pass
 
+            try:
+                self._unknown_queue.put_nowait(None)
+            except Full:
+                pass
             if self._attendance_task is not None:
                 await self._attendance_task
                 self._attendance_task = None
-
+                
+            await self._unknown_consumer.stop()
             return {
                 "stopped": stopped,
                 "count": len(stopped),
@@ -196,6 +215,7 @@ class CameraProcessManager:
                     rule,
                     self._frame_queues[camera.cameraId],
                     self._attendance_queue,
+                    self._unknown_queue,
                     self._log_queue,
                     self._stop_event,
                 ),

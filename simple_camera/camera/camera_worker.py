@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from logging_setup import (
     configure_queue_logging,
 )
-
+from camera.unknown_image_crop import (crop_unknown_face, crop_unknown_context, face_is_large_enough,)
 from tracking.person_tracking_runtime import (PersonTrackingRuntime,)
 from collections import deque
 
@@ -35,6 +35,7 @@ def read_camera(
     rule: AttendanceRules,
     frame_queue: Any | None = None,
     attendance_queue: Any | None = None,
+    unknown_queue: Any | None = None,
     log_queue: Any | None = None,
     stop_event: Any | None = None,
 ) -> None:
@@ -54,6 +55,7 @@ def read_camera(
     )
 
     camera_config = CameraConfig.model_validate(camera_data)
+    
     logger.info(
         "Camera worker starting: camera=%s",
         camera_config.cameraId,
@@ -97,6 +99,9 @@ def read_camera(
 
     consecutive_read_failures = 0
 
+    last_unknown_queue_time = 0.0
+    UNKNOWN_QUEUE_INTERVAL_SECONDS = 1.0
+    UNKNOWN_MATCH_THRESHOLD = 0.50
     try:
         while (
             stop_event is None
@@ -427,6 +432,49 @@ def read_camera(
                                         confirmed_score,
                                     )
 
+
+                    # ---------------------------------
+                    # UNKNOWN PERSON
+                    # ---------------------------------
+                    current_match_score = (
+                        float(match["score"])
+                        if match is not None
+                        else 0.0
+                    )
+
+                    is_unknown = (
+                        match is None
+                        or current_match_score
+                        < float(rule.recognitionThreshold)
+                    )
+
+                    if (
+                        is_unknown
+                        and unknown_queue is not None
+                        and (
+                            now
+                            - last_unknown_queue_time
+                            >= UNKNOWN_QUEUE_INTERVAL_SECONDS
+                        )
+                    ):
+                    
+                        unknown_queued = queue_unknown_face(
+                            unknown_queue=unknown_queue,
+                            frame=frame,
+                            detected_face=detected_face,
+                            detected_embedding=(
+                                detected_embedding
+                            ),
+                            camera_config=camera_config,
+                            rule=rule,
+                            match_threshold=(
+                                UNKNOWN_MATCH_THRESHOLD
+                            ),
+                        )
+
+                        if unknown_queued:
+                            last_unknown_queue_time = now       
+
                     cv2.rectangle(
                         frame,
                         (x1, y1),
@@ -695,3 +743,190 @@ def save_known_snapshot(
         return None
 
     return str(snapshot_path.resolve())
+
+def queue_unknown_face(
+    unknown_queue: Any,
+    frame: np.ndarray,
+    detected_face: Any,
+    detected_embedding: np.ndarray,
+    camera_config: CameraConfig,
+    rule: AttendanceRules,
+    match_threshold: float,
+) -> bool:
+    """
+    Prepare an unknown face and send it to the main process.
+
+    Returns True when successfully queued.
+    """
+
+    x1, y1, x2, y2 = map(
+        int,
+        detected_face.bbox,
+    )
+
+    bbox = (
+        x1,
+        y1,
+        x2,
+        y2,
+    )
+
+    # Don't save tiny faces.
+    if not face_is_large_enough(
+        bbox
+    ):
+        logger.debug(
+            "Unknown face too small: "
+            "camera=%s bbox=%s",
+            camera_config.cameraId,
+            bbox,
+        )
+
+        return False
+
+    face_crop = crop_unknown_face(
+        frame=frame,
+        bbox=bbox,
+    )
+
+    context_crop = crop_unknown_context(
+        frame=frame,
+        bbox=bbox,
+    )
+
+    if (
+        face_crop is None
+        or context_crop is None
+    ):
+        return False
+
+    face_ok, face_encoded = cv2.imencode(
+        ".jpg",
+        face_crop,
+        [
+            cv2.IMWRITE_JPEG_QUALITY,
+            90,
+        ],
+    )
+
+    if not face_ok:
+        logger.warning(
+            "Failed to encode unknown face: "
+            "camera=%s",
+            camera_config.cameraId,
+        )
+
+        return False
+
+    context_ok, context_encoded = (
+        cv2.imencode(
+            ".jpg",
+            context_crop,
+            [
+                cv2.IMWRITE_JPEG_QUALITY,
+                85,
+            ],
+        )
+    )
+
+    if not context_ok:
+        logger.warning(
+            "Failed to encode unknown context: "
+            "camera=%s",
+            camera_config.cameraId,
+        )
+
+        return False
+
+    face_width = x2 - x1
+    face_height = y2 - y1
+
+    size_quality = min(
+        1.0,
+        min(
+            face_width,
+            face_height,
+        ) / 160.0,
+    )
+
+    detection_score = float(
+        getattr(
+            detected_face,
+            "det_score",
+            1.0,
+        )
+    )
+
+    quality = min(
+        size_quality,
+        detection_score,
+    )
+
+    event = {
+        # The rule currently being processed.
+        "etsAuth": rule.etsAuth,
+
+        # Keep all tenants assigned to this physical
+        # camera for future resolution.
+
+        "cameraId": (
+            camera_config.cameraId
+        ),
+
+        "embedding": (
+            np.asarray(
+                detected_embedding,
+                dtype=np.float32,
+            )
+            .astype(float)
+            .tolist()
+        ),
+
+        "faceJpeg": (
+            face_encoded.tobytes()
+        ),
+
+        "contextJpeg": (
+            context_encoded.tobytes()
+        ),
+
+        "quality": float(
+            quality
+        ),
+
+        "observedAt": (
+            datetime.now(
+                timezone.utc
+            ).isoformat()
+        ),
+
+        "matchThreshold": float(
+            match_threshold
+        ),
+    }
+
+    try:
+        unknown_queue.put_nowait(
+            event
+        )
+
+    except Full:
+        logger.warning(
+            "Unknown person queue full: "
+            "camera=%s",
+            camera_config.cameraId,
+        )
+
+        return False
+
+    logger.info(
+        "Unknown person queued: "
+        "camera=%s "
+        "faceSize=%dx%d quality=%.4f",
+        camera_config.cameraId,
+        face_width,
+        face_height,
+        quality,
+    )
+
+    return True

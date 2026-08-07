@@ -7,7 +7,10 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 class GenBaseModel(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-
+class UnknownPersonStatus(str, Enum):
+    UNASSIGNED = "UNASSIGNED"
+    ASSIGNED = "ASSIGNED"
+    
 class AiCapability(str, Enum):
     FACE_RECOGNITION = "FACE_RECOGNITION"
     PLATE_RECOGNITION = "PLATE_RECOGNITION"

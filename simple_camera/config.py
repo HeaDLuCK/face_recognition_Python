@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     person_minimum_movement_pixels: float = 3.0
     person_trajectory_size: int = 30
 
+    erp_sync_interval_seconds: float = 30.0
+    erp_sync_batch_size: int = 10
+
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",

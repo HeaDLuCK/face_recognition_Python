@@ -2,7 +2,7 @@ import math
 from collections import deque
 from datetime import datetime
 
-from app.tracking.models import (
+from tracking.models import (
     BBox,
     Point,
     PersonDetection,

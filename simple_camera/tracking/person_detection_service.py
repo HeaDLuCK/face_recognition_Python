@@ -6,8 +6,8 @@ from typing import Any
 
 import numpy as np
 
-from app.config import Settings
-from app.tracking.models import PersonDetection
+from config import Settings
+from tracking.models import PersonDetection
 
 
 logger = logging.getLogger(__name__)

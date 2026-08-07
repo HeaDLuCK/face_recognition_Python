@@ -5,12 +5,12 @@ from time import monotonic
 import cv2
 import numpy as np
 
-from app.config import Settings
-from app.tracking.models import PersonTrack
-from app.tracking.person_detection_service import (
+from config import Settings
+from tracking.models import PersonTrack
+from tracking.person_detection_service import (
     PersonDetectionService,
 )
-from app.tracking.person_tracker import PersonTracker
+from tracking.person_tracker import PersonTracker
 
 
 logger = logging.getLogger(__name__)

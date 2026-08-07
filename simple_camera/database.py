@@ -15,13 +15,10 @@ ETABLISSEMENT_INDEXED_COLLECTIONS = (
     "attendance_detections",
     "camera_events",
     "alert_events",
-    "snapshot_metadata",
-    "unknown_face_crops",
     "camera_configs",
     "attendance_rules",
-    "attendance_sync_state",
     "service_logs",
-    "attendance_recovery_jobs",
+    "unknown_persons",
 )
 
 
@@ -75,8 +72,8 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
     )
     await db.attendance_detections.create_index([("etsAuth", 1), ("employeeId", 1), ("timestamp", -1)])
     await db.attendance_detections.create_index([("etsAuth", 1), ("eventType", 1), ("timestamp", 1)])
-    await db.camera_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
-    await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
+    # await db.camera_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
+    # await db.alert_events.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.snapshot_metadata.create_index([("etsAuth", 1), ("cameraId", 1), ("timestamp", -1)])
     await db.unknown_face_crops.create_index([("etsAuth", 1), ("cameraId", 1), ("createdAt", -1)])
     await db.unknown_face_crops.create_index([("etsAuth", 1), ("status", 1), ("createdAt", -1)])
@@ -98,16 +95,19 @@ async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
         unique=True,
     )
     await db.service_logs.create_index([("etsAuth", 1), ("createdAt", -1)])
-    await db.attendance_recovery_jobs.create_index(
-        [("status", 1), ("nextAttemptAt", 1), ("createdAt", 1)]
-    )
-    await db.attendance_recovery_jobs.create_index(
-        [("etsAuth", 1), ("cameraId", 1), ("windowStart", 1), ("windowEnd", 1)]
-    )
-    await db.attendance_recovery_jobs.create_index(
-        [("recoveryJobId", 1)],
-        unique=True,
-    )
+    await db.unknown_persons.create_index([("unknownId", 1),("assignedEmployeeId", 1)])
+    await db.unknown_persons.create_index( "unknownId", unique=True, )
+    await db.unknown_persons.create_index("lastSeenAt")
+    # await db.attendance_recovery_jobs.create_index(
+    #     [("status", 1), ("nextAttemptAt", 1), ("createdAt", 1)]
+    # )
+    # await db.attendance_recovery_jobs.create_index(
+    #     [("etsAuth", 1), ("cameraId", 1), ("windowStart", 1), ("windowEnd", 1)]
+    # )
+    # await db.attendance_recovery_jobs.create_index(
+    #     [("recoveryJobId", 1)],
+    #     unique=True,
+    # )
 
 def serialize_mongo_doc(doc: dict[str, Any] | None) -> dict[str, Any] | None:
     if doc is None:
