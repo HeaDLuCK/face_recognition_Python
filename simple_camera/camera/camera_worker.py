@@ -21,6 +21,8 @@ from datetime import datetime, timezone
 from logging_setup import (
     configure_queue_logging,
 )
+
+from tracking.person_tracking_runtime import (PersonTrackingRuntime,)
 from collections import deque
 
 
@@ -60,16 +62,16 @@ def read_camera(
 
     face_reco_engine: InsightFaceEngine | None = None
     fire_module: FireDetectionService | None = None
-    # tracking_module: FireDetectionService | None = None
+    person_tracking: PersonTrackingRuntime | None = None
     has_face_reco_module = camera_config.has_capability(AiCapability.FACE_RECOGNITION)
     has_fire_module = camera_config.has_capability(AiCapability.FIRE_DETECTION)
-    # has_tracking_module = camera_config.has_capability(AiCapability.PERSON_COUNTING)
+    has_tracking_module = camera_config.has_capability(AiCapability.PERSON_COUNTING)
     if has_face_reco_module:
         face_reco_engine = InsightFaceEngine()
     if has_fire_module:
         fire_module = FireDetectionService(settings)
-    # if has_tracking_module:
-    #         tracking_module = InsightFaceEngine()
+    if has_tracking_module:
+        person_tracking = PersonTrackingRuntime(settings)
     
     capture: cv2.VideoCapture | None = None
 
@@ -190,30 +192,63 @@ def read_camera(
                 )
             ]
 
-            # for person_key in expired_people:
-            #     del presence_state[person_key]
+            for person_key in expired_people:
+                del presence_state[person_key]
 
-            # if has_tracking_module:
-                #     print("has_tracking_module")
-                # if has_fire_module:
-                #     fire_detection:Any | None = None
-                #     if frame_number % 20 == 0: 
-                #         fire_detection = fire_module.detect_frame(frame)
-                #     if fire_detection != None:
-                #         for info in fire_detection:
-                #             x1, y1, x2, y2 = info
-                #             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                #             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 5)
-                #             cv2.putText(
-                #                 frame,
-                #                 "Fire",
-                #                 (x1 + 8, y1 + 30),
-                #                 cv2.FONT_HERSHEY_SIMPLEX,
-                #                 0.8,
-                #                 (0, 0, 255),
-                #                 2,
-                #                 cv2.LINE_AA,
-                #             )
+            if (person_tracking is not None and frame_number % settings.camera_frame_skip == 0 ):
+                try:
+                    updated_tracks, expired_tracks = (
+                        person_tracking.process_frame(
+                            frame=frame,
+                            draw=True,
+                        )
+                    )
+
+                    for track in updated_tracks:
+                        logger.debug(
+                            "Person track updated: "
+                            "camera=%s trackId=%s "
+                            "moving=%s movement=%.2f "
+                            "confidence=%.4f",
+                            camera_config.cameraId,
+                            track.track_id,
+                            track.is_moving,
+                            track.movement_distance,
+                            track.confidence,
+                        )
+
+                    for track in expired_tracks:
+                        logger.info(
+                            "Person track expired: "
+                            "camera=%s trackId=%s",
+                            camera_config.cameraId,
+                            track.track_id,
+                        )
+
+                except Exception:
+                    logger.exception(
+                        "Person tracking failed: camera=%s",
+                        camera_config.cameraId,
+                    )
+            if (fire_module is not None and frame_number % settings.camera_frame_skip == 0 ):
+                fire_detection:Any | None = None
+                if frame_number % 20 == 0: 
+                    fire_detection = fire_module.detect_frame(frame)
+                if fire_detection != None:
+                    for info in fire_detection:
+                        x1, y1, x2, y2 = info
+                        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 5)
+                        cv2.putText(
+                            frame,
+                            "Fire",
+                            (x1 + 8, y1 + 30),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.8,
+                            (0, 0, 255),
+                            2,
+                            cv2.LINE_AA,
+                        )
             if (face_reco_engine is not None and frame_number % settings.camera_frame_skip == 0 ):
                 detected_faces = (
                     face_reco_engine.detect_faces(frame)

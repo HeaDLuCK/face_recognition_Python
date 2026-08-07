@@ -36,6 +36,17 @@ class Settings(BaseSettings):
     recognition_candidate_floor_margin: float = Field(default=0.05,ge=0.0,le=0.2,)
     recognition_identity_hold_seconds: float = Field(default=1.2,ge=0.0,le=5.0,)
 
+
+    person_yolo_confidence: float = 0.40
+    person_yolo_imgsz: int = 640
+    person_yolo_device: str = "cpu"
+    person_yolo_max_detections: int = 20 
+    person_tracker_iou_threshold: float = 0.25
+    person_tracker_timeout_seconds: float = 1.5
+    person_movement_threshold_ratio: float = 0.02
+    person_minimum_movement_pixels: float = 3.0
+    person_trajectory_size: int = 30
+
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
