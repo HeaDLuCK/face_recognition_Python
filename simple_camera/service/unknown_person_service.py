@@ -23,19 +23,20 @@ class UnknownPersonService:
     - keep the best face image;
     - assign an unknown person to an employee later.
     """
-
+    REFERENCE_DUPLICATE_THRESHOLD = 0.92
+    MIN_REFERENCE_QUALITY = 0.60
     def __init__(
         self,
         db: AsyncIOMotorDatabase,
     ) -> None:
         self.db = db
+        
 
     async def register_seen(
         self,
         *,
         embedding: np.ndarray,
         face_path: str,
-        context_path: str | None,
         quality: float,
         observed_at: datetime,
         match_threshold: float,
@@ -67,7 +68,6 @@ class UnknownPersonService:
                 existing=existing,
                 embedding=normalized_embedding,
                 face_path=face_path,
-                context_path=context_path,
                 quality=quality,
                 observed_at=observed_at,
             )
@@ -75,7 +75,6 @@ class UnknownPersonService:
         return await self._create_unknown(
             embedding=normalized_embedding,
             face_path=face_path,
-            context_path=context_path,
             quality=quality,
             observed_at=observed_at,
         )
@@ -105,6 +104,7 @@ class UnknownPersonService:
             },
             {
                 "unknownId": 1,
+                "referenceEmbeddings": 1,
                 "referenceEmbedding": 1,
                 "bestQuality": 1,
                 "facePath": 1,
@@ -118,31 +118,31 @@ class UnknownPersonService:
         best_score = -1.0
 
         async for document in cursor:
-            stored_embedding = document.get(
-                "referenceEmbedding"
-            )
+            stored_embeddings = document.get("referenceEmbeddings")
 
-            if not stored_embedding:
+            # Support old Mongo documents temporarily.
+            if not stored_embeddings:
+                old_embedding = document.get("referenceEmbedding")
+
+                if old_embedding:
+                    stored_embeddings = [old_embedding]
+
+            if not stored_embeddings:
                 continue
 
-            stored = np.asarray(
-                stored_embedding,
-                dtype=np.float32,
-            )
+            document_best_score = -1.0
 
-            stored = self._normalize_embedding(
-                stored
-            )
+            for stored_embedding in stored_embeddings:
+                stored = np.asarray(stored_embedding,dtype=np.float32,)
 
-            score = float(
-                np.dot(
-                    normalized_embedding,
-                    stored,
-                )
-            )
+                stored = self._normalize_embedding(stored)
 
-            if score > best_score:
-                best_score = score
+                score = float(np.dot(normalized_embedding,stored,))
+
+                if score > document_best_score:
+                    document_best_score = score
+            if document_best_score > best_score:
+                best_score = document_best_score
                 best_document = document
 
         if (
@@ -171,7 +171,6 @@ class UnknownPersonService:
         *,
         embedding: np.ndarray,
         face_path: str,
-        context_path: str | None,
         quality: float,
         observed_at: datetime,
     ) -> dict:
@@ -199,14 +198,13 @@ class UnknownPersonService:
 
             "seenCount": 1,
 
-            "referenceEmbedding": (
+            "referenceEmbeddings": [
                 embedding
                 .astype(float)
                 .tolist()
-            ),
+            ],
 
             "facePath": face_path,
-            "contextPath": context_path,
 
             "bestQuality": float(
                 quality
@@ -244,7 +242,6 @@ class UnknownPersonService:
         existing: dict,
         embedding: np.ndarray,
         face_path: str,
-        context_path: str | None,
         quality: float,
         observed_at: datetime,
     ) -> dict:
@@ -266,22 +263,56 @@ class UnknownPersonService:
             )
         )
 
+        should_add_embedding = (
+            self._should_add_reference_embedding(
+                existing=existing,
+                embedding=embedding,
+                quality=quality,
+            )
+        )
+
+        if should_add_embedding:
+            reference_embeddings = list(
+                existing.get(
+                    "referenceEmbeddings"
+                )
+                or []
+            )
+
+            # Convert old document format if needed.
+            if (
+                not reference_embeddings
+                and existing.get(
+                    "referenceEmbedding"
+                )
+            ):
+                reference_embeddings.append(
+                    existing[
+                        "referenceEmbedding"
+                    ]
+                )
+
+            reference_embeddings.append(
+                embedding
+                .astype(float)
+                .tolist()
+            )
+
+            # KEEP THIS INSIDE THE IF
+            update_fields[
+                "referenceEmbeddings"
+            ] = reference_embeddings
+            
         # Keep the better face as the reference face.
         if quality > current_best_quality:
             update_fields.update(
                 {
-                    "referenceEmbedding": (
-                        embedding
-                        .astype(float)
-                        .tolist()
-                    ),
                     "facePath": face_path,
-                    "contextPath": context_path,
+
                     "bestQuality": float(
                         quality
                     ),
-                    # The ERP should receive the new,
-                    # better image on the next batch.
+
                     "erpSyncStatus": "PENDING",
                     "erpSyncedAt": None,
                 }
@@ -418,6 +449,67 @@ class UnknownPersonService:
             .hex[:12]
             .upper()
         )
+
+    def _should_add_reference_embedding(
+        self,
+        *,
+        existing: dict,
+        embedding: np.ndarray,
+        quality: float,
+    ) -> bool:
+
+        # Ignore very poor face samples.
+        if quality < self.MIN_REFERENCE_QUALITY:
+            return False
+
+        reference_embeddings = (
+            existing.get(
+                "referenceEmbeddings"
+            )
+            or []
+        )
+
+        # Backward compatibility with old records.
+        if (
+            not reference_embeddings
+            and existing.get(
+                "referenceEmbedding"
+            )
+        ):
+            reference_embeddings = [
+                existing[
+                    "referenceEmbedding"
+                ]
+            ]
+
+        candidate = self._normalize_embedding(
+            embedding
+        )
+
+        for stored_embedding in reference_embeddings:
+
+            stored = self._normalize_embedding(
+                np.asarray(
+                    stored_embedding,
+                    dtype=np.float32,
+                )
+            )
+
+            similarity = float(
+                np.dot(
+                    candidate,
+                    stored,
+                )
+            )
+
+            # Almost the same embedding already exists.
+            if (
+                similarity
+                >= self.REFERENCE_DUPLICATE_THRESHOLD
+            ):
+                return False
+
+        return True
 
     @staticmethod
     def _normalize_embedding(

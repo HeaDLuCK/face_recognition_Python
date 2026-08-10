@@ -30,6 +30,8 @@ class AttendanceService:
         confidence: float | None,
         snapshot_path: str | None = None,
         timestamp: datetime | None = None,
+        unknown_id: str | None = None,
+        identity_status: str | None = None,
     ) -> dict:
         event_time = timestamp or utc_now()
 
@@ -45,6 +47,14 @@ class AttendanceService:
             "timestamp": event_time,
             "createdAt": utc_now(),
         }
+
+        if unknown_id is not None:
+            doc["unknownId"] = unknown_id
+
+            doc["identityStatus"] = (
+                identity_status
+                or "PENDING"
+            )
 
         await self.db.attendance_detections.insert_one(doc)
 
@@ -299,6 +309,313 @@ class AttendanceService:
             "detection": detection,
         }
 
+
+    async def should_create_unknown_attendance(
+        self,
+        *,
+        ets_auth: str,
+        unknown_id: str,
+        camera_id: str,
+        camera_direction: str,
+        rule: AttendanceRules,
+        event_time: datetime | None = None,
+    ) -> tuple[
+        bool,
+        str | None,
+        dict[str, Any],
+    ]:
+        direction = self._attendance_direction(
+            camera_direction
+        )
+
+        if direction is None:
+            return (
+                False,
+                None,
+                {
+                    "reason": "invalid_direction",
+                    "cameraDirection": (
+                        camera_direction
+                    ),
+                },
+            )
+
+        now = event_time or utc_now()
+
+        cooldown_seconds = int(
+            rule.duplicateCooldownSeconds
+        )
+
+        cooldown = timedelta(
+            seconds=cooldown_seconds
+        )
+
+        cooldown_start = (
+            now - cooldown
+        )
+
+        if direction == "IN":
+            event_type = "ATTENDANCE_IN"
+
+        elif direction == "OUT":
+            event_type = "ATTENDANCE_OUT"
+
+        else:
+            # BIDIRECTIONAL/BOTH cannot tell IN vs OUT
+            # without another direction mechanism.
+            event_type = "UNKNOWN_FACE_DETECTED"
+
+        logger.info(
+            "Checking unknown attendance cooldown: "
+            "unknownId=%s camera=%s "
+            "eventType=%s start=%s end=%s "
+            "cooldownSeconds=%s",
+            unknown_id,
+            camera_id,
+            event_type,
+            cooldown_start.isoformat(),
+            now.isoformat(),
+            cooldown_seconds,
+        )
+
+        last_log = await (
+            self.db.attendance_detections
+            .find_one(
+                {
+                    "etsAuth": ets_auth,
+
+                    "unknownId": unknown_id,
+
+                    "cameraId": camera_id,
+
+                    "eventType": event_type,
+
+                    "timestamp": {
+                        "$gte": cooldown_start,
+                        "$lte": now,
+                    },
+                },
+                projection={
+                    "_id": 1,
+                    "detectionId": 1,
+                    "unknownId": 1,
+                    "cameraId": 1,
+                    "eventType": 1,
+                    "timestamp": 1,
+                },
+                sort=[
+                    (
+                        "timestamp",
+                        DESCENDING,
+                    )
+                ],
+            )
+        )
+
+        if last_log is not None:
+            return (
+                False,
+                direction,
+                {
+                    "reason": (
+                        "duplicate_cooldown"
+                    ),
+
+                    "cooldownSeconds": (
+                        cooldown_seconds
+                    ),
+
+                    "previousDetectionId": (
+                        last_log.get(
+                            "detectionId"
+                        )
+                        or str(
+                            last_log.get(
+                                "_id"
+                            )
+                        )
+                    ),
+
+                    "previousUnknownId": (
+                        last_log.get(
+                            "unknownId"
+                        )
+                    ),
+
+                    "previousCameraId": (
+                        last_log.get(
+                            "cameraId"
+                        )
+                    ),
+
+                    "previousEventType": (
+                        last_log.get(
+                            "eventType"
+                        )
+                    ),
+
+                    "previousTimestamp": (
+                        last_log.get(
+                            "timestamp"
+                        )
+                    ),
+                },
+            )
+
+        return (
+            True,
+            direction,
+            {
+                "reason": "allowed",
+                "eventType": event_type,
+            },
+        )
+
+    async def record_unknown_attendance_if_allowed(
+        self,
+        *,
+        ets_auth: str,
+        unknown_id: str,
+        camera_id: str,
+        camera_direction: str,
+        rule: AttendanceRules,
+        event_time: datetime | None = None,
+    ) -> dict:
+        now = event_time or utc_now()
+
+        logger.info(
+            "Unknown attendance evaluation started: "
+            "unknownId=%s etsAuth=%s "
+            "camera=%s direction=%s",
+            unknown_id,
+            ets_auth,
+            camera_id,
+            camera_direction,
+        )
+
+        allowed, direction, decision = (
+            await self.should_create_unknown_attendance(
+                ets_auth=ets_auth,
+                unknown_id=unknown_id,
+                camera_id=camera_id,
+                camera_direction=camera_direction,
+                rule=rule,
+                event_time=now,
+            )
+        )
+
+        if (
+            not allowed
+            or direction is None
+        ):
+            reason = decision.get(
+                "reason",
+                "unknown_rejection",
+            )
+
+            logger.info(
+                "Unknown attendance skipped: "
+                "unknownId=%s camera=%s "
+                "reason=%s",
+                unknown_id,
+                camera_id,
+                reason,
+            )
+
+            return {
+                "created": False,
+                "direction": direction,
+                "reason": reason,
+                "details": decision,
+            }
+
+        event_type = decision[
+            "eventType"
+        ]
+
+        detection = await self.record_detection(
+            ets_auth=ets_auth,
+            camera_id=camera_id,
+            event_type=event_type,
+
+            # We don't know employee yet.
+            employee_id=None,
+
+            # Not matched to employee yet.
+            matched=False,
+
+            confidence=None,
+
+            timestamp=now,
+
+            unknown_id=unknown_id,
+            identity_status="PENDING",
+        )
+
+        logger.info(
+            "Unknown attendance created: "
+            "unknownId=%s etsAuth=%s "
+            "camera=%s direction=%s "
+            "eventType=%s detectionId=%s",
+            unknown_id,
+            ets_auth,
+            camera_id,
+            direction,
+            event_type,
+            detection.get(
+                "detectionId"
+            ),
+        )
+
+        return {
+            "created": True,
+            "direction": direction,
+            "reason": "created",
+            "detection": detection,
+        }
+
+    async def resolve_unknown_attendance(
+        self,
+        *,
+        unknown_id: str,
+        employee_id: str,
+    ) -> int:
+        now = utc_now()
+
+        result = await (
+            self.db.attendance_detections
+            .update_many(
+                {
+                    "unknownId": unknown_id,
+                    "identityStatus": "PENDING",
+                },
+                {
+                    "$set": {
+                        "employeeId": (
+                            employee_id
+                        ),
+
+                        "identityStatus": (
+                            "RESOLVED"
+                        ),
+
+                        "resolvedAt": now,
+                    }
+                },
+            )
+        )
+
+        logger.info(
+            "Unknown attendance resolved: "
+            "unknownId=%s employee=%s "
+            "count=%d",
+            unknown_id,
+            employee_id,
+            result.modified_count,
+        )
+
+        return result.modified_count
+    
     async def list_attendance(
         self,
         ets_auth: str,

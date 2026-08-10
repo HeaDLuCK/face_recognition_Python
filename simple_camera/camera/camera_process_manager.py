@@ -48,6 +48,7 @@ class CameraProcessManager:
         self._unknown_consumer =  UnknownPersonConsumer(
                                     queue=self._unknown_queue,
                                     service=self.unknown_person_service,
+                                    attendance_service=self.attendance_service
                                 )
             
 

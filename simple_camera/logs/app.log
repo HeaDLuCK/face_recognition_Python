@@ -9841,3 +9841,526 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2026-08-07 18:07:38,425 | INFO | MainProcess:14108 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
 2026-08-07 18:07:40,298 | INFO | MainProcess:14108 | service.unknown_person_consumer | Unknown person consumer started
 2026-08-07 18:07:40,300 | INFO | MainProcess:14108 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 15:57:08,178 | INFO | MainProcess:14368 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 15:57:08,285 | INFO | MainProcess:14368 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 15:57:10,176 | INFO | MainProcess:14368 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 15:57:10,179 | INFO | MainProcess:14368 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 15:57:10,208 | INFO | MainProcess:14368 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15120
+2026-08-10 15:57:10,219 | INFO | MainProcess:14368 | camera.camera_process_manager | Started camera grid with PID 9660
+2026-08-10 15:57:10,219 | INFO | MainProcess:14368 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 15:57:10,219 | INFO | MainProcess:14368 | __main__ | FastAPI startup completed
+2026-08-10 15:57:10,219 | INFO | MainProcess:14368 | uvicorn.error | Application startup complete.
+2026-08-10 15:57:10,220 | ERROR | MainProcess:14368 | uvicorn.error | [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-08-10 15:57:10,220 | INFO | MainProcess:14368 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 15:57:10,220 | INFO | MainProcess:14368 | __main__ | FastAPI shutdown started
+2026-08-10 15:57:10,225 | INFO | MainProcess:14368 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 15:57:10,227 | INFO | MainProcess:14368 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 15:57:10,239 | INFO | MainProcess:14368 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 15:57:10,240 | INFO | MainProcess:14368 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 15:57:10,240 | INFO | MainProcess:14368 | __main__ | Camera processes stopped
+2026-08-10 15:57:10,241 | INFO | MainProcess:14368 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 15:57:10,255 | INFO | MainProcess:14368 | database | Closed MongoDB connection
+2026-08-10 15:57:10,255 | INFO | MainProcess:14368 | __main__ | MongoDB connection closed
+2026-08-10 15:57:10,255 | INFO | MainProcess:14368 | __main__ | FastAPI shutdown completed
+2026-08-10 15:57:59,915 | INFO | MainProcess:13796 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 15:57:59,989 | INFO | MainProcess:13796 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 15:58:01,008 | INFO | MainProcess:13796 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 15:58:01,009 | INFO | MainProcess:13796 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 15:58:01,026 | INFO | MainProcess:13796 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 4872
+2026-08-10 15:58:01,035 | INFO | MainProcess:13796 | camera.camera_process_manager | Started camera grid with PID 1500
+2026-08-10 15:58:01,036 | INFO | MainProcess:13796 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 15:58:01,036 | INFO | MainProcess:13796 | __main__ | FastAPI startup completed
+2026-08-10 15:58:01,036 | INFO | MainProcess:13796 | uvicorn.error | Application startup complete.
+2026-08-10 15:58:01,037 | INFO | MainProcess:13796 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 15:58:07,388 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 15:58:10,915 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 15:58:17,288 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x100 quality=0.5000
+2026-08-10 15:58:17,301 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person created: unknownId=UNK-AE8F422D2139 quality=0.5000
+2026-08-10 15:58:31,056 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 15:58:34,683 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=81x107 quality=0.5062
+2026-08-10 15:58:34,691 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person created: unknownId=UNK-D0453633ECA1 quality=0.5062
+2026-08-10 15:58:35,682 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=123x167 quality=0.7688
+2026-08-10 15:58:35,691 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person created: unknownId=UNK-F9DCEDC6B6E1 quality=0.7688
+2026-08-10 15:59:01,085 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=3
+2026-08-10 15:59:29,723 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x107 quality=0.5000
+2026-08-10 15:59:29,730 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person created: unknownId=UNK-AA85B8165D04 quality=0.5000
+2026-08-10 15:59:31,113 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 15:59:31,338 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x108 quality=0.5000
+2026-08-10 15:59:31,344 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AA85B8165D04 bestScore=0.5916 threshold=0.5000
+2026-08-10 15:59:31,348 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AA85B8165D04 matchScore=0.5916 quality=0.5000
+2026-08-10 15:59:32,496 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x105 quality=0.5000
+2026-08-10 15:59:32,502 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AA85B8165D04 bestScore=0.7136 threshold=0.5000
+2026-08-10 15:59:32,504 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AA85B8165D04 matchScore=0.7136 quality=0.5000
+2026-08-10 15:59:33,531 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=83x104 quality=0.5188
+2026-08-10 15:59:33,537 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AA85B8165D04 bestScore=0.6587 threshold=0.5000
+2026-08-10 15:59:33,539 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AA85B8165D04 matchScore=0.6587 quality=0.5188
+2026-08-10 15:59:34,572 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x100 quality=0.5000
+2026-08-10 15:59:34,578 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AA85B8165D04 bestScore=0.7625 threshold=0.5000
+2026-08-10 15:59:34,580 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AA85B8165D04 matchScore=0.7625 quality=0.5000
+2026-08-10 15:59:35,713 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=82x103 quality=0.5125
+2026-08-10 15:59:35,718 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AA85B8165D04 bestScore=0.7509 threshold=0.5000
+2026-08-10 15:59:35,720 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AA85B8165D04 matchScore=0.7509 quality=0.5125
+2026-08-10 15:59:36,905 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=82x103 quality=0.5125
+2026-08-10 15:59:36,911 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AA85B8165D04 bestScore=0.7863 threshold=0.5000
+2026-08-10 15:59:36,913 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AA85B8165D04 matchScore=0.7863 quality=0.5125
+2026-08-10 16:00:01,133 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:00:31,136 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:01:01,148 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:01:31,149 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:02:01,147 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:02:31,172 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:03:01,187 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:03:31,222 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:04:01,234 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:04:31,251 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:05:01,283 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:05:31,276 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:05:47,312 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=81x98 quality=0.5062
+2026-08-10 16:05:47,322 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person created: unknownId=UNK-49602AA3C349 quality=0.5062
+2026-08-10 16:05:48,320 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=83x101 quality=0.5188
+2026-08-10 16:05:48,326 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-49602AA3C349 bestScore=0.5129 threshold=0.5000
+2026-08-10 16:05:48,329 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-49602AA3C349 matchScore=0.5129 quality=0.5188
+2026-08-10 16:05:49,945 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x104 quality=0.5000
+2026-08-10 16:05:49,952 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AE8F422D2139 bestScore=0.5937 threshold=0.5000
+2026-08-10 16:05:49,954 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AE8F422D2139 matchScore=0.5937 quality=0.5000
+2026-08-10 16:05:51,203 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=82x102 quality=0.5125
+2026-08-10 16:05:51,215 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person created: unknownId=UNK-FC20A6AB76A0 quality=0.5125
+2026-08-10 16:05:57,312 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=84x105 quality=0.5250
+2026-08-10 16:05:57,318 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AE8F422D2139 bestScore=0.5166 threshold=0.5000
+2026-08-10 16:05:57,321 | INFO | MainProcess:13796 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-AE8F422D2139 matchScore=0.5166 quality=0.5250
+2026-08-10 16:06:01,341 | INFO | MainProcess:13796 | service.erp_sync_service | ERP unknown batch synchronized: count=6
+2026-08-10 16:06:05,143 | INFO | camera-CAM_Juniv301:4872 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 16:06:05,150 | INFO | MainProcess:13796 | uvicorn.error | Shutting down
+2026-08-10 16:06:05,261 | INFO | MainProcess:13796 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 16:06:05,261 | INFO | MainProcess:13796 | __main__ | FastAPI shutdown started
+2026-08-10 16:06:05,262 | INFO | MainProcess:13796 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 16:06:05,304 | INFO | MainProcess:13796 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 16:06:05,307 | INFO | MainProcess:13796 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 16:06:05,308 | INFO | MainProcess:13796 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 16:06:05,308 | INFO | MainProcess:13796 | __main__ | Camera processes stopped
+2026-08-10 16:06:05,308 | INFO | MainProcess:13796 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 16:06:05,326 | INFO | MainProcess:13796 | database | Closed MongoDB connection
+2026-08-10 16:06:05,326 | INFO | MainProcess:13796 | __main__ | MongoDB connection closed
+2026-08-10 16:06:05,326 | INFO | MainProcess:13796 | __main__ | FastAPI shutdown completed
+2026-08-10 16:35:40,110 | INFO | MainProcess:11432 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 16:35:40,181 | INFO | MainProcess:11432 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 16:35:41,376 | INFO | MainProcess:11432 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 16:35:41,376 | INFO | MainProcess:11432 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 16:35:41,400 | INFO | MainProcess:11432 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 5188
+2026-08-10 16:35:41,410 | INFO | MainProcess:11432 | camera.camera_process_manager | Started camera grid with PID 8692
+2026-08-10 16:35:41,410 | INFO | MainProcess:11432 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 16:35:41,410 | INFO | MainProcess:11432 | __main__ | FastAPI startup completed
+2026-08-10 16:35:41,411 | INFO | MainProcess:11432 | uvicorn.error | Application startup complete.
+2026-08-10 16:35:41,412 | INFO | MainProcess:11432 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 16:35:47,598 | INFO | camera-CAM_Juniv301:5188 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 16:35:50,893 | INFO | camera-CAM_Juniv301:5188 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 16:36:04,085 | INFO | camera-CAM_Juniv301:5188 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x107 quality=0.5000
+2026-08-10 16:36:04,093 | INFO | MainProcess:11432 | service.unknown_person_service | Unknown person created: unknownId=UNK-2159C99E7834 quality=0.5000
+2026-08-10 16:36:11,408 | INFO | MainProcess:11432 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 16:36:41,421 | INFO | MainProcess:11432 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 16:36:47,701 | INFO | camera-CAM_Juniv301:5188 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=82x100 quality=0.5125
+2026-08-10 16:36:47,706 | INFO | MainProcess:11432 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-2159C99E7834 bestScore=0.6003 threshold=0.5000
+2026-08-10 16:36:47,706 | ERROR | MainProcess:11432 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 65, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 265, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 459, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:37:11,437 | INFO | MainProcess:11432 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 16:37:16,102 | INFO | camera-CAM_Juniv301:5188 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 16:37:16,130 | INFO | MainProcess:11432 | uvicorn.error | Shutting down
+2026-08-10 16:37:16,241 | INFO | MainProcess:11432 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 16:37:16,241 | INFO | MainProcess:11432 | __main__ | FastAPI shutdown started
+2026-08-10 16:37:16,242 | INFO | MainProcess:11432 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 16:37:16,281 | INFO | MainProcess:11432 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 16:37:16,283 | INFO | MainProcess:11432 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 16:37:16,284 | INFO | MainProcess:11432 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 16:37:16,284 | INFO | MainProcess:11432 | __main__ | Camera processes stopped
+2026-08-10 16:37:16,284 | INFO | MainProcess:11432 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 16:37:16,294 | INFO | MainProcess:11432 | database | Closed MongoDB connection
+2026-08-10 16:37:16,294 | INFO | MainProcess:11432 | __main__ | MongoDB connection closed
+2026-08-10 16:37:16,294 | INFO | MainProcess:11432 | __main__ | FastAPI shutdown completed
+2026-08-10 16:40:42,941 | INFO | MainProcess:1500 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 16:40:43,013 | INFO | MainProcess:1500 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 16:40:44,142 | INFO | MainProcess:1500 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 16:40:44,143 | INFO | MainProcess:1500 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 16:40:44,161 | INFO | MainProcess:1500 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 14480
+2026-08-10 16:40:44,171 | INFO | MainProcess:1500 | camera.camera_process_manager | Started camera grid with PID 12540
+2026-08-10 16:40:44,171 | INFO | MainProcess:1500 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 16:40:44,171 | INFO | MainProcess:1500 | __main__ | FastAPI startup completed
+2026-08-10 16:40:44,171 | INFO | MainProcess:1500 | uvicorn.error | Application startup complete.
+2026-08-10 16:40:44,172 | INFO | MainProcess:1500 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 16:40:50,266 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 16:40:53,538 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 16:42:03,955 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x94 quality=0.5000
+2026-08-10 16:42:03,964 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown person created: unknownId=UNK-AB1CDA358A85 quality=0.5000
+2026-08-10 16:42:05,391 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=81x97 quality=0.5062
+2026-08-10 16:42:05,397 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AB1CDA358A85 bestScore=0.7339 threshold=0.5000
+2026-08-10 16:42:05,397 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:06,951 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x97 quality=0.5000
+2026-08-10 16:42:06,957 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AB1CDA358A85 bestScore=0.7033 threshold=0.5000
+2026-08-10 16:42:06,957 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:07,957 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=83x98 quality=0.5188
+2026-08-10 16:42:07,963 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AB1CDA358A85 bestScore=0.6223 threshold=0.5000
+2026-08-10 16:42:07,963 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:08,964 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=84x103 quality=0.5250
+2026-08-10 16:42:08,969 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-AB1CDA358A85 bestScore=0.5951 threshold=0.5000
+2026-08-10 16:42:08,969 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:14,189 | INFO | MainProcess:1500 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 16:42:44,198 | INFO | MainProcess:1500 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 16:43:14,196 | INFO | MainProcess:1500 | service.erp_sync_service | ERP unknown batch synchronized: count=1
+2026-08-10 16:43:23,413 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=85x107 quality=0.5312
+2026-08-10 16:43:23,421 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown person created: unknownId=UNK-255677DE6F0A quality=0.5312
+2026-08-10 16:43:28,193 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=86x147 quality=0.5375
+2026-08-10 16:43:28,201 | INFO | MainProcess:1500 | service.unknown_person_service | Unknown person created: unknownId=UNK-9995496DCD71 quality=0.5375
+2026-08-10 16:43:44,218 | INFO | MainProcess:1500 | service.erp_sync_service | ERP unknown batch synchronized: count=3
+2026-08-10 16:44:14,231 | INFO | MainProcess:1500 | service.erp_sync_service | ERP unknown batch synchronized: count=3
+2026-08-10 16:44:33,539 | INFO | MainProcess:1500 | uvicorn.error | Shutting down
+2026-08-10 16:44:33,561 | INFO | camera-CAM_Juniv301:14480 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 16:44:33,651 | INFO | MainProcess:1500 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 16:44:33,651 | INFO | MainProcess:1500 | __main__ | FastAPI shutdown started
+2026-08-10 16:44:33,652 | INFO | MainProcess:1500 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 16:44:33,690 | INFO | MainProcess:1500 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 16:44:33,692 | INFO | MainProcess:1500 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 16:44:33,693 | INFO | MainProcess:1500 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 16:44:33,693 | INFO | MainProcess:1500 | __main__ | Camera processes stopped
+2026-08-10 16:44:33,693 | INFO | MainProcess:1500 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 16:44:33,704 | INFO | MainProcess:1500 | database | Closed MongoDB connection
+2026-08-10 16:44:33,704 | INFO | MainProcess:1500 | __main__ | MongoDB connection closed
+2026-08-10 16:44:33,704 | INFO | MainProcess:1500 | __main__ | FastAPI shutdown completed
+2026-08-10 16:50:18,448 | INFO | MainProcess:5640 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 16:50:18,532 | INFO | MainProcess:5640 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 16:50:19,840 | INFO | MainProcess:5640 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 16:50:19,841 | INFO | MainProcess:5640 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 16:50:19,851 | WARNING | MainProcess:5640 | service.erp_sync_service | Unknown face file not found: unknownId=UNK-AB1CDA358A85 path=snapshots\unknown\face_8be785870cba4cf692db5f1c15f0071d.jpg
+2026-08-10 16:50:19,851 | WARNING | MainProcess:5640 | service.erp_sync_service | Unknown face file not found: unknownId=UNK-255677DE6F0A path=snapshots\unknown\face_d017628585bf4d259a71a3943e636f9d.jpg
+2026-08-10 16:50:19,851 | WARNING | MainProcess:5640 | service.erp_sync_service | Unknown face file not found: unknownId=UNK-9995496DCD71 path=snapshots\unknown\face_697e0996ff914c68b06d2c3ad9fdd7e1.jpg
+2026-08-10 16:50:19,863 | INFO | MainProcess:5640 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 4932
+2026-08-10 16:50:19,875 | INFO | MainProcess:5640 | camera.camera_process_manager | Started camera grid with PID 15036
+2026-08-10 16:50:19,876 | INFO | MainProcess:5640 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 16:50:19,876 | INFO | MainProcess:5640 | __main__ | FastAPI startup completed
+2026-08-10 16:50:19,876 | INFO | MainProcess:5640 | uvicorn.error | Application startup complete.
+2026-08-10 16:50:19,877 | INFO | MainProcess:5640 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 16:50:24,627 | INFO | MainProcess:5640 | uvicorn.error | Shutting down
+2026-08-10 16:50:24,728 | INFO | MainProcess:5640 | uvicorn.error | Finished server process [5640]
+2026-08-10 16:50:24,728 | INFO | MainProcess:5640 | __main__ | FastAPI shutdown started
+2026-08-10 16:50:24,729 | INFO | MainProcess:5640 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 16:50:24,757 | INFO | MainProcess:5640 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 16:50:24,760 | INFO | MainProcess:5640 | __main__ | FastAPI shutdown completed
+2026-08-10 16:50:52,609 | INFO | MainProcess:2088 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 16:50:52,677 | INFO | MainProcess:2088 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 16:50:53,720 | INFO | MainProcess:2088 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 16:50:53,721 | INFO | MainProcess:2088 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 16:50:53,738 | INFO | MainProcess:2088 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 10448
+2026-08-10 16:50:53,750 | INFO | MainProcess:2088 | camera.camera_process_manager | Started camera grid with PID 528
+2026-08-10 16:50:53,750 | INFO | MainProcess:2088 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 16:50:53,750 | INFO | MainProcess:2088 | __main__ | FastAPI startup completed
+2026-08-10 16:50:53,751 | INFO | MainProcess:2088 | uvicorn.error | Application startup complete.
+2026-08-10 16:50:53,752 | INFO | MainProcess:2088 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 16:51:00,263 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 16:51:03,601 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 16:51:20,789 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=84x115 quality=0.5250
+2026-08-10 16:51:20,796 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown person created: unknownId=UNK-1954A1284CBF quality=0.5250
+2026-08-10 16:51:21,791 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=117x140 quality=0.7312
+2026-08-10 16:51:21,800 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown person created: unknownId=UNK-A4DA935794AC quality=0.7312
+2026-08-10 16:51:23,770 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=2
+2026-08-10 16:51:26,182 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=95x162 quality=0.5938
+2026-08-10 16:51:26,191 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown person created: unknownId=UNK-2126B5E3C2D8 quality=0.5938
+2026-08-10 16:51:53,801 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=3
+2026-08-10 16:52:23,830 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=3
+2026-08-10 16:52:53,834 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=3
+2026-08-10 16:52:58,422 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=85x113 quality=0.5312
+2026-08-10 16:52:58,428 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-1954A1284CBF bestScore=0.6008 threshold=0.5000
+2026-08-10 16:52:58,428 | ERROR | MainProcess:2088 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 303, in _update_existing_unknown
+    ] = reference_embeddings
+UnboundLocalError: local variable 'reference_embeddings' referenced before assignment
+2026-08-10 16:52:59,451 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=117x144 quality=0.7312
+2026-08-10 16:52:59,456 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-A4DA935794AC bestScore=0.5712 threshold=0.5000
+2026-08-10 16:52:59,459 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-A4DA935794AC matchScore=0.5712 quality=0.7312
+2026-08-10 16:53:03,450 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=84x124 quality=0.5250
+2026-08-10 16:53:03,458 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown person created: unknownId=UNK-55B378E1D5E0 quality=0.5250
+2026-08-10 16:53:23,861 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=4
+2026-08-10 16:53:24,819 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=81x108 quality=0.5062
+2026-08-10 16:53:24,826 | INFO | MainProcess:2088 | service.unknown_person_service | Unknown person created: unknownId=UNK-7AC22D2FE934 quality=0.5062
+2026-08-10 16:53:53,884 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:54:23,889 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:54:53,919 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:55:23,916 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:55:53,924 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:56:23,951 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:56:53,987 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:57:23,998 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:57:54,003 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:58:24,029 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:58:54,062 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:59:24,092 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 16:59:54,097 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:00:24,117 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:00:54,123 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:01:24,136 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:01:54,156 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:02:24,166 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:02:54,171 | INFO | MainProcess:2088 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:03:09,106 | INFO | MainProcess:2088 | uvicorn.error | Shutting down
+2026-08-10 17:03:09,128 | INFO | camera-CAM_Juniv301:10448 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 17:03:09,211 | INFO | MainProcess:2088 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 17:03:09,211 | INFO | MainProcess:2088 | __main__ | FastAPI shutdown started
+2026-08-10 17:03:09,212 | INFO | MainProcess:2088 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 17:03:09,259 | INFO | MainProcess:2088 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 17:03:09,263 | INFO | MainProcess:2088 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 17:03:09,268 | INFO | MainProcess:2088 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 17:03:09,269 | INFO | MainProcess:2088 | __main__ | Camera processes stopped
+2026-08-10 17:03:09,269 | INFO | MainProcess:2088 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 17:03:09,279 | INFO | MainProcess:2088 | database | Closed MongoDB connection
+2026-08-10 17:03:09,279 | INFO | MainProcess:2088 | __main__ | MongoDB connection closed
+2026-08-10 17:03:09,279 | INFO | MainProcess:2088 | __main__ | FastAPI shutdown completed
+2026-08-10 17:04:05,607 | INFO | MainProcess:13092 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 17:04:05,710 | INFO | MainProcess:13092 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 17:04:07,237 | INFO | MainProcess:13092 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 17:04:07,238 | INFO | MainProcess:13092 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 17:04:07,264 | INFO | MainProcess:13092 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 7032
+2026-08-10 17:04:07,277 | INFO | MainProcess:13092 | camera.camera_process_manager | Started camera grid with PID 11652
+2026-08-10 17:04:07,277 | INFO | MainProcess:13092 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 17:04:07,277 | INFO | MainProcess:13092 | __main__ | FastAPI startup completed
+2026-08-10 17:04:07,278 | INFO | MainProcess:13092 | uvicorn.error | Application startup complete.
+2026-08-10 17:04:07,283 | INFO | MainProcess:13092 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 17:04:07,286 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:04:14,748 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 17:04:18,228 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 17:04:37,289 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:05:07,289 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=5
+2026-08-10 17:05:11,189 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=81x104 quality=0.5062
+2026-08-10 17:05:11,196 | INFO | MainProcess:13092 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-1954A1284CBF bestScore=0.5134 threshold=0.5000
+2026-08-10 17:05:11,196 | ERROR | MainProcess:13092 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 303, in _update_existing_unknown
+    ] = reference_embeddings
+UnboundLocalError: local variable 'reference_embeddings' referenced before assignment
+2026-08-10 17:05:12,189 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=107x150 quality=0.6687
+2026-08-10 17:05:12,196 | INFO | MainProcess:13092 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-1954A1284CBF bestScore=0.5537 threshold=0.5000
+2026-08-10 17:05:12,199 | INFO | MainProcess:13092 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-1954A1284CBF matchScore=0.5537 quality=0.6687
+2026-08-10 17:05:22,205 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=85x108 quality=0.5312
+2026-08-10 17:05:22,212 | INFO | MainProcess:13092 | service.unknown_person_service | Unknown person created: unknownId=UNK-8630A6A9AF34 quality=0.5312
+2026-08-10 17:05:23,400 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x104 quality=0.5000
+2026-08-10 17:05:23,410 | INFO | MainProcess:13092 | service.unknown_person_service | Unknown person created: unknownId=UNK-075BDA31C5AF quality=0.5000
+2026-08-10 17:05:37,330 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=7
+2026-08-10 17:05:45,199 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=82x117 quality=0.5125
+2026-08-10 17:05:45,209 | INFO | MainProcess:13092 | service.unknown_person_service | Unknown person created: unknownId=UNK-E9BE23F55172 quality=0.5125
+2026-08-10 17:06:07,336 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:06:37,358 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:07:07,372 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:07:37,368 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:08:07,378 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:08:37,403 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:09:07,417 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:09:37,440 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:10:07,470 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:10:37,503 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:11:07,514 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:11:37,556 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:12:07,559 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:12:37,564 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:13:07,586 | INFO | MainProcess:13092 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:13:23,604 | INFO | camera-CAM_Juniv301:7032 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 17:13:23,628 | INFO | MainProcess:13092 | uvicorn.error | Shutting down
+2026-08-10 17:13:23,739 | INFO | MainProcess:13092 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 17:13:23,739 | INFO | MainProcess:13092 | __main__ | FastAPI shutdown started
+2026-08-10 17:13:23,739 | INFO | MainProcess:13092 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 17:13:23,787 | INFO | MainProcess:13092 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 17:13:23,789 | INFO | MainProcess:13092 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 17:13:23,790 | INFO | MainProcess:13092 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 17:13:23,790 | INFO | MainProcess:13092 | __main__ | Camera processes stopped
+2026-08-10 17:13:23,791 | INFO | MainProcess:13092 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 17:13:23,802 | INFO | MainProcess:13092 | database | Closed MongoDB connection
+2026-08-10 17:13:23,802 | INFO | MainProcess:13092 | __main__ | MongoDB connection closed
+2026-08-10 17:13:23,802 | INFO | MainProcess:13092 | __main__ | FastAPI shutdown completed
+2026-08-10 17:13:32,067 | INFO | MainProcess:13228 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 17:13:32,135 | INFO | MainProcess:13228 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 17:13:33,310 | INFO | MainProcess:13228 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 17:13:33,312 | INFO | MainProcess:13228 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 17:13:33,332 | INFO | MainProcess:13228 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15132
+2026-08-10 17:13:33,343 | INFO | MainProcess:13228 | camera.camera_process_manager | Started camera grid with PID 6860
+2026-08-10 17:13:33,343 | INFO | MainProcess:13228 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 17:13:33,343 | INFO | MainProcess:13228 | __main__ | FastAPI startup completed
+2026-08-10 17:13:33,344 | INFO | MainProcess:13228 | uvicorn.error | Application startup complete.
+2026-08-10 17:13:33,348 | INFO | MainProcess:13228 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 17:13:33,355 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:13:40,086 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 17:13:43,609 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 17:14:03,361 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=8
+2026-08-10 17:14:04,417 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=83x109 quality=0.5188
+2026-08-10 17:14:04,426 | INFO | MainProcess:13228 | service.unknown_person_service | Unknown person created: unknownId=UNK-8EB68C3750FB quality=0.5188
+2026-08-10 17:14:33,421 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=9
+2026-08-10 17:15:03,452 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=9
+2026-08-10 17:15:28,033 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=80x99 quality=0.5000
+2026-08-10 17:15:28,041 | INFO | MainProcess:13228 | service.unknown_person_service | Unknown matching result: bestUnknownId=UNK-1954A1284CBF bestScore=0.5397 threshold=0.5000
+2026-08-10 17:15:28,043 | INFO | MainProcess:13228 | service.unknown_person_service | Unknown person seen again: unknownId=UNK-1954A1284CBF matchScore=0.5397 quality=0.5000
+2026-08-10 17:15:29,221 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=126x169 quality=0.7875
+2026-08-10 17:15:29,233 | INFO | MainProcess:13228 | service.unknown_person_service | Unknown person created: unknownId=UNK-C53FD4CAD96B quality=0.7875
+2026-08-10 17:15:33,485 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:15:34,419 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=125x189 quality=0.7812
+2026-08-10 17:15:34,428 | INFO | MainProcess:13228 | service.unknown_person_service | Unknown person created: unknownId=UNK-840561ED0166 quality=0.7812
+2026-08-10 17:15:35,438 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=88x156 quality=0.5500
+2026-08-10 17:15:35,448 | INFO | MainProcess:13228 | service.unknown_person_service | Unknown person created: unknownId=UNK-44CF86DB92EB quality=0.5500
+2026-08-10 17:16:03,487 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:16:33,501 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:17:03,533 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:17:33,560 | INFO | MainProcess:13228 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:17:50,854 | INFO | MainProcess:13228 | uvicorn.error | Shutting down
+2026-08-10 17:17:50,888 | INFO | camera-CAM_Juniv301:15132 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 17:17:50,964 | INFO | MainProcess:13228 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 17:17:50,964 | INFO | MainProcess:13228 | __main__ | FastAPI shutdown started
+2026-08-10 17:17:50,964 | INFO | MainProcess:13228 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 17:17:51,037 | INFO | MainProcess:13228 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 17:17:51,040 | INFO | MainProcess:13228 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 17:17:51,041 | INFO | MainProcess:13228 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 17:17:51,041 | INFO | MainProcess:13228 | __main__ | Camera processes stopped
+2026-08-10 17:17:51,042 | INFO | MainProcess:13228 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 17:17:51,056 | INFO | MainProcess:13228 | database | Closed MongoDB connection
+2026-08-10 17:17:51,056 | INFO | MainProcess:13228 | __main__ | MongoDB connection closed
+2026-08-10 17:17:51,056 | INFO | MainProcess:13228 | __main__ | FastAPI shutdown completed
+2026-08-10 17:37:37,777 | INFO | MainProcess:6256 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 17:37:37,863 | INFO | MainProcess:6256 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 17:37:39,326 | INFO | MainProcess:6256 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 17:37:39,328 | INFO | MainProcess:6256 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 17:37:39,352 | INFO | MainProcess:6256 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 14568
+2026-08-10 17:37:39,361 | INFO | MainProcess:6256 | camera.camera_process_manager | Started camera grid with PID 14968
+2026-08-10 17:37:39,361 | INFO | MainProcess:6256 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 17:37:39,361 | INFO | MainProcess:6256 | __main__ | FastAPI startup completed
+2026-08-10 17:37:39,362 | INFO | MainProcess:6256 | uvicorn.error | Application startup complete.
+2026-08-10 17:37:39,365 | INFO | MainProcess:6256 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 17:37:39,375 | INFO | MainProcess:6256 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:37:47,532 | INFO | camera-CAM_Juniv301:14568 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 17:37:51,405 | INFO | camera-CAM_Juniv301:14568 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 17:37:53,561 | ERROR | camera-CAM_Juniv301:14568 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 467, in read_camera
+    unknown_queued = queue_unknown_face(
+TypeError: queue_unknown_face() got an unexpected keyword argument 'cameraDirection'
+2026-08-10 17:37:53,574 | INFO | camera-CAM_Juniv301:14568 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 17:38:09,409 | INFO | MainProcess:6256 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:38:39,428 | INFO | MainProcess:6256 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:39:09,446 | INFO | MainProcess:6256 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:39:39,455 | INFO | MainProcess:6256 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:40:09,480 | INFO | MainProcess:6256 | service.erp_sync_service | ERP unknown batch synchronized: count=10
+2026-08-10 17:40:09,700 | INFO | MainProcess:6256 | uvicorn.error | Shutting down
+2026-08-10 17:40:09,736 | INFO | MainProcess:6256 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 17:40:09,799 | INFO | MainProcess:6256 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 17:40:09,799 | INFO | MainProcess:6256 | __main__ | FastAPI shutdown started
+2026-08-10 17:40:09,800 | INFO | MainProcess:6256 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 17:40:09,806 | INFO | MainProcess:6256 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 17:40:09,807 | INFO | MainProcess:6256 | __main__ | Camera processes stopped
+2026-08-10 17:40:09,807 | INFO | MainProcess:6256 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 17:40:09,820 | INFO | MainProcess:6256 | database | Closed MongoDB connection
+2026-08-10 17:40:09,820 | INFO | MainProcess:6256 | __main__ | MongoDB connection closed
+2026-08-10 17:40:09,820 | INFO | MainProcess:6256 | __main__ | FastAPI shutdown completed
+2026-08-10 17:52:59,017 | INFO | MainProcess:3988 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-10 17:52:59,089 | INFO | MainProcess:3988 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-10 17:53:00,352 | INFO | MainProcess:3988 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-10 17:53:00,355 | INFO | MainProcess:3988 | camera.camera_process_manager | Attendance consumer started
+2026-08-10 17:53:00,378 | INFO | MainProcess:3988 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 10256
+2026-08-10 17:53:00,390 | INFO | MainProcess:3988 | camera.camera_process_manager | Started camera grid with PID 6472
+2026-08-10 17:53:00,390 | INFO | MainProcess:3988 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-10 17:53:00,390 | INFO | MainProcess:3988 | __main__ | FastAPI startup completed
+2026-08-10 17:53:00,390 | INFO | MainProcess:3988 | uvicorn.error | Application startup complete.
+2026-08-10 17:53:00,391 | INFO | MainProcess:3988 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-10 17:53:07,008 | INFO | camera-CAM_Juniv301:10256 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-10 17:53:10,272 | INFO | camera-CAM_Juniv301:10256 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-10 17:53:14,176 | INFO | camera-CAM_Juniv301:10256 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=83x104 quality=0.5188
+2026-08-10 17:53:14,188 | INFO | MainProcess:3988 | service.unknown_person_service | Unknown person created: unknownId=UNK-D8F0F2BEFF5F quality=0.5188
+2026-08-10 17:53:14,188 | INFO | MainProcess:3988 | service.attendance_service | Unknown attendance evaluation started: unknownId=UNK-D8F0F2BEFF5F etsAuth=Resta2 camera=CAM_Juniv301 direction=BIDIRECTIONAL
+2026-08-10 17:53:14,188 | INFO | MainProcess:3988 | service.attendance_service | Checking unknown attendance cooldown: unknownId=UNK-D8F0F2BEFF5F camera=CAM_Juniv301 eventType=UNKNOWN_FACE_DETECTED start=2026-08-10T16:50:24.176137+00:00 end=2026-08-10T16:53:14.176137+00:00 cooldownSeconds=170
+2026-08-10 17:53:14,195 | INFO | MainProcess:3988 | service.attendance_service | Unknown attendance created: unknownId=UNK-D8F0F2BEFF5F etsAuth=Resta2 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=UNKNOWN_FACE_DETECTED detectionId=d56ae6f7-4b70-4344-9a2d-0e5419843f0f
+2026-08-10 17:53:14,195 | INFO | MainProcess:3988 | service.unknown_person_consumer | Unknown attendance result: unknownId=UNK-D8F0F2BEFF5F camera=CAM_Juniv301 created=True reason=created
+2026-08-10 17:53:15,162 | INFO | camera-CAM_Juniv301:10256 | camera.camera_worker | Unknown person queued: camera=CAM_Juniv301 faceSize=145x194 quality=0.9062
+2026-08-10 17:53:15,169 | INFO | MainProcess:3988 | service.unknown_person_service | Unknown person created: unknownId=UNK-7317001C9CE2 quality=0.9062
+2026-08-10 17:53:15,169 | INFO | MainProcess:3988 | service.attendance_service | Unknown attendance evaluation started: unknownId=UNK-7317001C9CE2 etsAuth=Resta2 camera=CAM_Juniv301 direction=BIDIRECTIONAL
+2026-08-10 17:53:15,170 | INFO | MainProcess:3988 | service.attendance_service | Checking unknown attendance cooldown: unknownId=UNK-7317001C9CE2 camera=CAM_Juniv301 eventType=UNKNOWN_FACE_DETECTED start=2026-08-10T16:50:25.161532+00:00 end=2026-08-10T16:53:15.161532+00:00 cooldownSeconds=170
+2026-08-10 17:53:15,175 | INFO | MainProcess:3988 | service.attendance_service | Unknown attendance created: unknownId=UNK-7317001C9CE2 etsAuth=Resta2 camera=CAM_Juniv301 direction=BIDIRECTIONAL eventType=UNKNOWN_FACE_DETECTED detectionId=a8e19cd3-c74c-454c-ab4f-765378236ee5
+2026-08-10 17:53:15,175 | INFO | MainProcess:3988 | service.unknown_person_consumer | Unknown attendance result: unknownId=UNK-7317001C9CE2 camera=CAM_Juniv301 created=True reason=created
+2026-08-10 17:53:30,411 | INFO | MainProcess:3988 | service.erp_sync_service | ERP unknown batch synchronized: count=2
+2026-08-10 17:54:00,420 | INFO | MainProcess:3988 | service.erp_sync_service | ERP unknown batch synchronized: count=2
+2026-08-10 17:54:30,424 | INFO | MainProcess:3988 | service.erp_sync_service | ERP unknown batch synchronized: count=2
+2026-08-10 17:55:00,430 | INFO | MainProcess:3988 | service.erp_sync_service | ERP unknown batch synchronized: count=2
+2026-08-10 17:55:23,832 | INFO | camera-CAM_Juniv301:10256 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-10 17:55:23,854 | INFO | MainProcess:3988 | uvicorn.error | Shutting down
+2026-08-10 17:55:23,965 | INFO | MainProcess:3988 | uvicorn.error | Waiting for application shutdown.
+2026-08-10 17:55:23,965 | INFO | MainProcess:3988 | __main__ | FastAPI shutdown started
+2026-08-10 17:55:23,966 | INFO | MainProcess:3988 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-10 17:55:24,006 | INFO | MainProcess:3988 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-10 17:55:24,009 | INFO | MainProcess:3988 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-10 17:55:24,009 | INFO | MainProcess:3988 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-10 17:55:24,010 | INFO | MainProcess:3988 | __main__ | Camera processes stopped
+2026-08-10 17:55:24,011 | INFO | MainProcess:3988 | service.erp_sync_service | ERP sync service stopped
+2026-08-10 17:55:24,022 | INFO | MainProcess:3988 | database | Closed MongoDB connection
+2026-08-10 17:55:24,022 | INFO | MainProcess:3988 | __main__ | MongoDB connection closed
+2026-08-10 17:55:24,022 | INFO | MainProcess:3988 | __main__ | FastAPI shutdown completed

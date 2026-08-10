@@ -844,3 +844,96 @@ Traceback (most recent call last):
     raise HTTPStatusError(message, request=request, response=self)
 httpx.HTTPStatusError: Client error '404 ' for url 'http://192.168.100.156:8090/digi-restau/api/ai/unknown-persons/batch'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2026-08-10 15:57:10,220 | ERROR | MainProcess:14368 | uvicorn.error | [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-08-10 16:36:47,706 | ERROR | MainProcess:11432 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 65, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 265, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 459, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:05,397 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:06,957 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:07,963 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:42:08,969 | ERROR | MainProcess:1500 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 267, in _update_existing_unknown
+    self._should_add_reference_embedding(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 461, in _should_add_reference_embedding
+    if quality < self.MIN_REFERENCE_QUALITY:
+AttributeError: 'UnknownPersonService' object has no attribute 'MIN_REFERENCE_QUALITY'
+2026-08-10 16:52:58,428 | ERROR | MainProcess:2088 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 303, in _update_existing_unknown
+    ] = reference_embeddings
+UnboundLocalError: local variable 'reference_embeddings' referenced before assignment
+2026-08-10 17:05:11,196 | ERROR | MainProcess:13092 | service.unknown_person_consumer | Failed to process unknown person
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 77, in _run
+    await self._process_item(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_consumer.py", line 108, in _process_item
+    unknown = await self.service.register_seen(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 67, in register_seen
+    return await self._update_existing_unknown(
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\unknown_person_service.py", line 303, in _update_existing_unknown
+    ] = reference_embeddings
+UnboundLocalError: local variable 'reference_embeddings' referenced before assignment
+2026-08-10 17:37:53,561 | ERROR | camera-CAM_Juniv301:14568 | camera.camera_worker | Camera CAM_Juniv301 worker failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 467, in read_camera
+    unknown_queued = queue_unknown_face(
+TypeError: queue_unknown_face() got an unexpected keyword argument 'cameraDirection'
