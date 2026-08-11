@@ -937,3 +937,2248 @@ Traceback (most recent call last):
   File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\camera\camera_worker.py", line 467, in read_camera
     unknown_queued = queue_unknown_face(
 TypeError: queue_unknown_face() got an unexpected keyword argument 'cameraDirection'
+2026-08-11 11:02:46,365 | ERROR | MainProcess:16468 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 161, in _sync_unknown_people
+    self.erp_client
+TypeError: ErpClient.send_unknown_batch() got an unexpected keyword argument 'items'
+2026-08-11 11:03:16,382 | ERROR | MainProcess:16468 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 161, in _sync_unknown_people
+    self.erp_client
+TypeError: ErpClient.send_unknown_batch() got an unexpected keyword argument 'items'
+2026-08-11 11:03:46,389 | ERROR | MainProcess:16468 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 161, in _sync_unknown_people
+    self.erp_client
+TypeError: ErpClient.send_unknown_batch() got an unexpected keyword argument 'items'
+2026-08-11 11:04:16,388 | ERROR | MainProcess:16468 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 161, in _sync_unknown_people
+    self.erp_client
+TypeError: ErpClient.send_unknown_batch() got an unexpected keyword argument 'items'
+2026-08-11 11:09:27,101 | ERROR | MainProcess:16096 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:09:57,182 | ERROR | MainProcess:16096 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:10:57,228 | ERROR | MainProcess:16096 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:11:44,925 | ERROR | MainProcess:16096 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:20:44,032 | ERROR | MainProcess:14840 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:24:57,943 | ERROR | MainProcess:16004 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:26:56,206 | ERROR | MainProcess:16192 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:29:50,613 | ERROR | MainProcess:6792 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:30:45,765 | ERROR | MainProcess:6792 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadError
+2026-08-11 11:35:11,678 | ERROR | MainProcess:18920 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:36:11,712 | ERROR | MainProcess:18920 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:36:43,747 | ERROR | MainProcess:18920 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:40:22,167 | ERROR | MainProcess:2720 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:41:22,223 | ERROR | MainProcess:2720 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 160, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:46:09,475 | ERROR | MainProcess:18144 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 143, in _sync_unknown_people
+    item = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 244, in _build_unknown_item
+    "firstSeenAt": self._serialize_date(
+AttributeError: 'ErpSyncService' object has no attribute '_serialize_date'
+2026-08-11 11:46:39,484 | ERROR | MainProcess:18144 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 143, in _sync_unknown_people
+    item = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 244, in _build_unknown_item
+    "firstSeenAt": self._serialize_date(
+AttributeError: 'ErpSyncService' object has no attribute '_serialize_date'
+2026-08-11 11:47:09,498 | ERROR | MainProcess:18144 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 143, in _sync_unknown_people
+    item = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 244, in _build_unknown_item
+    "firstSeenAt": self._serialize_date(
+AttributeError: 'ErpSyncService' object has no attribute '_serialize_date'
+2026-08-11 11:47:39,528 | ERROR | MainProcess:18144 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 143, in _sync_unknown_people
+    item = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 244, in _build_unknown_item
+    "firstSeenAt": self._serialize_date(
+AttributeError: 'ErpSyncService' object has no attribute '_serialize_date'
+2026-08-11 11:48:09,544 | ERROR | MainProcess:18144 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 143, in _sync_unknown_people
+    item = await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 244, in _build_unknown_item
+    "firstSeenAt": self._serialize_date(
+AttributeError: 'ErpSyncService' object has no attribute '_serialize_date'
+2026-08-11 11:48:38,427 | ERROR | MainProcess:17700 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:48:54,265 | ERROR | MainProcess:15364 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:49:26,321 | ERROR | MainProcess:15364 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:49:58,356 | ERROR | MainProcess:15364 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:50:24,927 | ERROR | MainProcess:13044 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:50:43,236 | ERROR | MainProcess:14548 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:51:15,295 | ERROR | MainProcess:14548 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:51:47,336 | ERROR | MainProcess:14548 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:52:19,407 | ERROR | MainProcess:14548 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:53:44,507 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:54:17,381 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:54:54,491 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 11:55:54,518 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:56:54,572 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 11:57:41,970 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadError
+2026-08-11 11:58:14,020 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:58:46,076 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 11:59:18,142 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 12:00:20,211 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 12:01:20,231 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 12:02:20,264 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 42, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+2026-08-11 12:02:55,097 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:03:25,152 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:03:55,210 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:04:25,239 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:04:55,273 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:05:25,303 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:05:55,353 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:06:25,400 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:06:55,423 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:07:25,461 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:07:55,497 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:08:25,519 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:08:55,561 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:09:25,591 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:09:55,635 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:10:25,661 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:10:55,707 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:11:25,737 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:11:55,771 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:12:25,797 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:12:55,849 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:13:25,885 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:13:55,923 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:14:25,963 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:14:56,002 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:15:26,040 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:15:56,064 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:16:26,098 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:16:56,119 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:17:26,131 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:17:56,176 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:18:26,219 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:18:56,248 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:19:26,274 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:19:56,305 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:20:26,350 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:20:56,391 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:21:26,438 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:21:56,466 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:22:26,498 | ERROR | MainProcess:15308 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 48, in send_unknown_batch
+    response.raise_for_status()
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://192.168.100.156:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-11 12:49:51,868 | ERROR | MainProcess:12524 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: All connection attempts failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 40, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: All connection attempts failed
+2026-08-11 16:34:07,558 | ERROR | MainProcess:16040 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 136, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 77, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 159, in _sync_unknown_people
+    await (
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 40, in send_unknown_batch
+    response = await self._client.post(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1859, in post
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout

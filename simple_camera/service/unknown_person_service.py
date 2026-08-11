@@ -35,6 +35,7 @@ class UnknownPersonService:
     async def register_seen(
         self,
         *,
+        ets_auth: str,
         embedding: np.ndarray,
         face_path: str,
         quality: float,
@@ -59,6 +60,7 @@ class UnknownPersonService:
         )
 
         existing = await self.find_matching_unknown(
+            ets_auth=ets_auth,
             embedding=normalized_embedding,
             threshold=match_threshold,
         )
@@ -73,6 +75,7 @@ class UnknownPersonService:
             )
 
         return await self._create_unknown(
+            ets_auth=ets_auth,
             embedding=normalized_embedding,
             face_path=face_path,
             quality=quality,
@@ -82,6 +85,7 @@ class UnknownPersonService:
     async def find_matching_unknown(
         self,
         *,
+        ets_auth: str,
         embedding: np.ndarray,
         threshold: float,
     ) -> dict | None:
@@ -97,7 +101,7 @@ class UnknownPersonService:
         )
 
         cursor = self.db.unknown_persons.find(
-            {
+            {   "etsAuth": ets_auth,
                 "status": (
                     UnknownPersonStatus.UNASSIGNED.value
                 ),
@@ -169,6 +173,7 @@ class UnknownPersonService:
     async def _create_unknown(
         self,
         *,
+        ets_auth: str,
         embedding: np.ndarray,
         face_path: str,
         quality: float,
@@ -185,6 +190,7 @@ class UnknownPersonService:
         unknown_id = self._generate_unknown_id()
 
         document = {
+            "etsAuth": ets_auth,
             "unknownId": unknown_id,
 
             "status": (
@@ -302,7 +308,7 @@ class UnknownPersonService:
             update_fields[
                 "referenceEmbeddings"
             ] = reference_embeddings
-            
+
         # Keep the better face as the reference face.
         if quality > current_best_quality:
             update_fields.update(

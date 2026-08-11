@@ -28,18 +28,17 @@ class ErpClient:
 
     async def send_unknown_batch(
         self,
+        ets_auth: str,
         unknown_persons: list[dict[str, Any]],
     ) -> None:
 
         if not unknown_persons:
             return
 
-        payload = {
-            "unknownPersons": unknown_persons
-        }
+        payload = unknown_persons
 
         response = await self._client.post(
-            "/api/ai/unknown-persons/batch",
+           f"/printCtrl?tp=unknown&auth={ets_auth}",
             json=payload,
             headers=self._headers(),
         )

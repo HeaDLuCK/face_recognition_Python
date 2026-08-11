@@ -1,15 +1,15 @@
 import asyncio
 import base64
 import logging
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from collections import defaultdict
 from service.erp_client import ErpClient
 from service.unknown_person_service import (
     UnknownPersonService,
 )
-
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -103,46 +103,88 @@ class ErpSyncService:
         if not unknowns:
             return
 
-        items: list[dict[str, Any]] = []
+        # ---------------------------------
+        # GROUP UNKNOWN PEOPLE BY etsAuth
+        # ---------------------------------
+        grouped_unknowns = defaultdict(list)
 
         for unknown in unknowns:
-            item = await self._build_unknown_item(
+            ets_auth = unknown.get(
+                "etsAuth"
+            )
+
+            if not ets_auth:
+                logger.warning(
+                    "Unknown person has no etsAuth: "
+                    "unknownId=%s",
+                    unknown.get("unknownId"),
+                )
+                continue
+
+            grouped_unknowns[
+                ets_auth
+            ].append(
                 unknown
             )
 
-            if item is not None:
-                items.append(
-                    item
+        # ---------------------------------
+        # ONE ERP REQUEST PER etsAuth
+        # ---------------------------------
+        for (
+            ets_auth,
+            establishment_unknowns,
+        ) in grouped_unknowns.items():
+
+            items: list[
+                dict[str, Any]
+            ] = []
+
+            for unknown in establishment_unknowns:
+                item = await (
+                    self._build_unknown_item(
+                        unknown
+                    )
                 )
 
-        if not items:
-            return
+                if item is not None:
+                    items.append(
+                        item
+                    )
 
-        # ONE request containing all unknown people.
-        # await self.erp_client.send_unknown_batch(
-        #     items
-        # )
+            if not items:
+                continue
 
-        # Only mark them synced AFTER ERP accepted
-        # the HTTP request successfully.
-        # unknown_ids = [
-        #     item["unknownId"]
-        #     for item in items
-        # ]
+            # Example:
+            # /api/ai/SEA_FOOD/unknown-persons/batch
+            await (
+                self.erp_client
+                .send_unknown_batch(
+                    ets_auth=ets_auth,
+                    unknown_persons=items,
+                )
+            )
 
-        # await (
-        #     self.unknown_person_service
-        #     .mark_erp_synced(
-        #         unknown_ids
-        #     )
-        # )
+            # IMPORTANT:
+            # Mark ONLY this establishment's
+            # successfully sent records as SYNCED.
+            unknown_ids = [
+                item["unknownId"]
+                for item in items
+            ]
 
-        logger.info(
-            "ERP unknown batch synchronized: "
-            "count=%d",
-            len(items),
-        )
+            await (
+                self.unknown_person_service
+                .mark_erp_synced(
+                    unknown_ids
+                )
+            )
 
+            logger.info(
+                "ERP unknown batch synchronized: "
+                "etsAuth=%s count=%d",
+                ets_auth,
+                len(items),
+            )
     async def _build_unknown_item(
         self,
         unknown: dict,
@@ -237,10 +279,9 @@ class ErpSyncService:
         if value is None:
             return None
 
-        if isinstance(
-            value,
-            datetime,
-        ):
-            return value.isoformat()
+        if isinstance(value, datetime):
+            return value.strftime(
+                "%b %d, %Y, %I:%M:%S %p"
+            )
 
         return str(value)

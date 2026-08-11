@@ -106,6 +106,7 @@ class UnknownPersonConsumer:
         )
 
         unknown = await self.service.register_seen(
+            ets_auth=item["etsAuth"],
             embedding=embedding,
             face_path=face_path,
             quality=float(
