@@ -10,6 +10,7 @@ from service.unknown_person_service import (
     UnknownPersonService,
 )
 from datetime import datetime, timezone
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +76,12 @@ class ErpSyncService:
         while self._running:
             try:
                 await self._sync_unknown_people()
+
+            except httpx.ConnectError:
+                logger.warning(
+                    "ERP server unavailable. "
+                    "Unknown people will remain pending."
+                )
 
             except Exception:
                 logger.exception(
