@@ -367,6 +367,7 @@ class UnknownPersonService:
     async def assign_to_employee(
         self,
         *,
+        ets_auth: str,
         unknown_id: str,
         employee_id: str,
     ) -> bool:
@@ -380,7 +381,7 @@ class UnknownPersonService:
         )
 
         result = await self.db.unknown_persons.update_one(
-            {
+            {   "etsAuth": ets_auth,
                 "unknownId": unknown_id,
                 "status": (
                     UnknownPersonStatus
@@ -418,10 +419,11 @@ class UnknownPersonService:
 
     async def get_by_unknown_id(
         self,
+        ets_auth: str,
         unknown_id: str,
     ) -> dict | None:
         return await self.db.unknown_persons.find_one(
-            {
+            {   "etsAuth": ets_auth,
                 "unknownId": unknown_id
             }
         )

@@ -1,0 +1,197 @@
+2026-08-12 13:19:29,514 | ERROR | MainProcess:23180 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 151, in _sync_unknown_people
+    self.attendance_service
+AttributeError: 'ErpSyncService' object has no attribute 'attendance_service'
+2026-08-12 13:19:59,542 | ERROR | MainProcess:23180 | service.erp_sync_service | ERP unknown person sync failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 78, in _run
+    await self._sync_unknown_people()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 151, in _sync_unknown_people
+    self.attendance_service
+AttributeError: 'ErpSyncService' object has no attribute 'attendance_service'
+2026-08-12 21:35:53,002 | ERROR | MainProcess:39140 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 52, in lifespan
+    if ERP_URL:
+       ^^^^^^^
+NameError: name 'ERP_URL' is not defined
+2026-08-12 22:58:36,952 | ERROR | MainProcess:35668 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 52, in lifespan
+    if ERP_URL:
+       ^^^^^^^
+NameError: name 'ERP_URL' is not defined
+2026-08-12 23:01:19,254 | ERROR | MainProcess:49572 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 55, in lifespan
+    erp_sync_service =  ErpSyncService(
+                        ^^^^^^^^^^^^^^^
+TypeError: ErpSyncService.__init__() missing 1 required positional argument: 'embedding_service'
+2026-08-12 23:03:05,608 | ERROR | MainProcess:16784 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 55, in lifespan
+    erp_sync_service =  ErpSyncService(
+                        ^^^^^^^^^^^^^^^
+TypeError: ErpSyncService.__init__() missing 1 required positional argument: 'embedding_service'
+2026-08-12 23:03:26,811 | ERROR | MainProcess:27944 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 55, in lifespan
+    erp_sync_service =  ErpSyncService(
+                        ^^^^^^^^^^^^^^^
+TypeError: ErpSyncService.__init__() missing 1 required positional argument: 'embedding_service'
+2026-08-12 23:05:34,665 | ERROR | MainProcess:37036 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 61, in lifespan
+    assignment_interval_seconds= settings.erp_assignment_interval_seconds,
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Settings' object has no attribute 'erp_assignment_interval_seconds'
+2026-08-12 23:06:19,969 | ERROR | MainProcess:47276 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 61, in lifespan
+    assignment_interval_seconds= settings.erp_assignment_interval_seconds,
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Settings' object has no attribute 'erp_assignment_interval_seconds'
+2026-08-12 23:07:12,632 | ERROR | MainProcess:30296 | __main__ | Application startup or runtime failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 61, in lifespan
+    assignment_interval_seconds= settings.erp_assignment_interval_seconds,
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Settings' object has no attribute 'erp_assignment_interval_seconds'
+2026-08-12 23:11:51,239 | ERROR | MainProcess:42124 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 76, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:12:56,253 | ERROR | MainProcess:53208 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 76, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:13:47,729 | ERROR | MainProcess:35908 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 76, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:15:34,901 | ERROR | MainProcess:47844 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 82, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:16:35,901 | ERROR | MainProcess:40024 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 82, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:19:12,194 | ERROR | MainProcess:9744 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 314, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 88, in get_unknown_assignments
+    response.raise_for_status()
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://localhost:8080/digi-restau/printCtrl?tp=unknown&auth=SUNDAY_AGADIR_XXX&sync=1'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-12 23:19:22,213 | ERROR | MainProcess:9744 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 314, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 88, in get_unknown_assignments
+    response.raise_for_status()
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://localhost:8080/digi-restau/printCtrl?tp=unknown&auth=SUNDAY_AGADIR_XXX&sync=1'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-12 23:19:32,226 | ERROR | MainProcess:9744 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 314, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 88, in get_unknown_assignments
+    response.raise_for_status()
+  File "C:\Users\xlooo\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 ' for url 'http://localhost:8080/digi-restau/printCtrl?tp=unknown&auth=SUNDAY_AGADIR_XXX&sync=1'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-08-12 23:19:42,274 | ERROR | MainProcess:9744 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 327, in _sync_unknown_assignments
+    await self._process_unknown_assignment(ets_auth=ets_auth,assignment=assignment,)
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 383, in _process_unknown_assignment
+    .get_by_unknown_id(
+     ^^^^^^^^^^^^^^^^^^
+TypeError: UnknownPersonService.get_by_unknown_id() got an unexpected keyword argument 'ets_auth'
+2026-08-12 23:20:02,338 | ERROR | MainProcess:9744 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 327, in _sync_unknown_assignments
+    await self._process_unknown_assignment(ets_auth=ets_auth,assignment=assignment,)
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 383, in _process_unknown_assignment
+    .get_by_unknown_id(
+     ^^^^^^^^^^^^^^^^^^
+TypeError: UnknownPersonService.get_by_unknown_id() got an unexpected keyword argument 'ets_auth'
+2026-08-12 23:21:27,387 | ERROR | MainProcess:9744 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 82, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:21:45,265 | ERROR | MainProcess:34208 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 328, in _sync_unknown_assignments
+    await self._process_unknown_assignment(ets_auth=ets_auth,assignment=assignment,)
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 382, in _process_unknown_assignment
+    unknown = await self.unknown_person_service.get_by_unknown_id(ets_auth=ets_auth,unknown_id=unknown_id,)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: UnknownPersonService.get_by_unknown_id() got an unexpected keyword argument 'ets_auth'
+2026-08-12 23:22:36,812 | ERROR | MainProcess:34208 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 82, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-12 23:23:03,992 | ERROR | MainProcess:43964 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=SUNDAY_AGADIR_XXX
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 328, in _sync_unknown_assignments
+    await self._process_unknown_assignment(ets_auth=ets_auth,assignment=assignment,)
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 402, in _process_unknown_assignment
+    await self.unknown_person_service.assign_to_employee(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: UnknownPersonService.assign_to_employee() got an unexpected keyword argument 'ets_auth'
+2026-08-12 23:23:08,904 | ERROR | MainProcess:43964 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\main.py", line 121, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\xlooo\OneDrive\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 82, in stop
+    await self._task
+          ^^^^^^^^^^
+AttributeError: 'ErpSyncService' object has no attribute '_task'

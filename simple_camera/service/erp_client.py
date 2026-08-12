@@ -10,14 +10,33 @@ logger = logging.getLogger(__name__)
 class ErpClient:
     def __init__(
         self,
-        base_url: str,
+        urls_by_ets_auth: dict[str, str],
     ) -> None:
-        self.base_url = base_url.rstrip("/")
+        self.urls_by_ets_auth = urls_by_ets_auth
 
         self._client = httpx.AsyncClient(
-            base_url=self.base_url,
-            timeout=30.0,
+            timeout=httpx.Timeout(
+                10.0,
+                connect=3.0,
+            )
         )
+
+    def _get_base_url(
+        self,
+        ets_auth: str,
+    ) -> str:
+
+        base_url = self.urls_by_ets_auth.get(
+            ets_auth
+        )
+
+        if not base_url:
+            raise ValueError(
+                f"No ERP URL configured "
+                f"for etsAuth={ets_auth}"
+            )
+
+        return base_url.rstrip("/")    
 
     def _headers(self) -> dict[str, str]:
         headers: dict[str, str] = {
@@ -36,9 +55,11 @@ class ErpClient:
             return
 
         payload = unknown_persons
-
+        base_url = self._get_base_url(ets_auth)
+        url =  f"{base_url}/printCtrl?tp=unknown&auth={ets_auth}"
+        
         response = await self._client.post(
-           f"/printCtrl?tp=unknown&auth={ets_auth}",
+            url,
             json=payload,
             headers=self._headers(),
         )
@@ -50,5 +71,36 @@ class ErpClient:
             len(unknown_persons),
         )
 
+    async def get_unknown_assignments(
+        self,
+        *,
+        ets_auth: str,
+    ) -> list[dict]:
+
+        base_url = self._get_base_url(
+            ets_auth
+        )
+
+        url =  f"{base_url}/printCtrl?tp=unknown&auth={ets_auth}&sync=1"
+
+        response = await self._client.get(url,)
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        if not isinstance(data, list):
+            return []
+
+        return data
+
+    def get_configured_ets_auths(
+        self,
+    ) -> list[str]:
+
+        return list(
+            self.urls_by_ets_auth.keys()
+        )
+
     async def close(self) -> None:
-        await self._client.aclose()
+        await self._client.aclose() 

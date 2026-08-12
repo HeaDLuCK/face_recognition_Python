@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
 LOG_DIR = BASE_DIR / "logs"
-ERP_URL: str | None = None
+ERP_URLS: dict[str, str] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -49,13 +49,16 @@ async def lifespan(app: FastAPI):
         attendance_service = AttendanceService(database)
         unknown_person_service  = UnknownPersonService(database)
 
-        if ERP_URL:
-            erp_client = ErpClient(ERP_URL)
+        if ERP_URLS:
+            erp_client = ErpClient(ERP_URLS)
 
             erp_sync_service =  ErpSyncService(
                     unknown_person_service=unknown_person_service,
+                    attendance_service=attendance_service,
+                    embedding_service=embedding_service,
                     erp_client=erp_client,
                     interval_seconds= settings.erp_sync_interval_seconds,
+                    assignment_interval_seconds= settings.erp_assignment_interval_seconds,
                     batch_size=settings.erp_sync_batch_size,
                 )
             await erp_sync_service.start()
@@ -160,24 +163,73 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--url",
-        type=str,
-        default=None,
-        help="ERP base URL",
+        "--erp",
+        action="append",
+        default=[],
+        help=(
+            "ERP configuration in format "
+            "ETS_AUTH=URL. "
+            "Can be used multiple times."
+        ),
     )
 
     args = parser.parse_args()
 
-    ERP_URL = args.url
+    ERP_URLS = {}
 
-    if ERP_URL:
-        print(
-            f"ERP URL: {ERP_URL}"
+    for value in args.erp:
+
+        if "=" not in value:
+            raise ValueError(
+                f"Invalid ERP configuration: {value}. "
+                "Expected ETS_AUTH=URL"
+            )
+
+        ets_auth, url = value.split(
+            "=",
+            1,
         )
-    else:
-        ERP_URL = "http://192.168.100.156:8090/digi-restau"
+
+        ets_auth = ets_auth.strip()
+
+        url = (
+            url
+            .strip()
+            .rstrip("/")
+        )
+
+        if not ets_auth:
+            raise ValueError(
+                "etsAuth cannot be empty"
+            )
+
+        if not url:
+            raise ValueError(
+                f"ERP URL cannot be empty "
+                f"for etsAuth={ets_auth}"
+            )
+
+        ERP_URLS[
+            ets_auth
+        ] = url
+
+    if ERP_URLS:
         print(
-            "No ERP URL provided"
+            "Configured ERP servers:"
+        )
+
+        for (
+            ets_auth,
+            url,
+        ) in ERP_URLS.items():
+
+            print(
+                f"  {ets_auth} -> {url}"
+            )
+
+    else:
+        print(
+            "No ERP URLs provided"
         )
 
     uvicorn.run(

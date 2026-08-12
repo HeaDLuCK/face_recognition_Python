@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     person_trajectory_size: int = 30
 
     erp_sync_interval_seconds: float = 30.0
+    erp_assignment_interval_seconds: float = 300.0
     erp_sync_batch_size: int = 10
 
     model_config = SettingsConfigDict(

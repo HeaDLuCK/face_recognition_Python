@@ -636,9 +636,47 @@ class AttendanceService:
         )
         cursor = self.db.attendance_detections.find(query).sort("timestamp", 1).limit(limit)
         data = serialize_mongo_docs(await cursor.to_list(length=limit))
-        return self._format_attendance_rows(data)
+        employee_ids = list({
+            obj.get("employeeId")
+            for obj in data
+            if obj.get("employeeId")
+        })
+        return self._format_attendance_rows(data,employee_ids)
 
+    async def list_unknown_attendance(
+        self,
+        *,
+        ets_auth: str,
+        unknown_id: str,
+        limit: int = 100,
+    ) -> str:
 
+        cursor = (
+            self.db.attendance_detections
+            .find(
+                {
+                    "etsAuth": ets_auth,
+                    "unknownId": unknown_id,
+                }
+            )
+            .sort(
+                "timestamp",
+                ASCENDING,
+            )
+            .limit(limit)
+        )
+
+        data = serialize_mongo_docs(
+            await cursor.to_list(
+                length=limit
+            )
+        )
+
+        return (
+            self._format_unknown_attendance_rows(
+                data
+            )
+        )
 
     @staticmethod
     def _attendance_direction(camera_direction: str) -> str | None:
@@ -686,10 +724,23 @@ class AttendanceService:
         return query
 
     @staticmethod
-    def _format_attendance_rows(data: list[dict]) -> str:
+    def _format_attendance_rows(
+        data: list[dict],
+        employee_names: dict[str, str],
+    ) -> str:
         return "".join(
-            f"{(obj.get('metadata') or {}).get('employeeName') or ''};"
-            f"{obj.get('employeeId') or ''};{obj.get('timestamp') or ''}|"
+            f"{employee_names.get(obj.get('employeeId'), '')};"
+            f"{obj.get('employeeId') or ''};"
+            f"{obj.get('timestamp') or ''}|"
+            for obj in data
+        )
+
+    @staticmethod
+    def _format_unknown_attendance_rows(
+        data: list[dict],
+    ) -> str:
+        return "".join(
+            f"{obj.get('timestamp') or ''}|"
             for obj in data
         )
 
