@@ -16,8 +16,8 @@ class ErpClient:
 
         self._client = httpx.AsyncClient(
             timeout=httpx.Timeout(
-                10.0,
-                connect=3.0,
+                15.0,
+                connect=5.0,
             )
         )
 
@@ -25,7 +25,6 @@ class ErpClient:
         self,
         ets_auth: str,
     ) -> str:
-
         base_url = self.urls_by_ets_auth.get(
             ets_auth
         )
@@ -101,6 +100,25 @@ class ErpClient:
         return list(
             self.urls_by_ets_auth.keys()
         )
+    
+    async def send_camera_image(
+        self,
+        *,
+        ets_auth: str,
+        camera_id: str,
+        image_base64: str,
+    ):
 
+        base_url = self._get_base_url(ets_auth)
+        url =  f"{base_url}/printCtrl?tp=camera&auth={ets_auth}&info=sync_cam"
+        payload = {
+            "cameraId": camera_id,
+            "image": image_base64,
+            "imageContentType": "image/jpeg",
+        }
+        response = await self._client.post(url,json=payload,)
+        response.raise_for_status()
+        return response
+    
     async def close(self) -> None:
         await self._client.aclose() 

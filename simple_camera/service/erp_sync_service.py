@@ -13,6 +13,10 @@ from service.unknown_person_service import (
 )
 from datetime import datetime, timezone
 import httpx
+import base64
+import cv2
+
+from camera.camera_process_manager import CameraProcessManager
 logger = logging.getLogger(__name__)
 
 
@@ -23,23 +27,26 @@ class ErpSyncService:
         attendance_service:AttendanceService,
         embedding_service:EmbeddingService,
         erp_client: ErpClient,
+        camera_process_manager: CameraProcessManager,
         interval_seconds: float = 30.0,
         assignment_interval_seconds: float = 300.0,
+        camera_image_interval_seconds: float = 86400.0,
         batch_size: int = 10,
     ) -> None:
         self.unknown_person_service = unknown_person_service
         self.attendance_service = attendance_service
         self.embedding_service = embedding_service
         self.erp_client = erp_client
+        self.camera_process_manager =  camera_process_manager
 
         self.interval_seconds = interval_seconds
         self.assignment_interval_seconds = assignment_interval_seconds
-
+        self.camera_image_interval_seconds = camera_image_interval_seconds
         self.batch_size = batch_size
 
         self._unknown_sync_task: asyncio.Task | None = None
         self._assignment_sync_task: asyncio.Task | None = None
-        
+        self._camera_image_sync_task: asyncio.Task | None = None
         self._running = False
         self._stop_event = asyncio.Event()
 
@@ -56,6 +63,10 @@ class ErpSyncService:
 
         self._assignment_sync_task = asyncio.create_task(
             self._run_assignment_sync()
+        )
+
+        self._camera_image_sync_task = asyncio.create_task(
+            self._run_camera_image_sync()
         )
 
         logger.info(
@@ -85,6 +96,10 @@ class ErpSyncService:
         if self._assignment_sync_task is not None:
             await self._tak
             self._task = None
+            
+        if self._camera_image_sync_task is not None:
+            await self._camera_image_sync_task
+            self._camera_image_sync_task = None
 
         logger.info(
             "ERP sync service stopped"
@@ -136,6 +151,113 @@ class ErpSyncService:
                 await asyncio.wait_for(
                     self._stop_event.wait(),
                     timeout=self.assignment_interval_seconds,
+                )
+
+            except asyncio.TimeoutError:
+                pass
+
+    async def _sync_camera_images(
+        self,
+    ) -> bool:
+        image_sent = False
+        camera_ids = self.camera_process_manager.get_camera_ids()
+
+        if not camera_ids:
+            logger.info("No cameras available for ERP image sync")
+            return False
+
+        for camera_id in camera_ids:
+
+            try:
+                frame = self.camera_process_manager.get_latest_frame(camera_id)
+
+                if frame is None:
+                    logger.warning(
+                        "No frame available for "
+                        "camera=%s",
+                        camera_id,
+                    )
+                    continue
+                success, encoded = cv2.imencode(".jpg",frame,[cv2.IMWRITE_JPEG_QUALITY, 75,],)
+
+                if not success:
+                    logger.warning(
+                        "Failed encoding camera "
+                        "frame: camera=%s",
+                        camera_id,
+                    )
+                    continue
+
+                image_base64 = base64.b64encode(encoded.tobytes()).decode("ascii")
+
+                ets_auths = await self.camera_process_manager.get_camera_ets_auths(camera_id)
+                if not ets_auths:
+                    logger.warning(
+                        "Camera has no ERP auth: "
+                        "camera=%s",
+                        camera_id,
+                    )
+                    continue
+
+                for ets_auth in ets_auths:
+                    try:
+                        await self.erp_client.send_camera_image(
+                            ets_auth=ets_auth,
+                            camera_id=camera_id,
+                            image_base64=image_base64,
+                        )
+                        image_sent = True
+                        logger.info(
+                            "Camera image sent to ERP: "
+                            "camera=%s etsAuth=%s",
+                            camera_id,
+                            ets_auth,
+                        )
+
+                    except Exception:
+                        logger.exception(
+                            "Failed sending camera "
+                            "image: camera=%s "
+                            "etsAuth=%s",
+                            camera_id,
+                            ets_auth,
+                        )
+
+            except Exception:
+                logger.exception(
+                    "Camera image sync failed: "
+                    "camera=%s",
+                    camera_id,
+                )      
+        return image_sent      
+
+    async def _run_camera_image_sync(self) -> None:
+        while self._running:
+
+            try:
+                image_sent = await self._sync_camera_images()
+
+            except Exception:
+                logger.exception("Camera image ERP sync failed")
+                image_sent = False
+            if image_sent:
+                wait_seconds = self.camera_image_interval_seconds
+                logger.info(
+                    "Camera image synced. "
+                    "Next sync in %.0f seconds",
+                    wait_seconds,
+                )
+            else:
+                wait_seconds = 10.0
+                logger.info("No camera frame available. "
+                    "Retrying in %.0f seconds",
+                    wait_seconds,
+                )
+
+            try:
+                await asyncio.wait_for(
+                    self._stop_event.wait(),
+                    timeout=wait_seconds,
                 )
 
             except asyncio.TimeoutError:
@@ -216,7 +338,6 @@ class ErpSyncService:
                 continue
 
             # Example:
-            # /api/ai/SEA_FOOD/unknown-persons/batch
             await (
                 self.erp_client
                 .send_unknown_batch(

@@ -11,11 +11,12 @@ from service.unknown_person_service import UnknownPersonService
 from service.unknown_person_consumer import UnknownPersonConsumer
 from service.attendance_service import AttendanceService
 from camera.camera_worker import read_camera
-from schemas.project_schema import CameraConfig
+from schemas.project_schema import CameraConfig,AiCapability
 from camera.camera_grid import show_camera_grid
+
 import logging
 from queue import Empty, Full
-
+import numpy as np
 logger = logging.getLogger(__name__)
 
 class CameraProcessManager:
@@ -34,10 +35,12 @@ class CameraProcessManager:
         self.unknown_person_service = unknown_person_service
         # Suitable for Windows multiprocessing.
         self._context = mp_context
+        self._lock = asyncio.Lock()
 
         self._processes: dict[str, mp.Process] = {}
-        self._lock = asyncio.Lock()
         self._frame_queues: dict[str, Any] = {}
+        self._erp_frame_queues: dict[str, Any] = {}
+        
         self._log_queue = log_queue
         self._attendance_queue = self._context.Queue(maxsize=500)
         self._unknown_queue = self._context.Queue(maxsize=500)
@@ -200,21 +203,27 @@ class CameraProcessManager:
             for camera in enabled_cameras
         }
 
+        self._erp_frame_queues = {
+            camera.cameraId: self._context.Queue(maxsize=1)
+            for camera in enabled_cameras
+        }
+
         # Start every camera process.
         for camera in enabled_cameras:
             camera_data = camera.model_dump(
                 by_alias=True,
                 mode="json",
             )
-            rule = await self.sync_service.get_rule_by_etsAuth(camera.etsAuth)
+            rules = await self.sync_service.get_all_rules()
 
             process = self._context.Process(
                 target=read_camera,
                 args=(
                     camera_data,
                     embedding_index,
-                    rule,
+                    rules,
                     self._frame_queues[camera.cameraId],
+                    self._erp_frame_queues[camera.cameraId],
                     self._attendance_queue,
                     self._unknown_queue,
                     self._log_queue,
@@ -360,3 +369,47 @@ class CameraProcessManager:
                 )
 
         logger.info("Attendance consumer stopped")
+
+    def get_latest_frame(
+        self,
+        camera_id: str,
+    ) -> np.ndarray | None:
+        
+        erp_frame_queue = self._erp_frame_queues.get(camera_id)
+        if erp_frame_queue is None:
+            return None
+        latest_frame = None
+
+        while True:
+            try:
+                latest_frame = (erp_frame_queue.get_nowait())
+            except Empty:
+                break
+
+            except Exception:
+                logger.exception(
+                    "Failed getting latest frame: "
+                    "camera=%s",
+                    camera_id,
+                )
+                break
+
+        return latest_frame
+    
+    def get_camera_ids(
+        self,
+    ) -> list[str]:
+
+        return list(
+            self._frame_queues.keys()
+        ) 
+
+    async def get_camera_ets_auths(
+        self,
+        camera_id: str,
+    ) -> list[str]:
+
+        camera_config = await (self.sync_service.get_camera(camera_id))        
+        if camera_config is None:
+            return []
+        return camera_config.listOfEtsAuths

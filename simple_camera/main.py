@@ -49,20 +49,6 @@ async def lifespan(app: FastAPI):
         attendance_service = AttendanceService(database)
         unknown_person_service  = UnknownPersonService(database)
 
-        if ERP_URLS:
-            erp_client = ErpClient(ERP_URLS)
-
-            erp_sync_service =  ErpSyncService(
-                    unknown_person_service=unknown_person_service,
-                    attendance_service=attendance_service,
-                    embedding_service=embedding_service,
-                    erp_client=erp_client,
-                    interval_seconds= settings.erp_sync_interval_seconds,
-                    assignment_interval_seconds= settings.erp_assignment_interval_seconds,
-                    batch_size=settings.erp_sync_batch_size,
-                )
-            await erp_sync_service.start()
-
         face_engine = InsightFaceEngine()
         sync_service = SyncService(
                 db=database,
@@ -77,7 +63,7 @@ async def lifespan(app: FastAPI):
                 mp_context=mp_context,
                 log_queue=log_queue,
             )
-        
+
         app.state.unknown_person_service = unknown_person_service
         app.state.attendance_service = attendance_service
         app.state.sync_service = sync_service
@@ -85,8 +71,26 @@ async def lifespan(app: FastAPI):
         app.state.embedding_service = embedding_service
         app.state.erp_client  = erp_client 
         app.state.erp_sync_service  = erp_sync_service
-
+        
         result  = await camera_manager.start_all()
+
+        if ERP_URLS:
+            erp_client = ErpClient(ERP_URLS)
+
+            erp_sync_service =  ErpSyncService(
+                    unknown_person_service=unknown_person_service,
+                    attendance_service=attendance_service,
+                    embedding_service=embedding_service,
+                    erp_client=erp_client,
+                    camera_process_manager=camera_manager,
+                    interval_seconds= settings.erp_sync_interval_seconds,
+                    assignment_interval_seconds= settings.erp_assignment_interval_seconds,
+                    camera_image_interval_seconds= settings.erp_camera_image_interval_seconds,
+                    batch_size=settings.erp_sync_batch_size,
+                )
+            await erp_sync_service.start()
+        
+        
 
         logger.info(
             "Camera startup result: %s",
@@ -178,30 +182,17 @@ if __name__ == "__main__":
     ERP_URLS = {}
 
     for value in args.erp:
-
         if "=" not in value:
             raise ValueError(
                 f"Invalid ERP configuration: {value}. "
                 "Expected ETS_AUTH=URL"
             )
 
-        ets_auth, url = value.split(
-            "=",
-            1,
-        )
-
+        ets_auth, url = value.split("=",1,)
         ets_auth = ets_auth.strip()
-
-        url = (
-            url
-            .strip()
-            .rstrip("/")
-        )
-
+        url = (url.strip().rstrip("/"))
         if not ets_auth:
-            raise ValueError(
-                "etsAuth cannot be empty"
-            )
+            raise ValueError("etsAuth cannot be empty")
 
         if not url:
             raise ValueError(
@@ -209,25 +200,14 @@ if __name__ == "__main__":
                 f"for etsAuth={ets_auth}"
             )
 
-        ERP_URLS[
-            ets_auth
-        ] = url
+        ERP_URLS[ets_auth] = url
 
     if ERP_URLS:
-        print(
-            "Configured ERP servers:"
-        )
-
-        for (
-            ets_auth,
-            url,
-        ) in ERP_URLS.items():
-
-            print(
-                f"  {ets_auth} -> {url}"
-            )
-
+        print( "Configured ERP servers:")
+        for (ets_auth, url,) in ERP_URLS.items():
+            print(f"  {ets_auth} -> {url}")
     else:
+        ERP_URLS["SUNDAY_AGADIR_XXX"] = "http://localhost:8080/digi-restau"
         print(
             "No ERP URLs provided"
         )

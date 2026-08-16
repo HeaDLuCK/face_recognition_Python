@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     erp_sync_interval_seconds: float = 30.0
     erp_assignment_interval_seconds: float = 300.0
     erp_sync_batch_size: int = 10
+    erp_camera_image_interval_seconds: float = 86400.0 # 24Hrs
 
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",

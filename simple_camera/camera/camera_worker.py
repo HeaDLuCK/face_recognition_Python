@@ -32,8 +32,9 @@ logger = logging.getLogger(__name__)
 def read_camera(
     camera_data: dict,
     embedding_index: EmbeddingIndex,
-    rule: AttendanceRules,
+    rules: list[AttendanceRules],
     frame_queue: Any | None = None,
+    erp_frame_queue: Any | None = None,
     attendance_queue: Any | None = None,
     unknown_queue: Any | None = None,
     log_queue: Any | None = None,
@@ -281,6 +282,12 @@ def read_camera(
                     confirmed_score = 0.0
 
                     if match is not None:
+                        rule = None
+                        for r in rules:
+                            if r.etsAuth == str(match["etsAuth"]):
+                                rule = r
+                                break
+
                         confirmed, confirmed_score = (
                             update_recognition_candidate(
                                 match=match,
@@ -376,42 +383,20 @@ def read_camera(
                                 )
 
                                 attendance_event = {
-                                    "etsAuth": (
-                                        match["etsAuth"]
-                                    ),
-                                    "cameraId": (
-                                        camera_config.cameraId
-                                    ),
-                                    "rule": (
-                                        rule
-                                    ),
-                                    "cameraDirection": (
-                                        camera_assignment.direction
-                                    ),
-                                    "employeeId": (
-                                        match["employeeId"]
-                                    ),
-                                    "employeeName": (
-                                        employee_name
-                                    ),
-                                    "confidence": (
-                                        confirmed_score
-                                    ),
-                                    "snapshotPath": (
-                                        snapshot_path
-                                    ),
+                                    "etsAuth": match["etsAuth"],
+                                    "cameraId": camera_config.cameraId,
+                                    "rule": rule,
+                                    "cameraDirection": camera_assignment.direction,
+                                    "employeeId": match["employeeId"],
+                                    "employeeName": employee_name,
+                                    "confidence": confirmed_score,
+                                    "snapshotPath": snapshot_path,
                                 }
 
                                 try:
-                                    attendance_queue.put_nowait(
-                                        attendance_event
-                                    )
-
+                                    attendance_queue.put_nowait(attendance_event)
                                 except Full:
-                                    state["next_retry"] = (
-                                        now
-                                        + QUEUE_RETRY_SECONDS
-                                    )
+                                    state["next_retry"] = (now+ QUEUE_RETRY_SECONDS)
 
                                     logger.warning(
                                         "Attendance queue full: "
@@ -436,49 +421,57 @@ def read_camera(
                     # ---------------------------------
                     # UNKNOWN PERSON
                     # ---------------------------------
-                    current_match_score = (
-                        float(match["score"])
-                        if match is not None
-                        else 0.0
-                    )
-
-                    is_unknown = (
-                        match is None
-                        or current_match_score
-                        < float(rule.recognitionThreshold)
-                    )
-
-                    camera_assignment = (
-                        camera_config.assigned_for(
-                            rule.etsAuth,
-                            AiCapability.FACE_RECOGNITION,
-                    ))
                     if (
-                        is_unknown
-                        and unknown_queue is not None
+                        unknown_queue is not None
                         and (
-                            now
-                            - last_unknown_queue_time
+                            now - last_unknown_queue_time
                             >= UNKNOWN_QUEUE_INTERVAL_SECONDS
                         )
                     ):
-                        
-                    
-                        unknown_queued = queue_unknown_face(
-                            unknown_queue=unknown_queue,
-                            frame=frame,
-                            detected_face=detected_face,
-                            detected_embedding=(
-                                detected_embedding
-                            ),
-                            camera_config=camera_config,
-                            rule=rule,
-                            cameraDirection = camera_assignment.direction,
-                            match_threshold=(UNKNOWN_MATCH_THRESHOLD),
-                        )
+                        unknown_queued_any = False
 
-                        if unknown_queued:
-                            last_unknown_queue_time = now       
+                        for unkRule in rules:
+
+                            current_match_score = (
+                                float(match["score"])
+                                if match is not None
+                                else 0.0
+                            )
+
+                            is_unknown = (
+                                match is None
+                                or current_match_score
+                                < float(unkRule.recognitionThreshold)
+                            )
+
+                            if not is_unknown:
+                                continue
+
+                            camera_assignment = camera_config.assigned_for(unkRule.etsAuth,AiCapability.FACE_RECOGNITION,)
+                            
+
+                            if (
+                                camera_assignment is None
+                                or not camera_assignment.enabled
+                            ):
+                                continue
+
+                            unknown_queued = queue_unknown_face(
+                                unknown_queue=unknown_queue,
+                                frame=frame,
+                                detected_face=detected_face,
+                                detected_embedding=detected_embedding,
+                                camera_config=camera_config,
+                                rule=unkRule,
+                                cameraDirection=(camera_assignment.direction),
+                                match_threshold=(UNKNOWN_MATCH_THRESHOLD),
+                            )
+
+                            if unknown_queued:
+                                unknown_queued_any = True
+
+                        if unknown_queued_any:
+                            last_unknown_queue_time = now
 
                     cv2.rectangle(
                         frame,
@@ -507,6 +500,17 @@ def read_camera(
                     send_latest_frame(frame_queue,display_frame,)
                 except Exception:
                     logger.exception("Failed to send display frame: camera=%s",camera_config.cameraId,)
+                    pass
+            if erp_frame_queue is not None:
+                display_frame = resize_preserving_ratio( frame,
+                    max_width=560,
+                    max_height=315,
+                )
+
+                try:
+                    send_latest_frame(erp_frame_queue,frame,)
+                except Exception:
+                    logger.exception("Failed to send erp display frame: camera=%s",camera_config.cameraId,)
                     pass
     except Exception:
             logger.exception(
