@@ -207,7 +207,7 @@ if __name__ == "__main__":
         for (ets_auth, url,) in ERP_URLS.items():
             print(f"  {ets_auth} -> {url}")
     else:
-        ERP_URLS["SUNDAY_AGADIR_XXX"] = "http://localhost:8080/digi-restau"
+        ERP_URLS["Resta2"] = "http://localhost:8090/digi-restau"
         print(
             "No ERP URLs provided"
         )

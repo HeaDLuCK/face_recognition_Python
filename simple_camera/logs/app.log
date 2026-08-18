@@ -1,0 +1,555 @@
+2026-08-18 17:15:13,720 | INFO | MainProcess:18324 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-18 17:15:15,307 | INFO | MainProcess:18324 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-18 17:15:15,307 | INFO | MainProcess:18324 | camera.camera_process_manager | Attendance consumer started
+2026-08-18 17:15:15,332 | INFO | MainProcess:18324 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 18132
+2026-08-18 17:15:15,344 | INFO | MainProcess:18324 | camera.camera_process_manager | Started camera grid with PID 3448
+2026-08-18 17:15:15,484 | INFO | MainProcess:18324 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-18 17:15:15,484 | INFO | MainProcess:18324 | service.erp_sync_service | ERP assignment service started: interval=10.0s 
+2026-08-18 17:15:15,484 | INFO | MainProcess:18324 | __main__ | Camera startup result: {'started': ['CAM_Juniv301'], 'count': 1, 'embeddingCount': 0}
+2026-08-18 17:15:15,484 | INFO | MainProcess:18324 | __main__ | FastAPI startup completed
+2026-08-18 17:15:15,487 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:15:15,503 | WARNING | MainProcess:18324 | service.erp_sync_service | No frame available for camera=CAM_Juniv301
+2026-08-18 17:15:15,503 | INFO | MainProcess:18324 | service.erp_sync_service | No camera frame available. Retrying in 10 seconds
+2026-08-18 17:15:15,503 | INFO | MainProcess:18324 | uvicorn.error | Application startup complete.
+2026-08-18 17:15:15,509 | INFO | MainProcess:18324 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-18 17:15:15,897 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:15:15,900 | INFO | MainProcess:18324 | service.erp_sync_service | ERP unknown assignments received etsAuth=Resta2 count=4
+2026-08-18 17:15:15,926 | INFO | MainProcess:18324 | service.unknown_person_service | Unknown person assigned: unknownId=UNK-7317001C9CE2 employee=000001-1
+2026-08-18 17:15:15,931 | INFO | MainProcess:18324 | service.attendance_service | Unknown attendance resolved: unknownId=UNK-7317001C9CE2 employee=000001-1 count=1
+2026-08-18 17:15:15,931 | INFO | MainProcess:18324 | service.erp_sync_service | Unknown assignment synchronized etsAuth=Resta2 unknownId=UNK-7317001C9CE2 employeeId=000001-1
+2026-08-18 17:15:15,949 | INFO | MainProcess:18324 | service.unknown_person_service | Unknown person assigned: unknownId=UNK-3CB11D74ADDD employee=000001-1
+2026-08-18 17:15:15,952 | INFO | MainProcess:18324 | service.attendance_service | Unknown attendance resolved: unknownId=UNK-3CB11D74ADDD employee=000001-1 count=1
+2026-08-18 17:15:15,952 | INFO | MainProcess:18324 | service.erp_sync_service | Unknown assignment synchronized etsAuth=Resta2 unknownId=UNK-3CB11D74ADDD employeeId=000001-1
+2026-08-18 17:15:15,967 | INFO | MainProcess:18324 | service.unknown_person_service | Unknown person assigned: unknownId=UNK-4AC583946A6E employee=000002-1
+2026-08-18 17:15:15,970 | INFO | MainProcess:18324 | service.attendance_service | Unknown attendance resolved: unknownId=UNK-4AC583946A6E employee=000002-1 count=1
+2026-08-18 17:15:15,970 | INFO | MainProcess:18324 | service.erp_sync_service | Unknown assignment synchronized etsAuth=Resta2 unknownId=UNK-4AC583946A6E employeeId=000002-1
+2026-08-18 17:15:15,984 | INFO | MainProcess:18324 | service.unknown_person_service | Unknown person assigned: unknownId=UNK-184CEE5FACA2 employee=000001-1
+2026-08-18 17:15:15,987 | INFO | MainProcess:18324 | service.attendance_service | Unknown attendance resolved: unknownId=UNK-184CEE5FACA2 employee=000001-1 count=1
+2026-08-18 17:15:15,987 | INFO | MainProcess:18324 | service.erp_sync_service | Unknown assignment synchronized etsAuth=Resta2 unknownId=UNK-184CEE5FACA2 employeeId=000001-1
+2026-08-18 17:15:22,174 | INFO | camera-CAM_Juniv301:18132 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 17:15:25,523 | WARNING | MainProcess:18324 | service.erp_sync_service | No frame available for camera=CAM_Juniv301
+2026-08-18 17:15:25,523 | INFO | MainProcess:18324 | service.erp_sync_service | No camera frame available. Retrying in 10 seconds
+2026-08-18 17:15:25,723 | INFO | camera-CAM_Juniv301:18132 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 17:15:25,992 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:15:26,008 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:15:35,683 | INFO | MainProcess:18324 | httpx | HTTP Request: POST http://localhost:8090/digi-restau/printCtrl?tp=camera&auth=Resta2&info=sync_cam "HTTP/1.1 200 "
+2026-08-18 17:15:35,686 | INFO | MainProcess:18324 | service.erp_sync_service | Camera image sent to ERP: camera=CAM_Juniv301 etsAuth=Resta2
+2026-08-18 17:15:35,687 | INFO | MainProcess:18324 | service.erp_sync_service | Camera image synced. Next sync in 86400 seconds
+2026-08-18 17:15:36,014 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:15:36,028 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:15:46,018 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:15:46,035 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:15:56,044 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:15:56,057 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:16:06,110 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:16:06,150 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:16:16,162 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:16:16,181 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:16:26,209 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:16:26,226 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:16:36,237 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:16:36,250 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:16:46,252 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:16:46,264 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:16:56,279 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:16:56,298 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:17:06,318 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:17:06,331 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:17:16,349 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:17:16,363 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:17:26,351 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:17:26,376 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:17:36,444 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:17:36,798 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:17:46,817 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:17:46,852 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:17:56,869 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:17:56,928 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:18:06,942 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:18:06,971 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:18:16,639 | INFO | MainProcess:18324 | service.sync_service | Synced cameras from ERP push: count=3
+2026-08-18 17:18:16,640 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-18 17:18:16,692 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-18 17:18:23,141 | INFO | MainProcess:18324 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 19924
+2026-08-18 17:18:23,143 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:18:23,155 | INFO | camera-CAM_Juniv301:19924 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 17:18:25,953 | INFO | camera-CAM_Juniv301:19924 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 17:18:30,580 | INFO | MainProcess:18324 | camera.camera_process_manager | Started camera CAM_Juniv with PID 14524
+2026-08-18 17:18:30,597 | INFO | camera-CAM_Juniv:14524 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 17:18:30,584 | ERROR | MainProcess:18324 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=Resta2
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 435, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 85, in get_unknown_assignments
+    response = await self._client.get(url,)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1768, in get
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+2026-08-18 17:18:34,325 | INFO | camera-CAM_Juniv:14524 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 17:18:42,256 | INFO | MainProcess:18324 | camera.camera_process_manager | Started camera CAM_ee_12 with PID 13516
+2026-08-18 17:18:42,269 | INFO | MainProcess:18324 | camera.camera_process_manager | Started camera grid with PID 16780
+2026-08-18 17:18:42,271 | INFO | MainProcess:18324 | uvicorn.access | 127.0.0.1:63322 - "POST /api/sync/all HTTP/1.1" 200
+2026-08-18 17:18:42,282 | INFO | camera-CAM_ee_12:13516 | camera.camera_worker | Camera worker starting: camera=CAM_ee_12
+2026-08-18 17:18:42,282 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:18:42,341 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:18:42,421 | INFO | MainProcess:18324 | uvicorn.access | 127.0.0.1:63322 - "POST /api/sync/rules HTTP/1.1" 500
+2026-08-18 17:18:42,421 | ERROR | MainProcess:18324 | uvicorn.error | Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 56, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\api\sync.py", line 65, in sync_rules
+    result = await request.app.state.sync_service.sync_rules_from_payload(payload)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\sync_service.py", line 588, in sync_rules_from_payload
+    await self._purge_images_for_rule(rule)
+AttributeError: 'SyncService' object has no attribute '_purge_images_for_rule'. Did you mean: 'purge_images_for_loaded_rules'?
+2026-08-18 17:18:52,345 | INFO | MainProcess:18324 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:18:52,369 | INFO | MainProcess:18324 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:18:53,512 | INFO | camera-CAM_Juniv301:19924 | camera.camera_worker | Camera CAM_Juniv301 stopped
+2026-08-18 17:18:53,539 | INFO | camera-CAM_Juniv:14524 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-18 17:18:53,593 | INFO | MainProcess:18324 | uvicorn.error | Shutting down
+2026-08-18 17:18:53,703 | INFO | MainProcess:18324 | uvicorn.error | Waiting for application shutdown.
+2026-08-18 17:18:53,703 | INFO | MainProcess:18324 | __main__ | FastAPI shutdown started
+2026-08-18 17:18:53,703 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-18 17:18:53,704 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-18 17:18:53,704 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopping camera CAM_ee_12
+2026-08-18 17:18:53,774 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-18 17:18:53,778 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-18 17:18:53,778 | INFO | MainProcess:18324 | camera.camera_process_manager | Stopped camera CAM_ee_12
+2026-08-18 17:18:53,781 | INFO | MainProcess:18324 | camera.camera_process_manager | Attendance consumer stopped
+2026-08-18 17:18:53,783 | INFO | MainProcess:18324 | service.unknown_person_consumer | Unknown person consumer stopped
+2026-08-18 17:18:53,784 | INFO | MainProcess:18324 | __main__ | Camera processes stopped
+2026-08-18 17:18:53,784 | ERROR | MainProcess:18324 | __main__ | Application shutdown failed
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\main.py", line 125, in lifespan
+    await erp_sync_service.stop()
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 93, in stop
+    await self._task
+AttributeError: 'ErpSyncService' object has no attribute '_task'
+2026-08-18 17:18:53,785 | INFO | MainProcess:18324 | __main__ | FastAPI shutdown completed
+2026-08-18 17:21:29,450 | INFO | MainProcess:15352 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-18 17:21:30,736 | INFO | MainProcess:15352 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-18 17:21:30,737 | INFO | MainProcess:15352 | camera.camera_process_manager | Attendance consumer started
+2026-08-18 17:21:37,411 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15648
+2026-08-18 17:21:37,423 | INFO | camera-CAM_Juniv301:15648 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 17:21:40,347 | INFO | camera-CAM_Juniv301:15648 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 17:21:44,866 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_Juniv with PID 12404
+2026-08-18 17:21:44,881 | INFO | camera-CAM_Juniv:12404 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 17:21:47,769 | INFO | camera-CAM_Juniv:12404 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 17:21:54,426 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_ee_12 with PID 20072
+2026-08-18 17:21:54,443 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera grid with PID 15632
+2026-08-18 17:21:54,466 | INFO | camera-CAM_ee_12:20072 | camera.camera_worker | Camera worker starting: camera=CAM_ee_12
+2026-08-18 17:21:54,570 | INFO | MainProcess:15352 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-18 17:21:54,570 | INFO | MainProcess:15352 | service.erp_sync_service | ERP assignment service started: interval=10.0s 
+2026-08-18 17:21:54,570 | INFO | MainProcess:15352 | __main__ | Camera startup result: {'started': ['CAM_Juniv301', 'CAM_Juniv', 'CAM_ee_12'], 'count': 3, 'embeddingCount': 4}
+2026-08-18 17:21:54,570 | INFO | MainProcess:15352 | __main__ | FastAPI startup completed
+2026-08-18 17:21:54,573 | INFO | MainProcess:15352 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:21:54,600 | INFO | MainProcess:15352 | uvicorn.error | Application startup complete.
+2026-08-18 17:21:54,607 | WARNING | MainProcess:15352 | service.erp_sync_service | Camera has no ERP auth: camera=CAM_Juniv301
+2026-08-18 17:21:54,626 | INFO | MainProcess:15352 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-18 17:21:54,630 | WARNING | MainProcess:15352 | service.erp_sync_service | Camera has no ERP auth: camera=CAM_Juniv
+2026-08-18 17:21:54,633 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_ee_12
+2026-08-18 17:21:54,633 | INFO | MainProcess:15352 | service.erp_sync_service | No camera frame available. Retrying in 10 seconds
+2026-08-18 17:21:54,665 | INFO | MainProcess:15352 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:22:04,650 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_Juniv301
+2026-08-18 17:22:04,662 | WARNING | MainProcess:15352 | service.erp_sync_service | Camera has no ERP auth: camera=CAM_Juniv
+2026-08-18 17:22:04,663 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_ee_12
+2026-08-18 17:22:04,663 | INFO | MainProcess:15352 | service.erp_sync_service | No camera frame available. Retrying in 10 seconds
+2026-08-18 17:22:04,664 | INFO | MainProcess:15352 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:22:04,683 | INFO | MainProcess:15352 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 17:22:11,173 | INFO | MainProcess:15352 | service.sync_service | Synced cameras from ERP push: count=3
+2026-08-18 17:22:11,173 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-18 17:22:11,174 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-18 17:22:11,174 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopping camera CAM_ee_12
+2026-08-18 17:22:11,231 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-18 17:22:11,231 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-18 17:22:11,232 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopped camera CAM_ee_12
+2026-08-18 17:22:17,593 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_Juniv with PID 12892
+2026-08-18 17:22:17,595 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_Juniv
+2026-08-18 17:22:17,596 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_Juniv301
+2026-08-18 17:22:17,597 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_ee_12
+2026-08-18 17:22:17,597 | INFO | MainProcess:15352 | service.erp_sync_service | No camera frame available. Retrying in 10 seconds
+2026-08-18 17:22:17,597 | INFO | MainProcess:15352 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:22:17,609 | INFO | camera-CAM_Juniv:12892 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 17:22:20,457 | INFO | camera-CAM_Juniv:12892 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 17:22:25,041 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 15976
+2026-08-18 17:22:25,047 | ERROR | MainProcess:15352 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=Resta2
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 435, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 85, in get_unknown_assignments
+    response = await self._client.get(url,)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1768, in get
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+2026-08-18 17:22:25,076 | INFO | camera-CAM_Juniv301:15976 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 17:22:28,270 | INFO | camera-CAM_Juniv301:15976 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 17:22:33,989 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_ee_12 with PID 18132
+2026-08-18 17:22:34,000 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera grid with PID 14756
+2026-08-18 17:22:34,000 | INFO | MainProcess:15352 | uvicorn.access | 127.0.0.1:63589 - "POST /api/sync/all HTTP/1.1" 200
+2026-08-18 17:22:34,011 | INFO | camera-CAM_ee_12:18132 | camera.camera_worker | Camera worker starting: camera=CAM_ee_12
+2026-08-18 17:22:34,121 | INFO | MainProcess:15352 | httpx | HTTP Request: POST http://localhost:8090/digi-restau/printCtrl?tp=camera&auth=Resta2&info=sync_cam "HTTP/1.1 200 "
+2026-08-18 17:22:34,124 | INFO | MainProcess:15352 | service.erp_sync_service | Camera image sent to ERP: camera=CAM_Juniv etsAuth=Resta2
+2026-08-18 17:22:34,167 | INFO | MainProcess:15352 | httpx | HTTP Request: POST http://localhost:8090/digi-restau/printCtrl?tp=camera&auth=Resta2&info=sync_cam "HTTP/1.1 200 "
+2026-08-18 17:22:34,170 | INFO | MainProcess:15352 | service.erp_sync_service | Camera image sent to ERP: camera=CAM_Juniv301 etsAuth=Resta2
+2026-08-18 17:22:34,171 | WARNING | MainProcess:15352 | service.erp_sync_service | No frame available for camera=CAM_ee_12
+2026-08-18 17:22:34,172 | INFO | MainProcess:15352 | service.erp_sync_service | Camera image synced. Next sync in 86400 seconds
+2026-08-18 17:22:34,205 | INFO | MainProcess:15352 | service.sync_service | Synced attendance rules from ERP push: etsAuth=Resta2 rule={'etsAuth': 'Resta2', 'recognitionThreshold': 0.58, 'duplicateCooldownSeconds': 170, 'saveFaceSnapshots': True, 'saveUnknownFaces': False, 'saveUnknownFaceCrops': False, 'sendUnknownFaceAlert': False, 'personTrackingEnabled': True, 'historyRecoveryEnabled': True, 'imageRetentionDays': 10}
+2026-08-18 17:22:34,206 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-18 17:22:34,206 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-18 17:22:34,207 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopping camera CAM_ee_12
+2026-08-18 17:22:34,271 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-18 17:22:34,272 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-18 17:22:34,272 | INFO | MainProcess:15352 | camera.camera_process_manager | Stopped camera CAM_ee_12
+2026-08-18 17:22:41,582 | INFO | MainProcess:15352 | camera.camera_process_manager | Started camera CAM_Juniv with PID 18892
+2026-08-18 17:22:41,584 | INFO | MainProcess:15352 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 17:22:41,597 | INFO | camera-CAM_Juniv:18892 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 17:22:44,618 | INFO | camera-CAM_Juniv:18892 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 17:22:47,820 | INFO | camera-CAM_Juniv:18892 | camera.camera_worker | Camera CAM_Juniv stopped
+2026-08-18 19:04:23,834 | INFO | MainProcess:18928 | database | Connected to MongoDB database 'ai_camera_service'
+2026-08-18 19:04:25,277 | INFO | MainProcess:18928 | service.unknown_person_consumer | Unknown person consumer started
+2026-08-18 19:04:25,278 | INFO | MainProcess:18928 | camera.camera_process_manager | Attendance consumer started
+2026-08-18 19:04:32,032 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_Juniv with PID 18612
+2026-08-18 19:04:32,048 | INFO | camera-CAM_Juniv:18612 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 19:04:34,822 | INFO | camera-CAM_Juniv:18612 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 19:04:39,173 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 18780
+2026-08-18 19:04:39,193 | INFO | camera-CAM_Juniv301:18780 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 19:04:42,332 | INFO | camera-CAM_Juniv301:18780 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 19:04:48,070 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_ee_12 with PID 2996
+2026-08-18 19:04:48,081 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera grid with PID 16444
+2026-08-18 19:04:48,090 | INFO | camera-CAM_ee_12:2996 | camera.camera_worker | Camera worker starting: camera=CAM_ee_12
+2026-08-18 19:04:48,221 | INFO | MainProcess:18928 | service.erp_sync_service | ERP sync service started: interval=30.0s batchSize=10
+2026-08-18 19:04:48,221 | INFO | MainProcess:18928 | service.erp_sync_service | ERP assignment service started: interval=10.0s 
+2026-08-18 19:04:48,221 | INFO | MainProcess:18928 | __main__ | Camera startup result: {'started': ['CAM_Juniv', 'CAM_Juniv301', 'CAM_ee_12'], 'count': 3, 'embeddingCount': 4}
+2026-08-18 19:04:48,221 | INFO | MainProcess:18928 | __main__ | FastAPI startup completed
+2026-08-18 19:04:48,223 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:04:48,250 | INFO | MainProcess:18928 | uvicorn.error | Application startup complete.
+2026-08-18 19:04:48,260 | INFO | MainProcess:18928 | uvicorn.error | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-08-18 19:04:48,295 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:04:48,302 | INFO | MainProcess:18928 | httpx | HTTP Request: POST http://localhost:8090/digi-restau/printCtrl?tp=camera&auth=Resta2&info=sync_cam "HTTP/1.1 200 "
+2026-08-18 19:04:48,305 | INFO | MainProcess:18928 | service.erp_sync_service | Camera image sent to ERP: camera=CAM_Juniv etsAuth=Resta2
+2026-08-18 19:04:48,339 | INFO | MainProcess:18928 | httpx | HTTP Request: POST http://localhost:8090/digi-restau/printCtrl?tp=camera&auth=Resta2&info=sync_cam "HTTP/1.1 200 "
+2026-08-18 19:04:48,343 | INFO | MainProcess:18928 | service.erp_sync_service | Camera image sent to ERP: camera=CAM_Juniv301 etsAuth=Resta2
+2026-08-18 19:04:48,344 | WARNING | MainProcess:18928 | service.erp_sync_service | No frame available for camera=CAM_ee_12
+2026-08-18 19:04:48,345 | INFO | MainProcess:18928 | service.erp_sync_service | Camera image synced. Next sync in 86400 seconds
+2026-08-18 19:04:58,321 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:04:58,334 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:05:08,353 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:05:08,365 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:05:18,379 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:05:18,390 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:05:28,410 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:05:28,422 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:05:38,434 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:05:38,447 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:05:48,460 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:05:48,473 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:05:58,482 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:05:58,496 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:06:08,501 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:06:08,515 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:06:18,524 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:06:18,536 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:06:28,561 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:06:28,581 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:06:38,594 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:06:38,605 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:06:48,620 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:06:48,634 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:06:58,637 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:06:58,652 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:07:08,677 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:07:08,779 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:07:18,802 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:07:18,815 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:07:28,825 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:07:28,848 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:07:38,908 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:07:38,923 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:07:48,945 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:07:48,958 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:07:58,977 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:07:58,988 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:08:08,993 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:08:09,005 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:08:19,002 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:08:19,013 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:08:29,017 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:08:29,029 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:08:39,047 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:08:39,062 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:08:45,751 | INFO | MainProcess:18928 | service.sync_service | Synced cameras from ERP push: count=3
+2026-08-18 19:08:45,752 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-18 19:08:45,752 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-18 19:08:45,753 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopping camera CAM_ee_12
+2026-08-18 19:08:45,813 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-18 19:08:45,813 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-18 19:08:45,813 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopped camera CAM_ee_12
+2026-08-18 19:08:53,686 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_Juniv with PID 12164
+2026-08-18 19:08:53,690 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:08:53,701 | INFO | camera-CAM_Juniv:12164 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 19:08:56,723 | INFO | camera-CAM_Juniv:12164 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 19:09:02,043 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 3016
+2026-08-18 19:09:02,048 | ERROR | MainProcess:18928 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=Resta2
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 435, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 85, in get_unknown_assignments
+    response = await self._client.get(url,)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1768, in get
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+2026-08-18 19:09:02,060 | INFO | camera-CAM_Juniv301:3016 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 19:09:05,408 | INFO | camera-CAM_Juniv301:3016 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 19:09:11,138 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_ee_12 with PID 5352
+2026-08-18 19:09:11,148 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera grid with PID 14276
+2026-08-18 19:09:11,149 | INFO | MainProcess:18928 | uvicorn.access | 127.0.0.1:3850 - "POST /api/sync/all HTTP/1.1" 200
+2026-08-18 19:09:11,158 | INFO | camera-CAM_ee_12:5352 | camera.camera_worker | Camera worker starting: camera=CAM_ee_12
+2026-08-18 19:09:11,258 | INFO | MainProcess:18928 | service.sync_service | Synced attendance rules from ERP push: etsAuth=Resta2 rule={'etsAuth': 'Resta2', 'recognitionThreshold': 0.58, 'duplicateCooldownSeconds': 170, 'saveFaceSnapshots': True, 'saveUnknownFaces': False, 'saveUnknownFaceCrops': False, 'sendUnknownFaceAlert': False, 'personTrackingEnabled': True, 'historyRecoveryEnabled': True, 'imageRetentionDays': 10}
+2026-08-18 19:09:11,259 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopping camera CAM_Juniv
+2026-08-18 19:09:11,259 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopping camera CAM_Juniv301
+2026-08-18 19:09:11,260 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopping camera CAM_ee_12
+2026-08-18 19:09:11,318 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopped camera CAM_Juniv
+2026-08-18 19:09:11,322 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopped camera CAM_Juniv301
+2026-08-18 19:09:11,322 | INFO | MainProcess:18928 | camera.camera_process_manager | Stopped camera CAM_ee_12
+2026-08-18 19:09:18,636 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_Juniv with PID 19960
+2026-08-18 19:09:18,638 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:09:18,656 | INFO | camera-CAM_Juniv:19960 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv
+2026-08-18 19:09:21,676 | INFO | camera-CAM_Juniv:19960 | camera.camera_worker | Camera connected: camera=CAM_Juniv
+2026-08-18 19:09:26,765 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_Juniv301 with PID 3580
+2026-08-18 19:09:26,770 | ERROR | MainProcess:18928 | service.erp_sync_service | Failed syncing unknown assignments etsAuth=Resta2
+Traceback (most recent call last):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_sync_service.py", line 435, in _sync_unknown_assignments
+    assignments = await self.erp_client.get_unknown_assignments(ets_auth=ets_auth)
+  File "c:\Users\dev-7\Desktop\face_recognition_Python\simple_camera\service\erp_client.py", line 85, in get_unknown_assignments
+    response = await self._client.get(url,)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1768, in get
+    return await self.request(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\dev-7\AppData\Local\Programs\Python\Python310\lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+2026-08-18 19:09:26,783 | INFO | camera-CAM_Juniv301:3580 | camera.camera_worker | Camera worker starting: camera=CAM_Juniv301
+2026-08-18 19:09:30,257 | INFO | camera-CAM_Juniv301:3580 | camera.camera_worker | Camera connected: camera=CAM_Juniv301
+2026-08-18 19:09:37,028 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera CAM_ee_12 with PID 17584
+2026-08-18 19:09:37,045 | INFO | MainProcess:18928 | camera.camera_process_manager | Started camera grid with PID 11164
+2026-08-18 19:09:37,046 | INFO | MainProcess:18928 | uvicorn.access | 127.0.0.1:3850 - "POST /api/sync/rules HTTP/1.1" 200
+2026-08-18 19:09:37,107 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:09:37,194 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:09:37,062 | INFO | camera-CAM_ee_12:17584 | camera.camera_worker | Camera worker starting: camera=CAM_ee_12
+2026-08-18 19:09:47,223 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:09:47,451 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:09:57,511 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:09:57,603 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:10:07,640 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:10:08,226 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:10:18,306 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:10:18,744 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:10:29,043 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:10:31,269 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "
+2026-08-18 19:10:41,304 | INFO | MainProcess:18928 | service.erp_sync_service | ets_auths: ['Resta2']
+2026-08-18 19:10:41,388 | INFO | MainProcess:18928 | httpx | HTTP Request: GET http://localhost:8090/digi-restau/printCtrl?tp=unknown&auth=Resta2&sync=1 "HTTP/1.1 200 "

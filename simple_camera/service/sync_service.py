@@ -568,7 +568,20 @@ class SyncService:
     # =========================================================
     # Attendance-rule synchronization
     # =========================================================
-
+    # async def _purge_images_for_rule(self, rule: AttendanceRules) -> dict:
+    #     result = await self.snapshot_service.purge_expired_images(
+    #         tenant_id=rule.tenantId,
+    #         retention_days=rule.imageRetentionDays,
+    #     )
+    #     if result["enabled"]:
+    #         await self.log_service.write(
+    #             "INFO",
+    #             "Purged expired snapshot images",
+    #             tenant_id=rule.tenantId,
+    #             metadata=result,
+    #         )
+    #     return result;
+    
     async def sync_rules_from_payload(
         self,
         payload: Any,
@@ -584,9 +597,9 @@ class SyncService:
             for rule in rules:
                 await self._persist_rule(rule)
 
-                purge_results.append(
-                    await self._purge_images_for_rule(rule)
-                )
+                # purge_results.append(
+                #     await self._purge_images_for_rule(rule)
+                # )
 
                 logger.info(
                     "Synced attendance rules from ERP push: "
@@ -703,9 +716,9 @@ class SyncService:
 
         results = []
 
-        for rule in rules:
-            result = await self._purge_images_for_rule(rule)
-            results.append(result)
+        # for rule in rules:
+        #     result = await self._purge_images_for_rule(rule)
+        #     results.append(result)
 
         return results
 
